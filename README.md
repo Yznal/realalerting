@@ -9,6 +9,8 @@ Alerting with minimal latencies.
     * [видос](https://www.youtube.com/watch?v=FL7_lxJbX0o)
     * [еще видос](https://www.youtube.com/watch?v=tM4YskS94b0)
 * [Видос про low latency системы](https://www.youtube.com/watch?v=BD9cRbxWQx8)
+* [OpenJDK 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html).
+* [OpenJDK 11](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html).
 
 Используем:
-* Целимся на [OpenJDK 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html).
+* JDK >= 11
