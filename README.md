@@ -4,6 +4,7 @@ Alerting with minimal latencies.
 
 Ссылки
 * [Базовые концепции мониторинга](https://docs.victoriametrics.com/keyConcepts.html)
+* [Немного про Yandex Monitoring](https://www.youtube.com/watch?v=Qnw7s8290Cs&t=2s)
 * [Инструментация кода](https://opentelemetry.io/docs/instrumentation/java/getting-started/)
 * [Aeron](https://github.com/real-logic/aeron)
     * [видос](https://www.youtube.com/watch?v=FL7_lxJbX0o)
