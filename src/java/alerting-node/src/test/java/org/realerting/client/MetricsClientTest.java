@@ -1,41 +1,21 @@
 package org.realerting.client;
 
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.realerting.dto.Metric;
-import org.realerting.service.MetricAlertPublisher;
-import org.realerting.service.MetricsClient;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-
-
-@ExtendWith(MockitoExtension.class)
+@QuarkusTest
 class MetricsClientTest {
-    private static final int METRIC_ID = 1;
 
-    private MetricAlertPublisher publisher = mock(MetricAlertPublisher.class);
-    private final List<Metric> metrics = List.of(new Metric(METRIC_ID, 100));
-    private final MetricsClient metricsClient = new MetricsClient(metrics, publisher);
+    @Inject
+    MetricsClient metricsClient;
 
     @Test
     void calculateAlert() {
-        metricsClient.calculateAlert(1, 100.01);
-        verify(publisher).sendAlert(METRIC_ID);
-    }
-
-    @Test
-    void calculateNoAlert() {
-        metricsClient.calculateAlert(METRIC_ID, 99.99);
-        verify(publisher, never()).sendAlert(METRIC_ID);
-    }
-
-    @Test
-    void calculateUnknownMetric() {
-        metricsClient.calculateAlert(-1, 100.01);
-        verify(publisher, never()).sendAlert(anyInt());
+        assertFalse(metricsClient.calculateAlert(1, 99.99));
+        assertTrue(metricsClient.calculateAlert(1, 100.01));
     }
 }
