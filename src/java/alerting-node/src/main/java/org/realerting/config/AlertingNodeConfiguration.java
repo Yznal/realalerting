@@ -34,8 +34,8 @@ public class AlertingNodeConfiguration {
 
         final File fileYamlConfiguration = new File(yamlConfigurationPath);
         if (!fileYamlConfiguration.exists()
-                || !fileYamlConfiguration.isFile()
-                || !fileYamlConfiguration.canRead()) {
+            || !fileYamlConfiguration.isFile()
+            || !fileYamlConfiguration.canRead()) {
             throw new RuntimeException("Can not access yaml configuration file by path: " + yamlConfigurationPath);
         }
 

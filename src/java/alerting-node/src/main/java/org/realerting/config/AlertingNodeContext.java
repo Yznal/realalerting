@@ -29,8 +29,9 @@ public class AlertingNodeContext implements AutoCloseable {
     }
 
     public void start() {
-        publisher.start();
         subscriber.start();
+        publisher.start();
+        subscriber.run();
     }
 
     @Contract("->!null")
@@ -63,11 +64,19 @@ public class AlertingNodeContext implements AutoCloseable {
         this.publisher = publisher;
     }
 
+    public Aeron getAeron() {
+        return aeron;
+    }
+
+    public boolean isRunning() {
+        return subscriber.isRunning() && publisher.isRunning();
+    }
+
     @Override
     public void close() {
-        aeron.close();
-        mediaDriver.close();
         subscriber.close();
         publisher.close();
+        mediaDriver.close();
+        aeron.close();
     }
 }

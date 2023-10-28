@@ -16,7 +16,7 @@ public class MetricsClient {
 
     public MetricsClient(List<Metric> metrics, MetricAlertPublisher publisher) {
         this.metrics = metrics.stream()
-                .collect(Collectors.toMap(Metric::getId, metric -> metric));
+            .collect(Collectors.toMap(Metric::getId, metric -> metric));
         this.publisher = publisher;
     }
 
