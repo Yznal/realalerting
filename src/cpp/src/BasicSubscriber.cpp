@@ -22,6 +22,7 @@
 #include "Configuration.h"
 #include "FragmentAssembler.h"
 #include "concurrent/SleepingIdleStrategy.h"
+#include "metric.hpp"
 #include "util/CommandOptionParser.h"
 
 using namespace aeron::util;
@@ -65,21 +66,18 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
 fragment_handler_t printStringMessage() {
   return [&](const AtomicBuffer &buffer, util::index_t offset,
              util::index_t length, const Header &header) {
-    double metric =
-        atof(reinterpret_cast<const char *>(buffer.buffer()) + offset);
-    if (metric > .6)
-      std::cout << "Message to stream " << header.streamId() << " from session "
-                << header.sessionId() << "(" << length << "@" << offset
-                << ") <<"
-
-                //  std::string(reinterpret_cast<const char
-                //  *>(buffer.buffer()) + offset,
-                //              static_cast<std::size_t>(length))
-                //      .;
-
-                // << *(reinterpret_cast<float *>(buffer.buffer()) +
-                //                     offset)
-                << metric << ">>" << std::endl;
+    Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
+    if (metric.val > .6)
+      std::cout
+          << "Message to stream " << header.streamId() << " from session "
+          << header.sessionId() << "(" << length << "@" << offset << ") <<"
+          << "id: " << metric.id << " val: "
+          << metric.val
+          // << "id: "
+          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->id
+          // << " val: "
+          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->val
+          << ">>" << std::endl;
   };
 }
 

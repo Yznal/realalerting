@@ -23,8 +23,8 @@
 
 #include "Aeron.h"
 #include "Configuration.h"
+#include "metric.hpp"
 #include "util/CommandOptionParser.h"
-
 using namespace aeron::util;
 using namespace aeron;
 
@@ -128,30 +128,42 @@ int main(int argc, char **argv) {
 
     AERON_DECL_ALIGNED(buffer_t buffer, 16);
     concurrent::AtomicBuffer srcBuffer(&buffer[0], buffer.size());
-    char message[256];
+    // char message[256];
 
-    for (std::int64_t i = 0; i < settings.numberOfMessages && running; i++) {
-      double r = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+    std ::array<Metric, 100> MetricArray;
+    {
+      size_t id = 0;
+      for (auto &metric : MetricArray) {
+        metric = {id++,
+                  static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
+      }
+    }
 
-#if _MSC_VER
-      const int messageLen =
-          ::sprintf_s(message, sizeof(message), "%f", r);
-#else
-      const int messageLen =
-          ::snprintf(message, sizeof(message), "%f", r);
-#endif
-
-      srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(message),
-                         messageLen);
+    // #if _MSC_VER
+    //       const int messageLen = ::sprintf_s(message, sizeof(message), "%f",
+    //       r);
+    // #else
+    //       const int messageLen = ::snprintf(message, sizeof(message), "%f",
+    //       r);
+    // #endif
+    for (size_t i = 0; i < MetricArray.size(); ++i) {
+      srcBuffer.putBytes(
+          0, reinterpret_cast<std::uint8_t *>(MetricArray.data() + i),
+          sizeof(Metric));
 
       std::cout << "offering " << i << "/" << settings.numberOfMessages
                 << " - ";
       std::cout.flush();
 
-      const std::int64_t result = publication->offer(srcBuffer, 0, messageLen);
+      const std::int64_t result =
+          publication->offer(srcBuffer, 0, sizeof(Metric));
 
       if (result > 0) {
-        std::cout << "yay!" << std::endl;
+        std::cout << "yay! send {"
+                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->id
+                  << ", "
+                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->val
+                  << "}" << std::endl;
       } else if (BACK_PRESSURED == result) {
         std::cout << "Offer failed due to back pressure" << std::endl;
       } else if (NOT_CONNECTED == result) {
@@ -173,7 +185,7 @@ int main(int argc, char **argv) {
         std::cout << "No active subscribers detected" << std::endl;
       }
 
-      //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     std::cout << "Done sending." << std::endl;
