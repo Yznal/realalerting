@@ -1,8 +1,6 @@
 plugins {
     id 'java'
-    id 'io.quarkus'
     id 'application'
-    id "io.freefair.lombok" version "8.4"
 }
 
 repositories {
@@ -11,15 +9,23 @@ repositories {
 }
 
 dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-arc'
-    implementation 'io.quarkus:quarkus-resteasy-reactive'
-    implementation 'io.quarkus:quarkus-config-yaml'
+    // Compile
     implementation 'io.aeron:aeron-all:1.42.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation 'org.jetbrains:annotations:24.0.1'
 
-    testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.quarkus:quarkus-junit5-mockito'
-    testImplementation 'io.rest-assured:rest-assured'
+    // Tests
+    testImplementation(platform('org.junit:junit-bom:5.10.0'))
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+
+    testImplementation(platform('org.mockito:mockito-bom:5.6.0'))
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+
+
 }
 
 group 'org.realerting'
@@ -31,8 +37,9 @@ java {
 }
 
 test {
-    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    useJUnitPlatform()
 }
+
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters'
@@ -42,16 +49,10 @@ compileTestJava {
     options.encoding = 'UTF-8'
 }
 
-// Needs to run aeron on JDK 17+
-// Reference: https://aeroncookbook.com/cookbook-content/aeron-jdk16/
-quarkus {
-    test {
-        jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
-    }
-    testNative {
-        jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
-    }
-    quarkusDev {
-        jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
-    }
+application {
+    mainClass = 'org.realerting.AlertingNodeEntryPoint'
+
+    // Needs to run aeron on JDK 17+
+    // Reference: https://aeroncookbook.com/cookbook-content/aeron-jdk16/
+    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
 }
