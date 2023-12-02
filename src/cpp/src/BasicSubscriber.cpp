@@ -16,10 +16,11 @@
 
 #include <csignal>
 #include <cstdint>
+#include <fstream>
 #include <thread>
 
 #include "Aeron.h"
-#include "Configuration.h"
+#include "Config.hpp"
 #include "FragmentAssembler.h"
 #include "concurrent/SleepingIdleStrategy.h"
 #include "metric.hpp"
@@ -42,42 +43,51 @@ static const int FRAGMENTS_LIMIT = 10;
 
 struct Settings {
   std::string dirPrefix;
-  std::string channel = samples::configuration::DEFAULT_CHANNEL;
-  std::int32_t streamId = samples::configuration::DEFAULT_STREAM_ID;
+  std::string channel;
+  std::int32_t streamId;
+  static std::vector<size_t> ids;
 };
+
+std::vector<size_t> Settings::ids;
 
 Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
   cp.parse(argc, argv);
-  if (cp.getOption(optHelp).isPresent()) {
-    cp.displayOptionsHelp(std::cout);
-    exit(0);
-  }
 
   Settings s;
 
-  s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
-  s.channel = cp.getOption(optChannel).getParam(0, s.channel);
-  s.streamId =
-      cp.getOption(optStreamId).getParamAsInt(0, 1, INT32_MAX, s.streamId);
+  Config::tree["metricConfig"]["metricClient"]["config"]["channel"] >>
+      s.channel;
 
+  s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
+
+  Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
+      s.streamId;
+
+  for (auto child :
+       Config::tree["metricConfig"]["metricClient"]["metrics"].children()) {
+    size_t id;
+    child["id"] >> id;
+    s.ids.push_back(id);
+  }
   return s;
 }
 
 fragment_handler_t printStringMessage() {
   return [&](const AtomicBuffer &buffer, util::index_t offset,
              util::index_t length, const Header &header) {
-    Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
-    if (metric.val > .6)
-      std::cout
-          << "Message to stream " << header.streamId() << " from session "
-          << header.sessionId() << "(" << length << "@" << offset << ") <<"
-          << "id: " << metric.id << " val: "
-          << metric.val
-          // << "id: "
-          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->id
-          // << " val: "
-          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->val
-          << ">>" << std::endl;
+    // Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
+    Metric MetricArray[Settings::ids.size()];
+    for (size_t i = 0; i < Settings::ids.size(); ++i) {
+      MetricArray[i] =
+          *(reinterpret_cast<Metric *>(buffer.buffer() + offset) + i);
+    }
+    std::cout << "Message to stream " << header.streamId() << " from session "
+              << header.sessionId() << "(" << length << "@" << offset << ") <<"
+              << "Metrics: \n";
+    for (size_t i = 0; i < Settings::ids.size(); ++i) {
+      std::cout << "\t{" << MetricArray[i].id << ", " << MetricArray[i].val
+                << "}>>\n";
+    }
   };
 }
 

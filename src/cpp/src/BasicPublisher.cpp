@@ -19,12 +19,16 @@
 #include <csignal>
 #include <cstdint>
 #include <cstdio>
+#include <fstream>
 #include <thread>
+#include <vector>
 
 #include "Aeron.h"
+#include "Config.hpp"
 #include "Configuration.h"
 #include "metric.hpp"
 #include "util/CommandOptionParser.h"
+
 using namespace aeron::util;
 using namespace aeron;
 
@@ -41,11 +45,9 @@ static const char optLinger = 'l';
 
 struct Settings {
   std::string dirPrefix;
-  std::string channel = samples::configuration::DEFAULT_CHANNEL;
-  std::int32_t streamId = samples::configuration::DEFAULT_STREAM_ID;
-  long long numberOfMessages =
-      samples::configuration::DEFAULT_NUMBER_OF_MESSAGES;
-  int lingerTimeoutMs = samples::configuration::DEFAULT_LINGER_TIMEOUT_MS;
+  std::string channel;
+  std::int32_t streamId;
+  int lingerTimeoutMs = configuration::DEFAULT_LINGER_TIMEOUT_MS;
 };
 
 typedef std::array<std::uint8_t, 256> buffer_t;
@@ -60,11 +62,10 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
   Settings s;
 
   s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
-  s.channel = cp.getOption(optChannel).getParam(0, s.channel);
-  s.streamId =
-      cp.getOption(optStreamId).getParamAsInt(0, 1, INT32_MAX, s.streamId);
-  s.numberOfMessages = cp.getOption(optMessages)
-                           .getParamAsLong(0, 0, INT64_MAX, s.numberOfMessages);
+  Config::tree["metricConfig"]["metricClient"]["config"]["channel"] >>
+      s.channel;
+  Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
+      s.streamId;
   s.lingerTimeoutMs = cp.getOption(optLinger).getParamAsInt(
       0, 0, 60 * 60 * 1000, s.lingerTimeoutMs);
 
@@ -128,42 +129,41 @@ int main(int argc, char **argv) {
 
     AERON_DECL_ALIGNED(buffer_t buffer, 16);
     concurrent::AtomicBuffer srcBuffer(&buffer[0], buffer.size());
-    // char message[256];
 
-    std ::array<Metric, 100> MetricArray;
-    {
-      size_t id = 0;
-      for (auto &metric : MetricArray) {
-        metric = {id++,
-                  static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
-      }
+    std::vector<size_t> ids;
+    for (auto child :
+         Config::tree["metricConfig"]["metricClient"]["metrics"].children()) {
+      size_t id;
+      child["id"] >> id;
+      ids.push_back(id);
     }
+    size_t i = 0;
+    while (running) {
+      Metric MetricArray[ids.size()];
+      auto dummy = MetricArray;
+      for (size_t id : ids) {
+        *dummy++ = {
+            id, static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
+      }
+      dummy = MetricArray;
+      int curid = 0;
+      while (dummy - MetricArray < 256 - sizeof(Metric) &&
+             curid++ < ids.size()) {
+        dummy++;
+      }
 
-    // #if _MSC_VER
-    //       const int messageLen = ::sprintf_s(message, sizeof(message), "%f",
-    //       r);
-    // #else
-    //       const int messageLen = ::snprintf(message, sizeof(message), "%f",
-    //       r);
-    // #endif
-    for (size_t i = 0; i < MetricArray.size(); ++i) {
-      srcBuffer.putBytes(
-          0, reinterpret_cast<std::uint8_t *>(MetricArray.data() + i),
-          sizeof(Metric));
+      srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(MetricArray),
+                         sizeof(Metric) * curid);
 
-      std::cout << "offering " << i << "/" << settings.numberOfMessages
-                << " - ";
+      std::cout << "offering " << i++ << " - ";
       std::cout.flush();
 
       const std::int64_t result =
-          publication->offer(srcBuffer, 0, sizeof(Metric));
+          publication->offer(srcBuffer, 0, sizeof(Metric) * curid);
 
       if (result > 0) {
-        std::cout << "yay! send {"
-                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->id
-                  << ", "
-                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->val
-                  << "}" << std::endl;
+        std::cout << "send\n";
+
       } else if (BACK_PRESSURED == result) {
         std::cout << "Offer failed due to back pressure" << std::endl;
       } else if (NOT_CONNECTED == result) {
