@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    // Compile
+    implementation 'io.aeron:aeron-all:1.42.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation 'org.jetbrains:annotations:24.0.1'
+    implementation 'com.lmax:disruptor:3.4.4'
+
+    // Tests
+    testImplementation(platform('org.junit:junit-bom:5.10.0'))
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+
+    testImplementation(platform('org.mockito:mockito-bom:5.6.0'))
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+}
+
+group 'org.realerting'
+version '1.0.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_20
+    targetCompatibility = JavaVersion.VERSION_20
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters' << '--enable-preview'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '--enable-preview'
+}
+
+application {
+    mainClass = 'org.realerting.AlertingNodeEntryPoint'
+
+    // Needs to run aeron on JDK 17+
+    // Reference: https://aeroncookbook.com/cookbook-content/aeron-jdk16/
+    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+}
