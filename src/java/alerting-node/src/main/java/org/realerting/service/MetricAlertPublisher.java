@@ -33,8 +33,9 @@ public class MetricAlertPublisher implements AutoCloseable {
         streamId = configuration.getStreamId();
         publication = aeron.addPublication(channel, streamId);
         isRunning = new AtomicBoolean(false);
-        SigInt.register(() -> isRunning.set(false));
         idle = new SleepingIdleStrategy();
+
+        SigInt.register(this::close);
     }
 
     public boolean isRunning() {
@@ -42,12 +43,14 @@ public class MetricAlertPublisher implements AutoCloseable {
     }
 
     public void start() {
-        while (!publication.isConnected()) {
+        isRunning.set(true);
+        while (isRunning() && !publication.isConnected()) {
             idle.idle();
         }
 
-        isRunning.set(true);
-        log.info("MetricAlertPublisher. Ready to publish alerts at channel={}, streamId={}", channel, streamId);
+        if (isRunning()) {
+            log.info("MetricAlertPublisher. Ready to publish alerts at channel={}, streamId={}", channel, streamId);
+        }
     }
 
     public void sendAlert(int metricId, double metricValue, long metricTimestamp) {
@@ -65,7 +68,12 @@ public class MetricAlertPublisher implements AutoCloseable {
 
     @Override
     public void close() {
-        log.info("MetricAlertPublisher closing active publication");
-        publication.close();
+        if (isRunning.get()) {
+            log.info("MetricAlertPublisher closing active publication");
+            isRunning.set(false);
+            publication.close();
+        }
+
+        log.info("MetricAlertPublisher closed");
     }
 }

@@ -2,7 +2,7 @@
     <configuration default="false" name="Local run" type="Application" factoryName="Application">
         <option name="MAIN_CLASS_NAME" value="org.realerting.AlertingNodeEntryPoint"/>
         <module name="alerting-node.main"/>
-        <option name="PROGRAM_PARAMETERS" value="src/main/resources/application.yaml"/>
+        <option name="PROGRAM_PARAMETERS" value="./src/main/resources/application.yaml"/>
         <option name="VM_PARAMETERS" value="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED"/>
         <extension name="coverage">
             <pattern>

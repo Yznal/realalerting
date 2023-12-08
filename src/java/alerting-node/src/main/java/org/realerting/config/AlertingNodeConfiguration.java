@@ -28,9 +28,9 @@ public class AlertingNodeConfiguration {
             throw new RuntimeException("Trying to rewrite existing configuration");
         }
 
-        if (!yamlConfigurationPath.startsWith("./")) {
-            yamlConfigurationPath = "./" + yamlConfigurationPath;
-        }
+//        if (!yamlConfigurationPath.startsWith("./")) {
+//            yamlConfigurationPath = "./" + yamlConfigurationPath;
+//        }
 
         final File fileYamlConfiguration = new File(yamlConfigurationPath);
         if (!fileYamlConfiguration.exists()
@@ -55,6 +55,10 @@ public class AlertingNodeConfiguration {
     @JsonProperty
     private final List<Metric> metrics;
 
+    /**
+     * Конструктор по умолчанию для jackson
+     */
+    @SuppressWarnings("unused")
     private AlertingNodeConfiguration() {
         this(null, null, null);
     }
@@ -85,6 +89,10 @@ public class AlertingNodeConfiguration {
         @JsonProperty("stream-id")
         private final int streamId;
 
+        /**
+         * Конструктор по умолчанию для jackson
+         */
+        @SuppressWarnings("unused")
         private AeronConnectionConfiguration() {
             this(null, 0, 0);
         }

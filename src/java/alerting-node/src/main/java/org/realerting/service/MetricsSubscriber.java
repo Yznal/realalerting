@@ -36,8 +36,9 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
         streamId = configuration.getStreamId();
         subscription = aeron.addSubscription(channel, streamId);
         isRunning = new AtomicBoolean(false);
-        SigInt.register(() -> isRunning.set(false));
         idle = new SleepingIdleStrategy();
+
+        SigInt.register(this::close);
     }
 
     public boolean isRunning() {
@@ -54,18 +55,25 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
     }
 
     public void start() {
-        while (!subscription.isConnected()) {
+        isRunning.set(true);
+        while (isRunning() && !subscription.isConnected()) {
             idle.idle();
         }
 
-        isRunning.set(true);
-        log.info("MetricsSubscriber. Ready to receive metrics at channel={}, streamId={}", channel, streamId);
+        if (isRunning()) {
+            log.info("MetricsSubscriber. Ready to receive metrics at channel={}, streamId={}", channel, streamId);
+        }
     }
 
     @Override
     public void close() {
-        log.info("MetricsSubscriber closing active subscription");
-        subscription.close();
+        if (isRunning.get()) {
+            log.info("MetricsSubscriber closing active publication");
+            isRunning.set(false);
+            subscription.close();
+        }
+
+        log.info("MetricsSubscriber closed");
     }
 
     @Override
