@@ -20,7 +20,7 @@ public class MetricsClient {
         this.publisher = publisher;
     }
 
-    public void calculateAlert(int metricId, double metricValue) {
+    public void calculateAlert(int metricId, double metricValue, long metricTimestamp) {
         var metric = metrics.get(metricId);
         if (metric == null) {
             log.warn("Unknown metric {}", metricId);
@@ -30,7 +30,7 @@ public class MetricsClient {
         var threshold = metric.getThreshold();
         if (metricValue >= threshold) {
             log.info("MetricsClient calculated an alert for id={} value={} > {}", metricId, metricValue, threshold);
-            publisher.sendAlert(metricId);
+            publisher.sendAlert(metricId, metricValue, metricTimestamp);
         }
     }
 

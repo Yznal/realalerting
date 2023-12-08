@@ -14,8 +14,7 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.agrona.BitUtil.SIZE_OF_INT;
-import static org.realerting.config.AlertingNodeConstants.AERON_ENDPOINT_FORMAT;
+import static org.realerting.config.AlertingNodeConstants.*;
 
 
 public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnable {
@@ -48,9 +47,10 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
     @Override
     public void onFragment(DirectBuffer buffer, int offset, int length, Header header) {
         var metricId = buffer.getInt(offset);
-        var metricValue = buffer.getDouble(offset + SIZE_OF_INT);
-        log.info("MetricsSubscriber. Received id={}: {}", metricId, metricValue);
-        metricsClient.calculateAlert(metricId, metricValue);
+        var metricValue = buffer.getDouble(offset + METRIC_VALUE_OFFSET);
+        var metricTimestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
+        log.info("MetricsSubscriber. Received id={}: {} at {}", metricId, metricValue, metricTimestamp);
+        metricsClient.calculateAlert(metricId, metricValue, metricTimestamp);
     }
 
     public void start() {

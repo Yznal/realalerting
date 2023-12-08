@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -84,14 +85,17 @@ class AlertingNodeEntryPointIT {
             var metricId = RANDOM.nextInt(1, 3);
             DUMMY_BUFFER.putInt(0, metricId);
             var metricValue = RANDOM.nextInt(5000, 15000) + RANDOM.nextDouble();
-            DUMMY_BUFFER.putDouble(METRIC_ID_LENGTH, metricValue);
+            DUMMY_BUFFER.putDouble(METRIC_VALUE_OFFSET, metricValue);
+            DUMMY_BUFFER.putLong(METRIC_TIMESTAMP_OFFSET,
+                ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.systemDefault()).toInstant().toEpochMilli());
             dummyPublisher.offer(DUMMY_BUFFER, 0, MESSAGE_LENGTH);
 
             var poll = -1;
             while (poll <= 0) {
                 FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
                     var alertMetricId = buffer.getInt(offset);
-                    log.info("Received alert for {}", alertMetricId);
+                    var timestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
+                    log.info("Received alert for {} at {}", alertMetricId, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()));
                     assertEquals(metricId, alertMetricId);
                 };
                 poll = dummySubscriber.poll(handler, 256);
