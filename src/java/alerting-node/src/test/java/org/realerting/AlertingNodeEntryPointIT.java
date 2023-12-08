@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -42,7 +44,7 @@ class AlertingNodeEntryPointIT {
     final IdleStrategy idle = new SleepingIdleStrategy();
 
     @BeforeAll
-    static void start() throws InterruptedException {
+    static void start() {
         runningMain = Thread.ofPlatform().daemon(true)
             .start(() -> AlertingNodeEntryPoint.main(new String[]{"src/main/resources/application.yaml"}));
         await().atMost(5, TimeUnit.MINUTES)
@@ -94,8 +96,7 @@ class AlertingNodeEntryPointIT {
             while (poll <= 0) {
                 FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
                     var alertMetricId = buffer.getInt(offset);
-                    var timestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
-                    log.info("Received alert for {} at {}", alertMetricId, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()));
+                    //log.info("Received alert for {} at {}", alertMetricId, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()));
                     assertEquals(metricId, alertMetricId);
                 };
                 poll = dummySubscriber.poll(handler, 256);
