@@ -32,23 +32,22 @@ group 'org.realerting'
 version '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_20
-    targetCompatibility = JavaVersion.VERSION_20
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 test {
     useJUnitPlatform()
-    jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+    jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
 }
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters' << '--enable-preview'
+    options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '--enable-preview'
 }
 
 application {
@@ -56,5 +55,5 @@ application {
 
     // Needs to run aeron on JDK 17+
     // Reference: https://aeroncookbook.com/cookbook-content/aeron-jdk16/
-    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
 }
