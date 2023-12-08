@@ -1,0 +1,16 @@
+alerting-node:
+  subscriber:
+    ip: localhost
+    port: 14880
+    stream-id: 1001
+  publisher:
+    ip: localhost
+    port: 42069
+    stream-id: 1002
+  metrics:
+    - id: 1
+      threshold: 100
+    - id: 2
+      threshold: 200
+    - id: 3
+      threshold: 15
