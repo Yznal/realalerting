@@ -1,19 +1,3 @@
-/*
- * Copyright 2014-2023 Real Logic Limited.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include <array>
 #include <cinttypes>
 #include <csignal>
@@ -25,7 +9,7 @@
 
 #include "Aeron.h"
 #include "Config.hpp"
-#include "Configuration.h"
+// #include "Configuration.h"
 #include "metric.hpp"
 #include "util/CommandOptionParser.h"
 
@@ -47,7 +31,7 @@ struct Settings {
   std::string dirPrefix;
   std::string channel;
   std::int32_t streamId;
-  int lingerTimeoutMs = configuration::DEFAULT_LINGER_TIMEOUT_MS;
+  // int lingerTimeoutMs = configuration::DEFAULT_LINGER_TIMEOUT_MS;
 };
 
 typedef std::array<std::uint8_t, 256> buffer_t;
@@ -66,8 +50,8 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
       s.channel;
   Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
       s.streamId;
-  s.lingerTimeoutMs = cp.getOption(optLinger).getParamAsInt(
-      0, 0, 60 * 60 * 1000, s.lingerTimeoutMs);
+  // s.lingerTimeoutMs = cp.getOption(optLinger).getParamAsInt(
+  //     0, 0, 60 * 60 * 1000, s.lingerTimeoutMs);
 
   return s;
 }
@@ -190,12 +174,12 @@ int main(int argc, char **argv) {
 
     std::cout << "Done sending." << std::endl;
 
-    if (settings.lingerTimeoutMs > 0) {
-      std::cout << "Lingering for " << settings.lingerTimeoutMs
-                << " milliseconds." << std::endl;
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(settings.lingerTimeoutMs));
-    }
+    // if (settings.lingerTimeoutMs > 0) {
+    //   std::cout << "Lingering for " << settings.lingerTimeoutMs
+    //             << " milliseconds." << std::endl;
+    //   std::this_thread::sleep_for(
+    //       std::chrono::milliseconds(settings.lingerTimeoutMs));
+    // }
   } catch (const CommandOptionException &e) {
     std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
     cp.displayOptionsHelp(std::cerr);

@@ -1,19 +1,3 @@
-/*
- * Copyright 2014-2023 Real Logic Limited.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include <csignal>
 #include <cstdint>
 #include <fstream>
@@ -75,19 +59,22 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
 fragment_handler_t printStringMessage() {
   return [&](const AtomicBuffer &buffer, util::index_t offset,
              util::index_t length, const Header &header) {
-    // Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
-    Metric MetricArray[Settings::ids.size()];
-    for (size_t i = 0; i < Settings::ids.size(); ++i) {
-      MetricArray[i] =
-          *(reinterpret_cast<Metric *>(buffer.buffer() + offset) + i);
-    }
+    Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
+    // Metric MetricArray[Settings::ids.size()];
+    // for (size_t i = 0; i < Settings::ids.size(); ++i) {
+    //   MetricArray[i] =
+    //       *(reinterpret_cast<Metric *>(buffer.buffer() + offset) + i);
+    // }
     std::cout << "Message to stream " << header.streamId() << " from session "
-              << header.sessionId() << "(" << length << "@" << offset << ") <<"
-              << "Metrics: \n";
-    for (size_t i = 0; i < Settings::ids.size(); ++i) {
-      std::cout << "\t{" << MetricArray[i].id << ", " << MetricArray[i].val
-                << "}>>\n";
-    }
+              << header.sessionId() << "(" << length << "@" << offset << ") <<{"
+              << metric.id << ", " << metric.val << ", "
+              << std::chrono::system_clock::to_time_t(metric.timestamp)
+              << "}>>\n";
+    //           << "Metrics: \n";
+    // for (size_t i = 0; i < Settings::ids.size(); ++i) {
+    //   std::cout << "\t{" << MetricArray[i].id << ", " << MetricArray[i].val
+    //             << "}>>\n";
+    // }
   };
 }
 
