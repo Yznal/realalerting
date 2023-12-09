@@ -19,6 +19,3 @@ struct Config {
   static ryml::Tree tree;
 };
 
-std::string Config::content = get_file_contents(R"(../config/PublisherConfig.yml)");
-ryml::Tree Config::tree =
-    ryml::parse_in_place(ryml::to_substr(Config::content));

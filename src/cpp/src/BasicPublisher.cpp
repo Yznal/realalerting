@@ -9,7 +9,12 @@
 
 #include "Aeron.h"
 #include "Config.hpp"
-// #include "Configuration.h"
+
+std::string Config::content =
+    get_file_contents(R"(../config/PublisherConfig.yml)");
+ryml::Tree Config::tree =
+    ryml::parse_in_place(ryml::to_substr(Config::content));
+
 #include "metric.hpp"
 #include "util/CommandOptionParser.h"
 
@@ -123,27 +128,35 @@ int main(int argc, char **argv) {
     }
     size_t i = 0;
     while (running) {
-      Metric MetricArray[ids.size()];
-      auto dummy = MetricArray;
-      for (size_t id : ids) {
-        *dummy++ = {
-            id, static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
-      }
-      dummy = MetricArray;
-      int curid = 0;
-      while (dummy - MetricArray < 256 - sizeof(Metric) &&
-             curid++ < ids.size()) {
-        dummy++;
-      }
+      // Metric MetricArray[ids.size()];
+      // auto dummy = MetricArray;
+      // for (size_t id : ids) {
+      //   *dummy++ = {
+      //       id, static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
+      // }
+      // dummy = MetricArray;
+      // int curid = 0;
+      // while (dummy - MetricArray < 256 - sizeof(Metric) &&
+      //        curid++ < ids.size()) {
+      //   dummy++;
+      // }
 
-      srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(MetricArray),
-                         sizeof(Metric) * curid);
+      // srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(MetricArray),
+      //                    sizeof(Metric) * curid);
+      Metric metric{ids[rand() % ids.size()],
+                    static_cast<double>(rand()) / static_cast<double>(RAND_MAX),
+                    std::chrono::system_clock::now()};
+
+      srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(&metric),
+                         sizeof(Metric));
 
       std::cout << "offering " << i++ << " - ";
       std::cout.flush();
 
+      // const std::int64_t result =
+      //     publication->offer(srcBuffer, 0, sizeof(Metric) * curid);
       const std::int64_t result =
-          publication->offer(srcBuffer, 0, sizeof(Metric) * curid);
+          publication->offer(srcBuffer, 0, sizeof(Metric));
 
       if (result > 0) {
         std::cout << "send\n";

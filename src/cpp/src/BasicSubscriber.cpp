@@ -5,6 +5,12 @@
 
 #include "Aeron.h"
 #include "Config.hpp"
+
+std::string Config::content =
+    get_file_contents(R"(../config/SubscriberConfig.yml)");
+ryml::Tree Config::tree =
+    ryml::parse_in_place(ryml::to_substr(Config::content));
+
 #include "FragmentAssembler.h"
 #include "concurrent/SleepingIdleStrategy.h"
 #include "metric.hpp"
@@ -65,10 +71,15 @@ fragment_handler_t printStringMessage() {
     //   MetricArray[i] =
     //       *(reinterpret_cast<Metric *>(buffer.buffer() + offset) + i);
     // }
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>
+        tmp(std::chrono::system_clock::now());
     std::cout << "Message to stream " << header.streamId() << " from session "
               << header.sessionId() << "(" << length << "@" << offset << ") <<{"
               << metric.id << ", " << metric.val << ", "
-              << std::chrono::system_clock::to_time_t(metric.timestamp)
+              << std::chrono::duration_cast<std::chrono::milliseconds>(
+                     std::chrono::system_clock::now() - metric.timestamp)
+                     .count()
+              // << std::chrono::system_clock::to_time_t(tmp - metric.timestamp)
               << "}>>\n";
     //           << "Metrics: \n";
     // for (size_t i = 0; i < Settings::ids.size(); ++i) {

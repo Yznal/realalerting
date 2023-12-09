@@ -1,9 +1,10 @@
 #pragma once
-#include <cstddef>
 #include <chrono>
+#include <cstddef>
 
 struct Metric {
   size_t id;
   double val;
-  std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> timestamp;
+  std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>
+      timestamp;
 };
