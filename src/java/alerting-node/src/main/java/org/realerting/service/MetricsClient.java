@@ -18,8 +18,8 @@ public class MetricsClient {
         this.publisher = publisher;
     }
 
-    public void calculateAlert(int metricId, double metricValue, long metricTimestamp) {
-        var metric = metrics.get(metricId);
+    public void calculateAlert(long metricId, double metricValue, long metricTimestamp) {
+        var metric = metrics.get((int) metricId);
         if (metric == null) {
             //log.warn("Unknown metric {}", metricId);
             return;

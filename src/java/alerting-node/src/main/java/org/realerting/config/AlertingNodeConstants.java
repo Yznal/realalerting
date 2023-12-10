@@ -1,12 +1,13 @@
 package org.realerting.config;
 
-import static org.agrona.BitUtil.*;
+import static org.agrona.BitUtil.SIZE_OF_DOUBLE;
+import static org.agrona.BitUtil.SIZE_OF_LONG;
 
 public class AlertingNodeConstants {
     /*
      * Длины атрибутов метрик
      */
-    public static final int METRIC_ID_LENGTH = SIZE_OF_INT;
+    public static final int METRIC_ID_LENGTH = SIZE_OF_LONG;
     public static final int METRIC_VALUE_LENGTH = SIZE_OF_DOUBLE;
     public static final int METRIC_TIMESTAMP_LENGTH = SIZE_OF_LONG;
     public static final int MESSAGE_LENGTH = METRIC_ID_LENGTH + METRIC_VALUE_LENGTH + METRIC_TIMESTAMP_LENGTH;

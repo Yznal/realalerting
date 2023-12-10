@@ -85,11 +85,12 @@ class AlertingNodeEntryPointIT {
             var start = System.nanoTime();
 
             var metricId = RANDOM.nextInt(1, 3);
-            DUMMY_BUFFER.putInt(0, metricId);
+            DUMMY_BUFFER.putLong(0, metricId);
             var metricValue = RANDOM.nextInt(5000, 15000) + RANDOM.nextDouble();
             DUMMY_BUFFER.putDouble(METRIC_VALUE_OFFSET, metricValue);
+            var now = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.systemDefault()).toInstant();
             DUMMY_BUFFER.putLong(METRIC_TIMESTAMP_OFFSET,
-                ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.systemDefault()).toInstant().toEpochMilli());
+                now.getEpochSecond() * 1_000_000_000 + now.getNano());
             dummyPublisher.offer(DUMMY_BUFFER, 0, MESSAGE_LENGTH);
 
             var poll = -1;
