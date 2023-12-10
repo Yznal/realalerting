@@ -19,7 +19,7 @@ public class AlertingNodeConstants {
     /*
      * Прочие константы
      */
-    public static final int ALIGNMENT = 4;
+    public static final int ALIGNMENT = 16;
     public static final int ATTEMPTS_TO_RESEND = 3;
     public static final String AERON_ENDPOINT_FORMAT = "aeron:udp?endpoint=%s:%s";
 }

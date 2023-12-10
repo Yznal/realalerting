@@ -46,12 +46,12 @@ class AlertingNodeEntryPointIT {
     @BeforeAll
     static void start() {
         runningMain = Thread.ofPlatform().daemon(true)
-            .start(() -> AlertingNodeEntryPoint.main(new String[]{"src/main/resources/application.yaml"}));
+            .start(() -> AlertingNodeEntryPoint.main(new String[]{"src/test/resources/application.yaml"}));
         await().atMost(5, TimeUnit.MINUTES)
             .until(() -> {
                 try {
-                    AlertingNodeContext.getInstance();
-                    return true;
+                    var context = AlertingNodeContext.getInstance();
+                    return context.isRunning();
                 } catch (Exception e) {
                     return false;
                 }

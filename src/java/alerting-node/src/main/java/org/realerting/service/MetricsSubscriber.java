@@ -50,7 +50,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
         var metricId = buffer.getInt(offset);
         var metricValue = buffer.getDouble(offset + METRIC_VALUE_OFFSET);
         var metricTimestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
-        //log.info("MetricsSubscriber. Received id={}: {} at {}", metricId, metricValue, metricTimestamp);
+        log.info("MetricsSubscriber. Received id={}: {} at {}", metricId, metricValue, metricTimestamp);
         metricsClient.calculateAlert(metricId, metricValue, metricTimestamp);
     }
 
