@@ -12,9 +12,6 @@ import org.realerting.config.AlertingNodeConfiguration;
 import org.realerting.config.AlertingNodeContext;
 import org.slf4j.Logger;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.realerting.config.AlertingNodeConstants.*;
@@ -53,7 +50,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
         var id = buffer.getLong(offset);
         var value = buffer.getDouble(offset + METRIC_VALUE_OFFSET);
         var nanoTimestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
-        log.info("MetricsSubscriber. Received id={}: {} at {}", id, value, LocalDateTime.ofInstant(Instant.ofEpochSecond(nanoTimestamp / 1_000_000_000, (int) (nanoTimestamp % 1_000_000_000)), ZoneId.systemDefault()));
+        // log.info("MetricsSubscriber. Received id={}: {} at {}", id, value, LocalDateTime.ofInstant(Instant.ofEpochSecond(nanoTimestamp / 1_000_000_000, (int) (nanoTimestamp % 1_000_000_000)), ZoneId.systemDefault()));
         metricsClient.calculateAlert(id, value, nanoTimestamp);
     }
 
