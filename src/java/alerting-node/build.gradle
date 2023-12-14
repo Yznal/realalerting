@@ -8,12 +8,18 @@ repositories {
     mavenLocal()
 }
 
+ext {
+    jacksonVersion = '2.16.0'
+    slf4jVersion = '2.0.9'
+}
+
 dependencies {
     // Compile
     implementation 'io.aeron:aeron-all:1.42.1'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3'
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation "org.slf4j:slf4j-simple:$slf4jVersion"
     implementation 'org.jetbrains:annotations:24.0.1'
     implementation 'com.lmax:disruptor:3.4.4'
 
@@ -32,23 +38,22 @@ group 'org.realerting'
 version '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_20
-    targetCompatibility = JavaVersion.VERSION_20
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 test {
     useJUnitPlatform()
-    jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+    jvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
 }
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters' << '--enable-preview'
+    options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '--enable-preview'
 }
 
 application {
@@ -56,5 +61,17 @@ application {
 
     // Needs to run aeron on JDK 17+
     // Reference: https://aeroncookbook.com/cookbook-content/aeron-jdk16/
-    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED', '--enable-preview']
+    applicationDefaultJvmArgs = ['--add-opens=java.base/sun.nio.ch=ALL-UNNAMED']
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

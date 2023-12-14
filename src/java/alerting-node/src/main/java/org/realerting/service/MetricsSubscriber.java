@@ -14,8 +14,7 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.agrona.BitUtil.SIZE_OF_INT;
-import static org.realerting.config.AlertingNodeConstants.AERON_ENDPOINT_FORMAT;
+import static org.realerting.config.AlertingNodeConstants.*;
 
 
 public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnable {
@@ -37,8 +36,9 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
         streamId = configuration.getStreamId();
         subscription = aeron.addSubscription(channel, streamId);
         isRunning = new AtomicBoolean(false);
-        SigInt.register(() -> isRunning.set(false));
         idle = new SleepingIdleStrategy();
+
+        SigInt.register(this::close);
     }
 
     public boolean isRunning() {
@@ -47,25 +47,33 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
     @Override
     public void onFragment(DirectBuffer buffer, int offset, int length, Header header) {
-        var metricId = buffer.getInt(offset);
-        var metricValue = buffer.getDouble(offset + SIZE_OF_INT);
-        log.info("MetricsSubscriber. Received id={}: {}", metricId, metricValue);
-        metricsClient.calculateAlert(metricId, metricValue);
+        var id = buffer.getLong(offset);
+        var value = buffer.getDouble(offset + METRIC_VALUE_OFFSET);
+        var nanoTimestamp = buffer.getLong(offset + METRIC_TIMESTAMP_OFFSET);
+        // log.info("MetricsSubscriber. Received id={}: {} at {}", id, value, LocalDateTime.ofInstant(Instant.ofEpochSecond(nanoTimestamp / 1_000_000_000, (int) (nanoTimestamp % 1_000_000_000)), ZoneId.systemDefault()));
+        metricsClient.calculateAlert(id, value, nanoTimestamp);
     }
 
     public void start() {
-        while (!subscription.isConnected()) {
+        isRunning.set(true);
+        while (isRunning() && !subscription.isConnected()) {
             idle.idle();
         }
 
-        isRunning.set(true);
-        log.info("MetricsSubscriber. Ready to receive metrics at channel={}, streamId={}", channel, streamId);
+        if (isRunning()) {
+            log.info("MetricsSubscriber. Ready to receive metrics at channel={}, streamId={}", channel, streamId);
+        }
     }
 
     @Override
     public void close() {
-        log.info("MetricsSubscriber closing active subscription");
-        subscription.close();
+        if (isRunning.get()) {
+            log.info("MetricsSubscriber closing active publication");
+            isRunning.set(false);
+            subscription.close();
+        }
+
+        log.info("MetricsSubscriber closed");
     }
 
     @Override
@@ -80,12 +88,11 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
         while (isRunning.get()) {
             var poll = subscription.poll(this, 256);
-            if (poll < 0) {
-                log.warn("MetricsSubscriber. Polling < 0: {}", poll);
-            } else {
+            if (poll >= 0) {
                 idle.idle(poll);
             }
         }
+
         close();
     }
 }

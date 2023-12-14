@@ -18,7 +18,7 @@ import static org.realerting.config.AlertingNodeConstants.*;
 
 public class MetricAlertPublisher implements AutoCloseable {
     private static final Logger log = AlertingNodeContext.getLogger();
-    private static final UnsafeBuffer BUFFER = new UnsafeBuffer(BufferUtil.allocateDirectAligned(METRIC_ID_LENGTH, ALIGNMENT));
+    private static final UnsafeBuffer BUFFER = new UnsafeBuffer(BufferUtil.allocateDirectAligned(MESSAGE_LENGTH, ALIGNMENT));
 
     private final String channel;
     private final int streamId;
@@ -33,8 +33,9 @@ public class MetricAlertPublisher implements AutoCloseable {
         streamId = configuration.getStreamId();
         publication = aeron.addPublication(channel, streamId);
         isRunning = new AtomicBoolean(false);
-        SigInt.register(() -> isRunning.set(false));
         idle = new SleepingIdleStrategy();
+
+        SigInt.register(this::close);
     }
 
     public boolean isRunning() {
@@ -42,17 +43,21 @@ public class MetricAlertPublisher implements AutoCloseable {
     }
 
     public void start() {
-        while (!publication.isConnected()) {
+        isRunning.set(true);
+        while (isRunning() && !publication.isConnected()) {
             idle.idle();
         }
 
-        isRunning.set(true);
-        log.info("MetricAlertPublisher. Ready to publish alerts at channel={}, streamId={}", channel, streamId);
+        if (isRunning()) {
+            log.info("MetricAlertPublisher. Ready to publish alerts at channel={}, streamId={}", channel, streamId);
+        }
     }
 
-    public void sendAlert(int metricId) {
+    public void sendAlert(long metricId, double metricValue, long metricTimestamp) {
         log.info("MetricAlertPublisher. Sending alert for {}", metricId);
-        BUFFER.putInt(0, metricId);
+        BUFFER.putLong(METRIC_ID_OFFSET, metricId);
+        BUFFER.putDouble(METRIC_VALUE_OFFSET, metricValue);
+        BUFFER.putLong(METRIC_TIMESTAMP_OFFSET, metricTimestamp);
         var publicationResult = publication.offer(BUFFER, 0, METRIC_ID_LENGTH);
 
         for (int i = 0; i < ATTEMPTS_TO_RESEND && publicationResult < 0; i++) {
@@ -63,7 +68,12 @@ public class MetricAlertPublisher implements AutoCloseable {
 
     @Override
     public void close() {
-        log.info("MetricAlertPublisher closing active publication");
-        publication.close();
+        if (isRunning.get()) {
+            log.info("MetricAlertPublisher closing active publication");
+            isRunning.set(false);
+            publication.close();
+        }
+
+        log.info("MetricAlertPublisher closed");
     }
 }

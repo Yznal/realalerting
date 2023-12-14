@@ -21,6 +21,8 @@ public class AlertingNodeEntryPoint {
             context.start();
         } catch (Exception e) {
             log.error("AlertingNodeEntryPoint. Caught exception: ", e);
+        } finally {
+            log.info("AlertingNodeEntryPoint. Stopped alerting node");
         }
     }
 }

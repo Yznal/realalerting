@@ -7,6 +7,7 @@ import org.realerting.dto.Metric;
 import org.realerting.service.MetricAlertPublisher;
 import org.realerting.service.MetricsClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -17,25 +18,27 @@ import static org.mockito.Mockito.*;
 class MetricsClientTest {
     private static final int METRIC_ID = 1;
 
-    private MetricAlertPublisher publisher = mock(MetricAlertPublisher.class);
+    private final MetricAlertPublisher publisher = mock(MetricAlertPublisher.class);
     private final List<Metric> metrics = List.of(new Metric(METRIC_ID, 100));
     private final MetricsClient metricsClient = new MetricsClient(metrics, publisher);
 
     @Test
     void calculateAlert() {
-        metricsClient.calculateAlert(1, 100.01);
-        verify(publisher).sendAlert(METRIC_ID);
+        var expectedValue = 100.01;
+        var expectedTimeStamp = LocalDateTime.now().getNano();
+        metricsClient.calculateAlert(METRIC_ID, expectedValue, expectedTimeStamp);
+        verify(publisher).sendAlert(METRIC_ID, expectedValue, expectedTimeStamp);
     }
 
     @Test
     void calculateNoAlert() {
-        metricsClient.calculateAlert(METRIC_ID, 99.99);
-        verify(publisher, never()).sendAlert(METRIC_ID);
+        metricsClient.calculateAlert(METRIC_ID, 99.99, LocalDateTime.now().getNano());
+        verify(publisher, never()).sendAlert(anyInt(), anyDouble(), anyLong());
     }
 
     @Test
     void calculateUnknownMetric() {
-        metricsClient.calculateAlert(-1, 100.01);
-        verify(publisher, never()).sendAlert(anyInt());
+        metricsClient.calculateAlert(-1, 100.01, LocalDateTime.now().getNano());
+        verify(publisher, never()).sendAlert(anyInt(), anyDouble(), anyLong());
     }
 }

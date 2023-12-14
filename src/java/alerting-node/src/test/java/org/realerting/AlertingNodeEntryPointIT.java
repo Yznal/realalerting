@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -41,14 +44,14 @@ class AlertingNodeEntryPointIT {
     final IdleStrategy idle = new SleepingIdleStrategy();
 
     @BeforeAll
-    static void start() throws InterruptedException {
+    static void start() {
         runningMain = Thread.ofPlatform().daemon(true)
-            .start(() -> AlertingNodeEntryPoint.main(new String[]{"src/main/resources/application.yaml"}));
+            .start(() -> AlertingNodeEntryPoint.main(new String[]{"src/test/resources/application.yaml"}));
         await().atMost(5, TimeUnit.MINUTES)
             .until(() -> {
                 try {
-                    AlertingNodeContext.getInstance();
-                    return true;
+                    var context = AlertingNodeContext.getInstance();
+                    return context.isRunning();
                 } catch (Exception e) {
                     return false;
                 }
@@ -82,16 +85,19 @@ class AlertingNodeEntryPointIT {
             var start = System.nanoTime();
 
             var metricId = RANDOM.nextInt(1, 3);
-            DUMMY_BUFFER.putInt(0, metricId);
+            DUMMY_BUFFER.putLong(0, metricId);
             var metricValue = RANDOM.nextInt(5000, 15000) + RANDOM.nextDouble();
-            DUMMY_BUFFER.putDouble(METRIC_ID_LENGTH, metricValue);
+            DUMMY_BUFFER.putDouble(METRIC_VALUE_OFFSET, metricValue);
+            var now = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.systemDefault()).toInstant();
+            DUMMY_BUFFER.putLong(METRIC_TIMESTAMP_OFFSET,
+                now.getEpochSecond() * 1_000_000_000 + now.getNano());
             dummyPublisher.offer(DUMMY_BUFFER, 0, MESSAGE_LENGTH);
 
             var poll = -1;
             while (poll <= 0) {
                 FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
                     var alertMetricId = buffer.getInt(offset);
-                    log.info("Received alert for {}", alertMetricId);
+                    //log.info("Received alert for {} at {}", alertMetricId, LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()));
                     assertEquals(metricId, alertMetricId);
                 };
                 poll = dummySubscriber.poll(handler, 256);
