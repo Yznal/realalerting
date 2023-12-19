@@ -54,15 +54,15 @@ public class MetricAlertPublisher implements AutoCloseable {
     }
 
     public void sendAlert(long metricId, double metricValue, long metricTimestamp) {
-        log.info("MetricAlertPublisher. Sending alert for {}", metricId);
+//        log.info("MetricAlertPublisher. Sending alert for {}", metricId);
         BUFFER.putLong(METRIC_ID_OFFSET, metricId);
         BUFFER.putDouble(METRIC_VALUE_OFFSET, metricValue);
         BUFFER.putLong(METRIC_TIMESTAMP_OFFSET, metricTimestamp);
-        var publicationResult = publication.offer(BUFFER, 0, METRIC_ID_LENGTH);
+        var publicationResult = publication.offer(BUFFER, 0, MESSAGE_LENGTH);
 
         for (int i = 0; i < ATTEMPTS_TO_RESEND && publicationResult < 0; i++) {
-            log.warn("MetricAlertPublisher could not send alert for metric {}. Reason code: {}", metricId, publicationResult);
-            publicationResult = publication.offer(BUFFER, 0, METRIC_ID_LENGTH);
+//            log.warn("MetricAlertPublisher could not send alert for metric {}. Reason code: {}", metricId, publicationResult);
+            publicationResult = publication.offer(BUFFER, 0, MESSAGE_LENGTH);
         }
     }
 

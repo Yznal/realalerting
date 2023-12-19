@@ -29,11 +29,11 @@ public class AlertingNodeContext implements AutoCloseable {
     }
 
     public void start() {
-        Thread.ofVirtual().start(() -> {
-            GLOBAL_LOGGER.info("Started publisher thread");
-            publisher.start();
-        });
-
+//        Thread.ofVirtual().start(() -> {
+//            GLOBAL_LOGGER.info("Started publisher thread");
+//            publisher.start();
+//        });
+        publisher.start();
         subscriber.start();
         subscriber.run();
     }
@@ -57,7 +57,7 @@ public class AlertingNodeContext implements AutoCloseable {
     private final MetricAlertPublisher publisher;
 
     @SuppressWarnings("unused")
-    private final MetricsClient metricsClient;
+    final MetricsClient metricsClient;
 
 
     private AlertingNodeContext(MediaDriver mediaDriver, Aeron aeron, MetricsSubscriber subscriber,
