@@ -36,7 +36,6 @@ struct Settings {
   std::string dirPrefix;
   std::string channel;
   std::int32_t streamId;
-  // int lingerTimeoutMs = configuration::DEFAULT_LINGER_TIMEOUT_MS;
 };
 
 typedef std::array<std::uint8_t, 256> buffer_t;
@@ -55,8 +54,7 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
       s.channel;
   Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
       s.streamId;
-  // s.lingerTimeoutMs = cp.getOption(optLinger).getParamAsInt(
-  //     0, 0, 60 * 60 * 1000, s.lingerTimeoutMs);
+
 
   return s;
 }
@@ -119,7 +117,7 @@ int main(int argc, char **argv) {
     AERON_DECL_ALIGNED(buffer_t buffer, 16);
     concurrent::AtomicBuffer srcBuffer(&buffer[0], buffer.size());
 
-    std::vector<size_t> ids;
+    std::vector<int64_t> ids;
     for (auto child :
          Config::tree["metricConfig"]["metricClient"]["metrics"].children()) {
       size_t id;
@@ -127,22 +125,9 @@ int main(int argc, char **argv) {
       ids.push_back(id);
     }
     size_t i = 0;
+    SleepingIdleStrategy Idle(std::chrono::milliseconds(1000));
     while (running) {
-      // Metric MetricArray[ids.size()];
-      // auto dummy = MetricArray;
-      // for (size_t id : ids) {
-      //   *dummy++ = {
-      //       id, static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
-      // }
-      // dummy = MetricArray;
-      // int curid = 0;
-      // while (dummy - MetricArray < 256 - sizeof(Metric) &&
-      //        curid++ < ids.size()) {
-      //   dummy++;
-      // }
 
-      // srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(MetricArray),
-      //                    sizeof(Metric) * curid);
       Metric metric{ids[rand() % ids.size()],
                     static_cast<double>(rand()) / static_cast<double>(RAND_MAX),
                     std::chrono::system_clock::now()};
@@ -153,8 +138,7 @@ int main(int argc, char **argv) {
       std::cout << "offering " << i++ << " - ";
       std::cout.flush();
 
-      // const std::int64_t result =
-      //     publication->offer(srcBuffer, 0, sizeof(Metric) * curid);
+
       const std::int64_t result =
           publication->offer(srcBuffer, 0, sizeof(Metric));
 
@@ -163,10 +147,14 @@ int main(int argc, char **argv) {
 
       } else if (BACK_PRESSURED == result) {
         std::cout << "Offer failed due to back pressure" << std::endl;
+        Idle.idle();
       } else if (NOT_CONNECTED == result) {
         std::cout
             << "Offer failed because publisher is not connected to a subscriber"
             << std::endl;
+        ;
+        Idle.idle();
+
       } else if (ADMIN_ACTION == result) {
         std::cout
             << "Offer failed because of an administration action in the system"
@@ -182,17 +170,12 @@ int main(int argc, char **argv) {
         std::cout << "No active subscribers detected" << std::endl;
       }
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     std::cout << "Done sending." << std::endl;
 
-    // if (settings.lingerTimeoutMs > 0) {
-    //   std::cout << "Lingering for " << settings.lingerTimeoutMs
-    //             << " milliseconds." << std::endl;
-    //   std::this_thread::sleep_for(
-    //       std::chrono::milliseconds(settings.lingerTimeoutMs));
-    // }
+
   } catch (const CommandOptionException &e) {
     std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
     cp.displayOptionsHelp(std::cerr);

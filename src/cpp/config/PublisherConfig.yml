@@ -11,5 +11,5 @@ metricConfig:
         id: 3
         type: double
     config:
-      channel: "aeron:udp?endpoint=158.160.83.78:42069"
-      streamid: 1002
+      channel: "aeron:udp?endpoint=51.250.98.111:14880"
+      streamid: 1001

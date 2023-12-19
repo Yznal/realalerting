@@ -1,4 +1,4 @@
-# Install script for directory: /home/koteika/Practice/default/src/cpp/src
+# Install script for directory: /home/random/default/src/cpp/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/koteika/Practice/default/src/cpp/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/random/default/src/cpp/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -65,27 +65,17 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
 fragment_handler_t printStringMessage() {
   return [&](const AtomicBuffer &buffer, util::index_t offset,
              util::index_t length, const Header &header) {
-    Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
-    // Metric MetricArray[Settings::ids.size()];
-    // for (size_t i = 0; i < Settings::ids.size(); ++i) {
-    //   MetricArray[i] =
-    //       *(reinterpret_cast<Metric *>(buffer.buffer() + offset) + i);
-    // }
     std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>
         tmp(std::chrono::system_clock::now());
+    Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
+       
     std::cout << "Message to stream " << header.streamId() << " from session "
               << header.sessionId() << "(" << length << "@" << offset << ") <<{"
               << metric.id << ", " << metric.val << ", "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(
-                     std::chrono::system_clock::now() - metric.timestamp)
+              << std::chrono::duration_cast<std::chrono::nanoseconds>(
+                     tmp - metric.timestamp)
                      .count()
-              // << std::chrono::system_clock::to_time_t(tmp - metric.timestamp)
               << "}>>\n";
-    //           << "Metrics: \n";
-    // for (size_t i = 0; i < Settings::ids.size(); ++i) {
-    //   std::cout << "\t{" << MetricArray[i].id << ", " << MetricArray[i].val
-    //             << "}>>\n";
-    // }
   };
 }
 
