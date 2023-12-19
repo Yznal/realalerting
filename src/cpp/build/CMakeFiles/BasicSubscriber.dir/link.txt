@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/BasicSubscriber.dir/BasicSubscriber.cpp.o -o BasicSubscriber  -laeron_client 

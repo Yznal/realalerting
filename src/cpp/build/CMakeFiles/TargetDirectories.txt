@@ -1,4 +1,0 @@
-/home/random/default/src/cpp/build/CMakeFiles/BasicPublisher.dir
-/home/random/default/src/cpp/build/CMakeFiles/BasicSubscriber.dir
-/home/random/default/src/cpp/build/CMakeFiles/edit_cache.dir
-/home/random/default/src/cpp/build/CMakeFiles/rebuild_cache.dir
