@@ -1,30 +1,23 @@
-/*
- * Copyright 2014-2023 Real Logic Limited.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include <array>
 #include <cinttypes>
 #include <csignal>
 #include <cstdint>
 #include <cstdio>
+#include <fstream>
 #include <thread>
+#include <vector>
 
 #include "Aeron.h"
-#include "Configuration.h"
+#include "Config.hpp"
+
+std::string Config::content =
+    get_file_contents(R"(../config/PublisherConfig.yml)");
+ryml::Tree Config::tree =
+    ryml::parse_in_place(ryml::to_substr(Config::content));
+
 #include "metric.hpp"
 #include "util/CommandOptionParser.h"
+
 using namespace aeron::util;
 using namespace aeron;
 
@@ -41,11 +34,8 @@ static const char optLinger = 'l';
 
 struct Settings {
   std::string dirPrefix;
-  std::string channel = samples::configuration::DEFAULT_CHANNEL;
-  std::int32_t streamId = samples::configuration::DEFAULT_STREAM_ID;
-  long long numberOfMessages =
-      samples::configuration::DEFAULT_NUMBER_OF_MESSAGES;
-  int lingerTimeoutMs = samples::configuration::DEFAULT_LINGER_TIMEOUT_MS;
+  std::string channel;
+  std::int32_t streamId;
 };
 
 typedef std::array<std::uint8_t, 256> buffer_t;
@@ -60,13 +50,11 @@ Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
   Settings s;
 
   s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
-  s.channel = cp.getOption(optChannel).getParam(0, s.channel);
-  s.streamId =
-      cp.getOption(optStreamId).getParamAsInt(0, 1, INT32_MAX, s.streamId);
-  s.numberOfMessages = cp.getOption(optMessages)
-                           .getParamAsLong(0, 0, INT64_MAX, s.numberOfMessages);
-  s.lingerTimeoutMs = cp.getOption(optLinger).getParamAsInt(
-      0, 0, 60 * 60 * 1000, s.lingerTimeoutMs);
+  Config::tree["metricConfig"]["metricClient"]["config"]["channel"] >>
+      s.channel;
+  Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
+      s.streamId;
+
 
   return s;
 }
@@ -128,48 +116,45 @@ int main(int argc, char **argv) {
 
     AERON_DECL_ALIGNED(buffer_t buffer, 16);
     concurrent::AtomicBuffer srcBuffer(&buffer[0], buffer.size());
-    // char message[256];
 
-    std ::array<Metric, 100> MetricArray;
-    {
-      size_t id = 0;
-      for (auto &metric : MetricArray) {
-        metric = {id++,
-                  static_cast<double>(rand()) / static_cast<double>(RAND_MAX)};
-      }
+    std::vector<int64_t> ids;
+    for (auto child :
+         Config::tree["metricConfig"]["metricClient"]["metrics"].children()) {
+      size_t id;
+      child["id"] >> id;
+      ids.push_back(id);
     }
+    size_t i = 0;
+    SleepingIdleStrategy Idle(std::chrono::milliseconds(1000));
+    while (running) {
 
-    // #if _MSC_VER
-    //       const int messageLen = ::sprintf_s(message, sizeof(message), "%f",
-    //       r);
-    // #else
-    //       const int messageLen = ::snprintf(message, sizeof(message), "%f",
-    //       r);
-    // #endif
-    for (size_t i = 0; i < MetricArray.size(); ++i) {
-      srcBuffer.putBytes(
-          0, reinterpret_cast<std::uint8_t *>(MetricArray.data() + i),
-          sizeof(Metric));
+      Metric metric{ids[rand() % ids.size()],
+                    static_cast<double>(rand()) / static_cast<double>(RAND_MAX),
+                    std::chrono::system_clock::now()};
 
-      std::cout << "offering " << i << "/" << settings.numberOfMessages
-                << " - ";
+      srcBuffer.putBytes(0, reinterpret_cast<std::uint8_t *>(&metric),
+                         sizeof(Metric));
+
+      std::cout << "offering " << i++ << " - ";
       std::cout.flush();
+
 
       const std::int64_t result =
           publication->offer(srcBuffer, 0, sizeof(Metric));
 
       if (result > 0) {
-        std::cout << "yay! send {"
-                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->id
-                  << ", "
-                  << reinterpret_cast<Metric *>(srcBuffer.buffer() + 0)->val
-                  << "}" << std::endl;
+        std::cout << "send\n";
+
       } else if (BACK_PRESSURED == result) {
         std::cout << "Offer failed due to back pressure" << std::endl;
+        Idle.idle();
       } else if (NOT_CONNECTED == result) {
         std::cout
             << "Offer failed because publisher is not connected to a subscriber"
             << std::endl;
+        ;
+        Idle.idle();
+
       } else if (ADMIN_ACTION == result) {
         std::cout
             << "Offer failed because of an administration action in the system"
@@ -185,17 +170,12 @@ int main(int argc, char **argv) {
         std::cout << "No active subscribers detected" << std::endl;
       }
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     std::cout << "Done sending." << std::endl;
 
-    if (settings.lingerTimeoutMs > 0) {
-      std::cout << "Lingering for " << settings.lingerTimeoutMs
-                << " milliseconds." << std::endl;
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(settings.lingerTimeoutMs));
-    }
+
   } catch (const CommandOptionException &e) {
     std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
     cp.displayOptionsHelp(std::cerr);

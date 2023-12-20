@@ -1,25 +1,16 @@
-/*
- * Copyright 2014-2023 Real Logic Limited.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #include <csignal>
 #include <cstdint>
+#include <fstream>
 #include <thread>
 
 #include "Aeron.h"
-#include "Configuration.h"
+#include "Config.hpp"
+
+std::string Config::content =
+    get_file_contents(R"(../config/SubscriberConfig.yml)");
+ryml::Tree Config::tree =
+    ryml::parse_in_place(ryml::to_substr(Config::content));
+
 #include "FragmentAssembler.h"
 #include "concurrent/SleepingIdleStrategy.h"
 #include "metric.hpp"
@@ -42,42 +33,49 @@ static const int FRAGMENTS_LIMIT = 10;
 
 struct Settings {
   std::string dirPrefix;
-  std::string channel = samples::configuration::DEFAULT_CHANNEL;
-  std::int32_t streamId = samples::configuration::DEFAULT_STREAM_ID;
+  std::string channel;
+  std::int32_t streamId;
+  static std::vector<size_t> ids;
 };
+
+std::vector<size_t> Settings::ids;
 
 Settings parseCmdLine(CommandOptionParser &cp, int argc, char **argv) {
   cp.parse(argc, argv);
-  if (cp.getOption(optHelp).isPresent()) {
-    cp.displayOptionsHelp(std::cout);
-    exit(0);
-  }
 
   Settings s;
 
-  s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
-  s.channel = cp.getOption(optChannel).getParam(0, s.channel);
-  s.streamId =
-      cp.getOption(optStreamId).getParamAsInt(0, 1, INT32_MAX, s.streamId);
+  Config::tree["metricConfig"]["metricClient"]["config"]["channel"] >>
+      s.channel;
 
+  s.dirPrefix = cp.getOption(optPrefix).getParam(0, s.dirPrefix);
+
+  Config::tree["metricConfig"]["metricClient"]["config"]["streamid"] >>
+      s.streamId;
+
+  for (auto child :
+       Config::tree["metricConfig"]["metricClient"]["metrics"].children()) {
+    size_t id;
+    child["id"] >> id;
+    s.ids.push_back(id);
+  }
   return s;
 }
 
 fragment_handler_t printStringMessage() {
   return [&](const AtomicBuffer &buffer, util::index_t offset,
              util::index_t length, const Header &header) {
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>
+        tmp(std::chrono::system_clock::now());
     Metric metric = *(reinterpret_cast<Metric *>(buffer.buffer() + offset));
-    if (metric.val > .6)
-      std::cout
-          << "Message to stream " << header.streamId() << " from session "
-          << header.sessionId() << "(" << length << "@" << offset << ") <<"
-          << "id: " << metric.id << " val: "
-          << metric.val
-          // << "id: "
-          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->id
-          // << " val: "
-          // << (reinterpret_cast<Metric *>(buffer.buffer() + offset))->val
-          << ">>" << std::endl;
+       
+    std::cout << "Message to stream " << header.streamId() << " from session "
+              << header.sessionId() << "(" << length << "@" << offset << ") <<{"
+              << metric.id << ", " << metric.val << ", "
+              << std::chrono::duration_cast<std::chrono::nanoseconds>(
+                     tmp - metric.timestamp)
+                     .count()
+              << "}>>\n";
   };
 }
 
