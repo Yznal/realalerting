@@ -9,6 +9,9 @@ import org.realerting.service.MetricsSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 
 /**
  * @author Mikhail Shadrin
@@ -19,20 +22,34 @@ public class AlertingNodeContext implements AutoCloseable {
 
     public static void initialize() {
         var configuration = AlertingNodeConfiguration.getInstance();
-        var mediaDriver_ = MediaDriver.launchEmbedded();
-        var aeron_ = Aeron.connect(new Aeron.Context().aeronDirectoryName(mediaDriver_.aeronDirectoryName()));
-        var publisher_ = new MetricAlertPublisher(aeron_, configuration.getPublisherConfiguration());
+        var publisherConfiguration = configuration.getPublisherConfiguration();
+        var subscriberConfiguration = configuration.getSubscriberConfiguration();
+
+        Aeron aeron_ = null;
+        MediaDriver mediaDriver_ = null;
+        if (publisherConfiguration.isIpcEnabled() || subscriberConfiguration.isIpcEnabled()) {
+            try {
+                aeron_ = Aeron.connect(new Aeron.Context()); // для работы с IPC необходим внешний медиа драйвер, настройки по умолчанию
+            } catch (Exception e) {
+                GLOBAL_LOGGER.warn("Пытались подцепиться к внешнему media driver, но поймали ошибку. " +
+                    "Будем запускать встроенный", e);
+            }
+        }
+
+        if (isNull(aeron_)) { // мы либо не пытались создать aeron до этого вообще, либо не смогли
+            mediaDriver_ = MediaDriver.launchEmbedded(); // с чистой совестью запускаем встроенный медиа драйвер
+            aeron_ = Aeron.connect(new Aeron.Context().aeronDirectoryName(mediaDriver_.aeronDirectoryName()));
+        }
+
+        var publisher_ = new MetricAlertPublisher(aeron_, publisherConfiguration);
         var metricsClient_ = new MetricsClient(configuration.getMetrics(), publisher_);
-        var subscriber_ = new MetricsSubscriber(aeron_, metricsClient_, configuration.getSubscriberConfiguration());
+        var subscriber_ = new MetricsSubscriber(aeron_, metricsClient_, subscriberConfiguration);
 
         context = new AlertingNodeContext(mediaDriver_, aeron_, subscriber_, metricsClient_, publisher_);
     }
 
     public void start() {
-        Thread.ofVirtual().start(() -> {
-            GLOBAL_LOGGER.info("Started publisher thread");
-            publisher.start();
-        });
+        Thread.ofVirtual().start(publisher::start);
         subscriber.start();
         subscriber.run();
     }
@@ -80,7 +97,9 @@ public class AlertingNodeContext implements AutoCloseable {
     public void close() {
         subscriber.close();
         publisher.close();
-        mediaDriver.close();
+        if (nonNull(mediaDriver)) {
+            mediaDriver.close();
+        }
         aeron.close();
     }
 }

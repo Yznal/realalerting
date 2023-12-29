@@ -118,6 +118,10 @@ public class AlertingNodeConfiguration {
             return isIpcEnabled ? AERON_IPC
                 : String.format(AERON_UDP_FORMAT, ip, port);
         }
+
+        boolean isIpcEnabled() {
+            return isIpcEnabled;
+        }
     }
 
 }

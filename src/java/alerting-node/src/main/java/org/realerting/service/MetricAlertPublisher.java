@@ -44,6 +44,8 @@ public class MetricAlertPublisher implements AutoCloseable {
 
     public void start() {
         isRunning.set(true);
+
+        log.info("MetricAlertPublisher. Connecting to channel={}, streamId={}", channel, streamId);
         while (isRunning() && !publication.isConnected()) {
             idle.idle();
         }

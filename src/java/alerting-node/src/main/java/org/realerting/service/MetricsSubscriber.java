@@ -57,6 +57,8 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
     public void start() {
         isRunning.set(true);
+
+        log.info("MetricsSubscriber. Connecting to channel={}, streamId={}", channel, streamId);
         while (isRunning() && !subscription.isConnected()) {
             idle.idle();
         }
@@ -79,14 +81,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
     @Override
     public void run() {
-        isRunning.set(true);
-        log.info("MetricsSubscriber. Running.");
-
-        while (!subscription.isConnected()) {
-            idle.idle();
-        }
-        log.info("MetricsSubscriber. Subscribed to metrics at channel={}, streamId={}", channel, streamId);
-
+        log.info("MetricsSubscriber. Running");
         while (isRunning.get()) {
             var poll = subscription.poll(this, 256);
             if (poll >= 0) {
