@@ -3,10 +3,12 @@ alerting-node:
     ip: localhost
     port: 14880
     stream-id: 1001
+    ipc-enabled: true
   publisher:
     ip: localhost
     port: 42069
     stream-id: 1002
+    ipc-enabled: true
   metrics:
     - id: 1
       threshold: 100

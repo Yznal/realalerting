@@ -29,7 +29,7 @@ public class MetricAlertPublisher implements AutoCloseable {
 
     public MetricAlertPublisher(Aeron aeron,
                                 AlertingNodeConfiguration.AeronConnectionConfiguration configuration) {
-        channel = String.format(AERON_ENDPOINT_FORMAT, configuration.getIp(), configuration.getPort());
+        channel = configuration.getChannel();
         streamId = configuration.getStreamId();
         publication = aeron.addPublication(channel, streamId);
         isRunning = new AtomicBoolean(false);

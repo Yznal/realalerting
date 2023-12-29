@@ -29,11 +29,10 @@ public class AlertingNodeContext implements AutoCloseable {
     }
 
     public void start() {
-//        Thread.ofVirtual().start(() -> {
-//            GLOBAL_LOGGER.info("Started publisher thread");
-//            publisher.start();
-//        });
-        publisher.start();
+        Thread.ofVirtual().start(() -> {
+            GLOBAL_LOGGER.info("Started publisher thread");
+            publisher.start();
+        });
         subscriber.start();
         subscriber.run();
     }

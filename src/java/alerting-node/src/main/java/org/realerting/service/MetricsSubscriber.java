@@ -14,7 +14,8 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.realerting.config.AlertingNodeConstants.*;
+import static org.realerting.config.AlertingNodeConstants.METRIC_TIMESTAMP_OFFSET;
+import static org.realerting.config.AlertingNodeConstants.METRIC_VALUE_OFFSET;
 
 
 public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnable {
@@ -32,7 +33,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
                              AlertingNodeConfiguration.AeronConnectionConfiguration configuration) {
         this.metricsClient = metricsClient;
 
-        channel = String.format(AERON_ENDPOINT_FORMAT, configuration.getIp(), configuration.getPort());
+        channel = configuration.getChannel();
         streamId = configuration.getStreamId();
         subscription = aeron.addSubscription(channel, streamId);
         isRunning = new AtomicBoolean(false);

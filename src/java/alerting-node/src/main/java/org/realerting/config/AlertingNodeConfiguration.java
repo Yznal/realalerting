@@ -13,6 +13,9 @@ import java.util.List;
  * @author Mikhail Shadrin
  */
 public class AlertingNodeConfiguration {
+    private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
+    private static final String AERON_IPC = "aeron:ipc";
+
     private static AlertingNodeConfiguration configuration = null;
 
     public static AlertingNodeConfiguration getInstance() {
@@ -89,30 +92,31 @@ public class AlertingNodeConfiguration {
         @JsonProperty("stream-id")
         private final int streamId;
 
+        @JsonProperty("ipc-enabled")
+        private final boolean isIpcEnabled;
+
         /**
          * Конструктор по умолчанию для jackson
          */
         @SuppressWarnings("unused")
         private AeronConnectionConfiguration() {
-            this(null, 0, 0);
+            this(null, 0, 0, false);
         }
 
-        private AeronConnectionConfiguration(String ip, int port, int streamId) {
+        private AeronConnectionConfiguration(String ip, int port, int streamId, boolean isIpcEnabled) {
             this.ip = ip;
             this.port = port;
             this.streamId = streamId;
-        }
-
-        public String getIp() {
-            return ip;
-        }
-
-        public int getPort() {
-            return port;
+            this.isIpcEnabled = isIpcEnabled;
         }
 
         public int getStreamId() {
             return streamId;
+        }
+
+        public String getChannel() {
+            return isIpcEnabled ? AERON_IPC
+                : String.format(AERON_UDP_FORMAT, ip, port);
         }
     }
 

@@ -66,13 +66,11 @@ class AlertingNodeEntryPointIT {
 
         // setUp dummy publisher
         var sConfig = configuration.getSubscriberConfiguration();
-        var dummyPublisher = aeron.addPublication(
-            String.format(AERON_ENDPOINT_FORMAT, sConfig.getIp(), sConfig.getPort()), sConfig.getStreamId());
+        var dummyPublisher = aeron.addPublication(sConfig.getChannel(), sConfig.getStreamId());
 
         // setUp dummy subscriber
         var pConfig = configuration.getPublisherConfiguration();
-        var dummySubscriber = aeron.addSubscription(
-            String.format(AERON_ENDPOINT_FORMAT, pConfig.getIp(), pConfig.getPort()), pConfig.getStreamId());
+        var dummySubscriber = aeron.addSubscription(pConfig.getChannel(), pConfig.getStreamId());
 
         while (!dummyPublisher.isConnected()
             || !dummySubscriber.isConnected()
@@ -107,7 +105,7 @@ class AlertingNodeEntryPointIT {
         assertFalse(latencies.isEmpty());
 
         latencies.sort(Comparator.naturalOrder());
-        log.info("Fastest - {} mcs", getMicroLatency(latencies.get(0)));
+        log.info("Fastest - {} mcs", getMicroLatency(latencies.getFirst()));
         log.info("0.5 latency - {} mcs", getLatencyPercentile(latencies, 0.5));
         log.info("0.9 latency - {} mcs", getLatencyPercentile(latencies, 0.9));
         log.info("0.95 latency - {} mcs", getLatencyPercentile(latencies, 0.95));
