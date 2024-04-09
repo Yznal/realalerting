@@ -14,7 +14,8 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.realerting.config.AlertingNodeConstants.*;
+import static org.realerting.config.AlertingNodeConstants.METRIC_TIMESTAMP_OFFSET;
+import static org.realerting.config.AlertingNodeConstants.METRIC_VALUE_OFFSET;
 
 
 public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnable {
@@ -32,7 +33,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
                              AlertingNodeConfiguration.AeronConnectionConfiguration configuration) {
         this.metricsClient = metricsClient;
 
-        channel = String.format(AERON_ENDPOINT_FORMAT, configuration.getIp(), configuration.getPort());
+        channel = configuration.getChannel();
         streamId = configuration.getStreamId();
         subscription = aeron.addSubscription(channel, streamId);
         isRunning = new AtomicBoolean(false);
@@ -56,6 +57,8 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
     public void start() {
         isRunning.set(true);
+
+        log.info("MetricsSubscriber. Connecting to channel={}, streamId={}", channel, streamId);
         while (isRunning() && !subscription.isConnected()) {
             idle.idle();
         }
@@ -78,14 +81,7 @@ public class MetricsSubscriber implements FragmentHandler, AutoCloseable, Runnab
 
     @Override
     public void run() {
-        isRunning.set(true);
-        log.info("MetricsSubscriber. Running.");
-
-        while (!subscription.isConnected()) {
-            idle.idle();
-        }
-        log.info("MetricsSubscriber. Subscribed to metrics at channel={}, streamId={}", channel, streamId);
-
+        log.info("MetricsSubscriber. Running");
         while (isRunning.get()) {
             var poll = subscription.poll(this, 256);
             if (poll >= 0) {
