@@ -1,4 +1,4 @@
-package org.protocol;
+package ru.realalerting.protocol;
 
 /*
  * All instructions related to the metric 0-10
@@ -6,6 +6,10 @@ package org.protocol;
  * All instructions related to the tenant 21-30
  */
 
+
+/**
+ * @author Karbayev Saruar
+ */
 public final class Protocol {
 
     public static final int INSTRUCTION_CREATE_NEW_METRIC = 0;

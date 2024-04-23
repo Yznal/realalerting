@@ -1,4 +1,4 @@
-package org.protocol;
+package ru.realalerting.protocol;
 
 import io.aeron.Aeron;
 import io.aeron.driver.MediaDriver;
@@ -6,17 +6,20 @@ import io.aeron.driver.ThreadingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import static java.util.Objects.isNull;
 
-public class AeronContext implements Closeable {
+
+/**
+ * @author Karbayev Saruar
+ */
+public class AeronContext implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(AeronContext.class);
     private static Aeron aeron;
     private static MediaDriver mediaDriver;
 
-    private static AeronContext context = null;
+    private static AeronContext context;
 
     public static AeronContext getInstance() {
         if (isNull(context)) {
@@ -26,6 +29,9 @@ public class AeronContext implements Closeable {
     }
 
     public static void initialize(String mediaPath) throws IOException {
+        if (!isNull(context)) {
+            throw new IllegalStateException("AeronContext has not been initialized");
+        }
         final MediaDriver.Context mediaDriverCtx = new MediaDriver.Context()
                 .aeronDirectoryName(mediaPath)
                 .dirDeleteOnStart(true)

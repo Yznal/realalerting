@@ -1,4 +1,5 @@
 producer:
+  is-ipc : false
   ip: localhost
   port: 6001
   stream-id: 1
