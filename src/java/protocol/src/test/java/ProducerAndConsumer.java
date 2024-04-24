@@ -9,9 +9,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.realalerting.consumer.Consumer;
 import ru.realalerting.producer.Producer;
-import ru.realalerting.protocol.AeronContext;
-import ru.realalerting.protocol.ConfigReader;
+import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.protocol.Metric;
+import ru.realalerting.protocol.RealAlertingDriverContext;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,9 +30,9 @@ public class ProducerAndConsumer {
 
     @BeforeAll
     static void run() throws IOException {
-        AeronContext.initialize("/dev/shm/aeron");
-        producer = new Producer(AeronContext.getInstance(), ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
-        consumer = new Consumer(AeronContext.getInstance(), ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
+        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
+        producer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
+        consumer = new Consumer(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
     }
 
     @Test

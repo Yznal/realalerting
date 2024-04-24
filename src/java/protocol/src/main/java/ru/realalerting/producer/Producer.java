@@ -3,8 +3,8 @@ package ru.realalerting.producer;
 import io.aeron.Publication;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingIdleStrategy;
-import ru.realalerting.protocol.AeronContext;
-import ru.realalerting.protocol.ConnectInfo;
+import ru.realalerting.protocol.RealAlertingConfig;
+import ru.realalerting.protocol.RealAlertingDriverContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,13 +19,13 @@ public class Producer implements AutoCloseable {
     private final Publication publication;
     private final IdleStrategy idle;
 
-    public Producer(AeronContext aeronContext, ConnectInfo connectInfo) {
-        this.publication = aeronContext.getAeron().addPublication(connectInfo.getUri(), connectInfo.getStreamId());
+    public Producer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig) {
+        this.publication = aeronContext.getAeron().addPublication(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = new SleepingIdleStrategy();
     }
 
-    public Producer(AeronContext aeronContext, ConnectInfo connectInfo, IdleStrategy idleStrategy) {
-        this.publication = aeronContext.getAeron().addPublication(connectInfo.getUri(), connectInfo.getStreamId());
+    public Producer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idleStrategy) {
+        this.publication = aeronContext.getAeron().addPublication(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = idleStrategy;
     }
 

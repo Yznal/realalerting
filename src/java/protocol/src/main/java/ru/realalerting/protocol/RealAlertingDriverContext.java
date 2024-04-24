@@ -14,36 +14,21 @@ import static java.util.Objects.isNull;
 /**
  * @author Karbayev Saruar
  */
-public class AeronContext implements AutoCloseable {
-    private static final Logger LOG = LoggerFactory.getLogger(AeronContext.class);
-    private static Aeron aeron;
-    private static MediaDriver mediaDriver;
+public class RealAlertingDriverContext implements AutoCloseable {
+    private final Logger LOG = LoggerFactory.getLogger(RealAlertingDriverContext.class);
+    private Aeron aeron;
+    private MediaDriver mediaDriver;
 
-    private static AeronContext context;
-
-    public static AeronContext getInstance() {
-        if (isNull(context)) {
-            throw new IllegalStateException("AeronContext has not been initialized");
-        }
-        return context;
-    }
-
-    public static void initialize(String mediaPath) throws IOException {
-        if (!isNull(context)) {
-            throw new IllegalStateException("AeronContext has not been initialized");
-        }
+    private void initializeFromFile(String mediaPath) throws IOException {
         final MediaDriver.Context mediaDriverCtx = new MediaDriver.Context()
                 .aeronDirectoryName(mediaPath)
                 .dirDeleteOnStart(true)
                 .dirDeleteOnShutdown(true)
                 .threadingMode(ThreadingMode.SHARED);
-        Aeron aeron = null;
-        MediaDriver mediaDriver = null;
         try {
             mediaDriver = MediaDriver.launchEmbedded(mediaDriverCtx);
             try {
                 aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(mediaPath));
-                context = new AeronContext(aeron, mediaDriver);
             } catch (Exception e) {
                 aeron.close();
                 LOG.warn("Failed to connect to aeron: {}", mediaPath);
@@ -56,7 +41,11 @@ public class AeronContext implements AutoCloseable {
         }
     }
 
-    private AeronContext(Aeron aeron, MediaDriver mediaDriver) {
+    public RealAlertingDriverContext(String mediaPath) throws IOException {
+        initializeFromFile(mediaPath);
+    }
+
+    public RealAlertingDriverContext(Aeron aeron, MediaDriver mediaDriver) {
         this.aeron = aeron;
         this.mediaDriver = mediaDriver;
     }

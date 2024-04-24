@@ -1,8 +1,9 @@
-package ru.realalerting.protocol;
+package ru.realalerting.reader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import ru.realalerting.protocol.RealAlertingConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class ConfigReader {
     private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
     private static final String AERON_IPC = "aeron:ipc";
 
-    public static ConnectInfo readProducerFromFile(String configPath) throws IOException {
+    public static RealAlertingConfig readProducerFromFile(String configPath) throws IOException {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -36,13 +37,13 @@ public class ConfigReader {
                 streamUri = String.format(AERON_UDP_FORMAT, ip, port);
             }
             int streamId = producerYamlSection.get("stream-id").asInt();
-            return new ConnectInfo(streamUri, streamId, isIpc);
+            return new RealAlertingConfig(streamUri, streamId, isIpc);
         } catch (IOException e) {
             throw e;
         }
     }
 
-    public static ConnectInfo readConsumerFromFile(String configPath) throws IOException {
+    public static RealAlertingConfig readConsumerFromFile(String configPath) throws IOException {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -63,13 +64,13 @@ public class ConfigReader {
                 streamUri = String.format(AERON_UDP_FORMAT, ip, port);
             }
             int streamId = streams.get("stream-id").asInt();
-            return new ConnectInfo(streamUri, streamId, isIpc);
+            return new RealAlertingConfig(streamUri, streamId, isIpc);
         } catch (IOException e) {
             throw e;
         }
     }
 
-    public static ArrayList<ConnectInfo> readManyConsumerFromFile(String configPath) throws IOException {
+    public static ArrayList<RealAlertingConfig> readManyConsumerFromFile(String configPath) throws IOException {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -79,7 +80,7 @@ public class ConfigReader {
         var objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("consumer");
-            ArrayList<ConnectInfo> streams = new ArrayList<>();
+            ArrayList<RealAlertingConfig> streams = new ArrayList<>();
             for (JsonNode node: consumerYamlSection.get("streams")) {
                 boolean isIpc = node.get("is-ipc").asBoolean();
                 String streamUri;
@@ -90,7 +91,7 @@ public class ConfigReader {
                     String port = node.get("port").asText();
                     streamUri = String.format(AERON_UDP_FORMAT, ip, port);
                 }
-                streams.add(new ConnectInfo(streamUri, node.get("stream-id").intValue(), isIpc));
+                streams.add(new RealAlertingConfig(streamUri, node.get("stream-id").intValue(), isIpc));
             }
             return streams;
         } catch (IOException e) {
