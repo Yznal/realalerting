@@ -1,6 +1,6 @@
 package ru.realalerting.protocol.client;
 
-import ru.realalerting.consumer.Consumer;
+import ru.realalerting.subscriber.Subscriber;
 import ru.realalerting.producer.Producer;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public final class CreateNewMetric {
     private Producer producer;
-    private Consumer consumer;
+    private Subscriber subscriber;
 
     public void doWork(int requestId, HashMap<String, String> tags) {
 

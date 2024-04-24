@@ -1,10 +1,10 @@
-package ru.realalerting.consumer;
+package ru.realalerting.subscriber;
 
 import io.aeron.Subscription;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingIdleStrategy;
-import ru.realalerting.protocol.AeronContext;
-import ru.realalerting.protocol.ConnectInfo;
+import ru.realalerting.protocol.RealAlertingConfig;
+import ru.realalerting.protocol.RealAlertingDriverContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,18 +14,18 @@ import static java.util.Objects.isNull;
 /**
  * @author Karbayev Saruar
  */
-public class Consumer implements AutoCloseable {
+public class Subscriber implements AutoCloseable {
 
     private final Subscription subscription;
     private final IdleStrategy idle;
 
-    public Consumer(AeronContext aeronContext, ConnectInfo connectInfo) {
-        subscription = aeronContext.getAeron().addSubscription(connectInfo.getUri(), connectInfo.getStreamId());
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig) {
+        subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = new SleepingIdleStrategy();
     }
 
-    public Consumer(AeronContext aeronContext, ConnectInfo connectInfo, IdleStrategy idleStrategy) {
-        subscription = aeronContext.getAeron().addSubscription(connectInfo.getUri(), connectInfo.getStreamId());
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idleStrategy) {
+        subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = idleStrategy;
     }
 

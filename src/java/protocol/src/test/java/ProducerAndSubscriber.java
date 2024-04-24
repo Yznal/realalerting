@@ -7,11 +7,11 @@ import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingIdleStrategy;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.realalerting.consumer.Consumer;
+import ru.realalerting.subscriber.Subscriber;
 import ru.realalerting.producer.Producer;
-import ru.realalerting.protocol.AeronContext;
-import ru.realalerting.protocol.ConfigReader;
+import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.protocol.Metric;
+import ru.realalerting.protocol.RealAlertingDriverContext;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,16 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Karbayev Saruar
  */
-public class ProducerAndConsumer {
+public class ProducerAndSubscriber {
 
     private static Producer producer;
-    private static Consumer consumer;
+    private static Subscriber subscriber;
 
     @BeforeAll
     static void run() throws IOException {
-        AeronContext.initialize("/dev/shm/aeron");
-        producer = new Producer(AeronContext.getInstance(), ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
-        consumer = new Consumer(AeronContext.getInstance(), ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
+        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
+        producer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
+        subscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ProducerAndConsumer {
                 int response = buffer.getInt(offset);
                 assertEquals(sendInt, response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -85,7 +85,7 @@ public class ProducerAndConsumer {
                 String response = buffer.getStringWithoutLengthAscii(offset, sendData.length);
                 assertEquals(new String(sendData, StandardCharsets.UTF_8), response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -112,7 +112,7 @@ public class ProducerAndConsumer {
                 String response = buffer.getStringUtf8(offset);
                 assertEquals(sendData, response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -155,7 +155,7 @@ public class ProducerAndConsumer {
             assertEquals(responseTimestamp, timestamp[messageId.getAndIncrement()]);
         };
         while (poll <= 0) {
-            poll = consumer.getSubscription().poll(handler, Metric.BYTES);
+            poll = subscriber.getSubscription().poll(handler, Metric.BYTES);
             idle.idle();
         }
     }
@@ -198,7 +198,7 @@ public class ProducerAndConsumer {
             }
         };
         while (poll <= 0) {
-            poll = consumer.getSubscription().poll(handler, Metric.BYTES);
+            poll = subscriber.getSubscription().poll(handler, Metric.BYTES);
             idle.idle();
         }
     }

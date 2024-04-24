@@ -19,7 +19,7 @@ public final class Metric {
     public static final int OFFSET_VALUE = OFFSET_ID + LENGTH_ID;
     public static final int OFFSET_TIMESTAMP = OFFSET_VALUE + LENGTH_VALUE;
 
-    public static final int ALIGNMENT = 512;
+    public static final int ALIGNMENT = 32;
 
 
     private Metric() {};
