@@ -1,4 +1,4 @@
-package ru.realalerting.alert_node;
+package ru.realalerting.alertnode;
 
 enum Comparison{
     GREATER,
@@ -9,14 +9,20 @@ enum Comparison{
 }
 
 public class AlertInfo {
+    private final int alertId;
     private final int metricId;
     private final Comparison comp;
     private final long threshold;
 
-    public AlertInfo(int metricId, Comparison comp, long threshold) {
+    public AlertInfo(int alertId, int metricId, Comparison comp, long threshold) {
+        this.alertId = alertId;
         this.metricId = metricId;
         this.comp = comp;
         this.threshold = threshold;
+    }
+
+    public int getAlertId() {
+        return alertId;
     }
 
     public int getMetricId() {

@@ -1,8 +1,7 @@
 package Client;
 
-import ru.realalerting.alert_node.MetricClient;
+import ru.realalerting.alertnode.MetricClient;
 
 public class MetricClientTest {
-    private final MetricClient metricClient = new MetricClient();
 
 }

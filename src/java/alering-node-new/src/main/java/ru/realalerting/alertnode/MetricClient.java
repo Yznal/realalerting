@@ -1,19 +1,21 @@
-package ru.realalerting.alert_node;
+package ru.realalerting.alertnode;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
 
 public class MetricClient {
-    private final Map<Integer, AlertInfo> alerts;
+    private final Int2ObjectOpenHashMap<AlertInfo> alerts;
     private final AlertProducer alertProducer;
 
     public MetricClient(List<AlertInfo> alerts, AlertProducer alertProducer ) {
-        this.alerts = alerts.stream()
-                .collect(Collectors.toMap(AlertInfo::getMetricId, metric -> metric));
+        this.alerts = new Int2ObjectOpenHashMap<>(alerts.stream()
+                .collect(Collectors.toMap(AlertInfo::getAlertId, alert -> alert)));
         this.alertProducer = alertProducer;
     }
 
@@ -22,34 +24,34 @@ public class MetricClient {
         if (isNull(alertInfo)) {
             return;
         }
+
         switch (alertInfo.getComp()) {
-            case GREATER:
+            case GREATER -> {
                 if (value > alertInfo.getThreshold()) {
                     alertProducer.sendAlert(metricId, value, timestamp);
                 }
-                break;
-            case LESS:
+            }
+            case LESS -> {
                 if (value < alertInfo.getThreshold()) {
                     alertProducer.sendAlert(metricId, value, timestamp);
                 }
-                break;
-            case EQUAL:
+            }
+            case EQUAL -> {
                 if (value == alertInfo.getThreshold()) {
                     alertProducer.sendAlert(metricId, value, timestamp);
                 }
-                break;
-            case GREATER_OR_EQUAL:
+            }
+            case GREATER_OR_EQUAL -> {
                 if (value >= alertInfo.getThreshold()) {
                     alertProducer.sendAlert(metricId, value, timestamp);
                 }
-                break;
-            case LESS_OR_EQUAL:
+            }
+            case LESS_OR_EQUAL -> {
                 if (value <= alertInfo.getThreshold()) {
                     alertProducer.sendAlert(metricId, value, timestamp);
                 }
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + alertInfo.getComp());
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + alertInfo.getComp());
         }
     }
 
