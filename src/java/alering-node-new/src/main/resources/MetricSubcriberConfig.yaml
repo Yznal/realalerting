@@ -1,0 +1,3 @@
+info:
+  batch-size: 20
+  retries: 3
