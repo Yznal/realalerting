@@ -1,0 +1,3 @@
+info:
+  max-fetch-bytes: 20
+  retry-count: 3

@@ -1,23 +1,14 @@
-package ru.realalerting.alertnode;
+package ru.realalerting.alertlogic;
 
-enum Comparison{
-    GREATER,
-    LESS,
-    EQUAL,
-    GREATER_OR_EQUAL,
-    LESS_OR_EQUAL
-}
-
-public class AlertInfo {
+public class AlertInfo { // TODO record
+    // TODO перенести всю инфу в саму реализацию
     private final int alertId;
     private final int metricId;
-    private final Comparison comp;
     private final long threshold;
 
-    public AlertInfo(int alertId, int metricId, Comparison comp, long threshold) {
+    public AlertInfo(int alertId, int metricId, long threshold) {
         this.alertId = alertId;
         this.metricId = metricId;
-        this.comp = comp;
         this.threshold = threshold;
     }
 
@@ -27,10 +18,6 @@ public class AlertInfo {
 
     public int getMetricId() {
         return metricId;
-    }
-
-    public Comparison getComp() {
-        return comp;
     }
 
     public long getThreshold() {

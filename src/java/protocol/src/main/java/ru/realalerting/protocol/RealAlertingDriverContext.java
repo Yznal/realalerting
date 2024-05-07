@@ -21,6 +21,7 @@ public class RealAlertingDriverContext implements AutoCloseable {
 
     private void initializeFromFile(String mediaPath) throws IOException {
         final MediaDriver.Context mediaDriverCtx = new MediaDriver.Context()
+                .spiesSimulateConnection(true)
                 .aeronDirectoryName(mediaPath)
                 .dirDeleteOnStart(true)
                 .dirDeleteOnShutdown(true)
@@ -28,7 +29,7 @@ public class RealAlertingDriverContext implements AutoCloseable {
         try {
             mediaDriver = MediaDriver.launchEmbedded(mediaDriverCtx);
             try {
-                aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(mediaPath));
+                aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(mediaDriver.aeronDirectoryName()));
             } catch (Exception e) {
                 aeron.close();
                 LOG.warn("Failed to connect to aeron: {}", mediaPath);

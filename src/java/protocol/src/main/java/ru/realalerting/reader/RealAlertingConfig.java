@@ -1,4 +1,4 @@
-package ru.realalerting.protocol;
+package ru.realalerting.reader;
 
 /**
  * @author Karbayev Saruar

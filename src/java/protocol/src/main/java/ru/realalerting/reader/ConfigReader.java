@@ -3,7 +3,6 @@ package ru.realalerting.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import ru.realalerting.protocol.RealAlertingConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class ConfigReader {
     private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
     private static final String AERON_IPC = "aeron:ipc";
 
-    public static RealAlertingConfig readProducerFromFile(String configPath) throws IOException {
+    public static RealAlertingConfig readProducerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -39,11 +38,11 @@ public class ConfigReader {
             int streamId = producerYamlSection.get("stream-id").asInt();
             return new RealAlertingConfig(streamUri, streamId, isIpc);
         } catch (IOException e) {
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
-    public static RealAlertingConfig readConsumerFromFile(String configPath) throws IOException {
+    public static RealAlertingConfig readConsumerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -66,11 +65,11 @@ public class ConfigReader {
             int streamId = streams.get("stream-id").asInt();
             return new RealAlertingConfig(streamUri, streamId, isIpc);
         } catch (IOException e) {
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
-    public static ArrayList<RealAlertingConfig> readManyConsumerFromFile(String configPath) throws IOException {
+    public static ArrayList<RealAlertingConfig> readManyConsumerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -95,7 +94,26 @@ public class ConfigReader {
             }
             return streams;
         } catch (IOException e) {
-            throw e;
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MetricConsumerConfig readMetricSubcriberConfig(String configPath) {
+        final File fileYamlConfiguration = new File(configPath);
+        if (!fileYamlConfiguration.exists()
+                || !fileYamlConfiguration.isFile()
+                || !fileYamlConfiguration.canRead()) {
+            throw new RuntimeException("Can not access yaml configuration file by path: " + configPath);
+        }
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            JsonNode metricSubscriberYamlSection = objectMapper.readTree(fileYamlConfiguration).get("info");
+            int retryCount = metricSubscriberYamlSection.get("retry-count").asInt();
+            int maxFetchBytes = metricSubscriberYamlSection.get("max-fetch-bytes").asInt();
+            MetricConsumerConfig config = new MetricConsumerConfig(retryCount, maxFetchBytes);
+            return config;
+        } catch (IOException e) {
+           throw new RuntimeException(e);
         }
     }
 }

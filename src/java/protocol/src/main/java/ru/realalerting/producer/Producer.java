@@ -3,7 +3,7 @@ package ru.realalerting.producer;
 import io.aeron.Publication;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingIdleStrategy;
-import ru.realalerting.protocol.RealAlertingConfig;
+import ru.realalerting.reader.RealAlertingConfig;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +15,6 @@ import static java.util.Objects.isNull;
  * @author Karbayev Saruar
  */
 public class Producer implements AutoCloseable {
-
     private final Publication publication;
     private final IdleStrategy idle;
 

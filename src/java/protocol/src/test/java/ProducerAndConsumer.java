@@ -7,7 +7,10 @@ import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SleepingIdleStrategy;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.realalerting.subscriber.Subscriber;
+import ru.realalerting.alertlogic.AlertInfo;
+import ru.realalerting.alertlogic.GreaterAlert;
+import ru.realalerting.producer.AlertProducer;
+import ru.realalerting.consumer.Consumer;
 import ru.realalerting.producer.Producer;
 import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.protocol.Metric;
@@ -23,16 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Karbayev Saruar
  */
-public class ProducerAndSubscriber {
+public class ProducerAndConsumer {
 
     private static Producer producer;
-    private static Subscriber subscriber;
+    private static Consumer consumer;
+    private static RealAlertingDriverContext context;
 
     @BeforeAll
     static void run() throws IOException {
-        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
+        context = new RealAlertingDriverContext("/dev/shm/aeron");
         producer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
-        subscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
+        consumer = new Consumer(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
     }
 
     @Test
@@ -58,7 +62,7 @@ public class ProducerAndSubscriber {
                 int response = buffer.getInt(offset);
                 assertEquals(sendInt, response);
             };
-            poll = subscriber.getSubscription().poll(handler, 256);
+            poll = consumer.getSubscription().poll(handler, 256);
         }
     }
 
@@ -85,7 +89,7 @@ public class ProducerAndSubscriber {
                 String response = buffer.getStringWithoutLengthAscii(offset, sendData.length);
                 assertEquals(new String(sendData, StandardCharsets.UTF_8), response);
             };
-            poll = subscriber.getSubscription().poll(handler, 256);
+            poll = consumer.getSubscription().poll(handler, 256);
         }
     }
 
@@ -112,7 +116,7 @@ public class ProducerAndSubscriber {
                 String response = buffer.getStringUtf8(offset);
                 assertEquals(sendData, response);
             };
-            poll = subscriber.getSubscription().poll(handler, 256);
+            poll = consumer.getSubscription().poll(handler, 256);
         }
     }
 
@@ -155,7 +159,7 @@ public class ProducerAndSubscriber {
             assertEquals(responseTimestamp, timestamp[messageId.getAndIncrement()]);
         };
         while (poll <= 0) {
-            poll = subscriber.getSubscription().poll(handler, Metric.BYTES);
+            poll = consumer.getSubscription().poll(handler, Metric.BYTES);
             idle.idle();
         }
     }
@@ -198,8 +202,39 @@ public class ProducerAndSubscriber {
             }
         };
         while (poll <= 0) {
-            poll = subscriber.getSubscription().poll(handler, Metric.BYTES);
+            poll = consumer.getSubscription().poll(handler, Metric.BYTES);
             idle.idle();
         }
+    }
+
+    @Test
+    public void AlertProducer() throws Exception {
+        IdleStrategy idle = new SleepingIdleStrategy();
+        AlertProducer alertProducer = new AlertProducer(producer);
+        alertProducer.waitUntilConnected();
+        AlertInfo alertInfo = new AlertInfo(0, 0, 20);
+        GreaterAlert greaterAlert = new GreaterAlert(alertInfo);
+        alertProducer.sendAlert(greaterAlert, alertInfo.getMetricId(), 0, 12300);
+        alertProducer.sendAlert(greaterAlert, alertInfo.getMetricId(), 10, 12300);
+        alertProducer.sendAlert(greaterAlert, alertInfo.getMetricId(), 20, 12300);
+        alertProducer.sendAlert(greaterAlert, alertInfo.getMetricId(), 30, 12300);
+        alertProducer.sendAlert(greaterAlert, alertInfo.getMetricId(), 40, 12300);
+        int poll = -1;
+        AtomicInteger metric_count = new AtomicInteger(3);
+        FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
+            for (int i = 0; i * Metric.BYTES < length; ++i) {
+                int responseId = buffer.getInt(offset + i * Metric.BYTES);
+                long responseValue = buffer.getLong(offset + i * Metric.BYTES + Metric.OFFSET_VALUE);
+                long responseTimestamp = buffer.getLong(offset + i * Metric.BYTES + Metric.OFFSET_TIMESTAMP);
+                assertEquals(responseId, 0);
+                assertEquals(responseValue, 10 * metric_count.getAndIncrement());
+                assertEquals(responseTimestamp, 12300);
+            }
+        };
+        while (poll <= 0) {
+            poll = consumer.getSubscription().poll(handler, Metric.BYTES);
+            idle.idle();
+        }
+        // TODO Multicast добавить в publication and consumer
     }
 }

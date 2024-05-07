@@ -11,9 +11,11 @@ package ru.realalerting.protocol;
  * @author Karbayev Saruar
  */
 public final class Protocol {
-
     public static final int INSTRUCTION_CREATE_NEW_METRIC = 0;
     public static final int INSTRUCTION_CREATED_NEW_METRIC = 1;
+    public static final int INSTRUCTION_GET_METRIC_ID = 2;
+    public static final int INSTRUCTION_SET_METRIC_ID = 3;
+    public static final int INSTRUCTION_SEND_METRIC = 4;
     public static final int INSTRUCTION_NEW_CRITICAL_ALERT_TYPE_1 = 11;
     public static final int INSTRUCTION_NEW_CRITICAL_ALERT_TYPE_2 = 12;
     //...
