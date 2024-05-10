@@ -3,7 +3,7 @@ package ru.realalerting.producer;
 import org.agrona.BufferUtil;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
-import ru.realalerting.protocol.Metric;
+import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
 
@@ -28,21 +28,28 @@ public class MetricProducer extends BaseProducer {
         super(aeronContext, streamId, isIpc);
     }
 
+    private void sendData(int metricId, long value, long timestamp, MutableDirectBuffer buf, int offset) {
+        buf.putInt(offset + MetricConstants.OFFSET_ID, metricId);
+        buf.putLong(offset + MetricConstants.OFFSET_VALUE, value);
+        buf.putLong(offset + MetricConstants.OFFSET_TIMESTAMP, timestamp);
+    }
+
+    private void sendData(int metricId, double value, long timestamp, MutableDirectBuffer buf, int offset) {
+        buf.putInt(offset + MetricConstants.OFFSET_ID, metricId);
+        buf.putDouble(offset + MetricConstants.OFFSET_VALUE, value);
+        buf.putLong(offset + MetricConstants.OFFSET_TIMESTAMP, timestamp);
+    }
+
     public boolean sendMetric(int metricId, long value, long timestamp) {
         boolean isSended = false;
-        if (producer.getPublication().tryClaim(Metric.BYTES, bufferClaim) > 0) {
+        if (producer.getPublication().tryClaim(MetricConstants.BYTES, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
-            buf.putInt(bufferClaim.offset() + Metric.OFFSET_ID, metricId);
-            buf.putLong(bufferClaim.offset() + Metric.OFFSET_VALUE, value);
-            buf.putLong(bufferClaim.offset() + Metric.OFFSET_TIMESTAMP, timestamp);
+            sendData(metricId, value, timestamp, buf, bufferClaim.offset());
             bufferClaim.commit();
             isSended = true;
         } else {
-            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(Metric.BYTES, Metric.ALIGNMENT));
-            // TODO тут смущает, кажется нужно вынести и очищать при переполнении
-            buf.putInt(Metric.OFFSET_ID, metricId);
-            buf.putLong(Metric.OFFSET_VALUE, value);
-            buf.putLong(Metric.OFFSET_TIMESTAMP, timestamp);
+            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(MetricConstants.BYTES, MetricConstants.ALIGNMENT));
+            sendData(metricId, value, timestamp, buf, 0);
             if (producer.getPublication().offer(buf) > 0) {
                 isSended = true;
             }
@@ -52,18 +59,14 @@ public class MetricProducer extends BaseProducer {
 
     public boolean sendMetric(int metricId, double value, long timestamp) {
         boolean isSended = false;
-        if (producer.getPublication().tryClaim(Metric.BYTES, bufferClaim) > 0) {
+        if (producer.getPublication().tryClaim(MetricConstants.BYTES, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
-            buf.putInt(bufferClaim.offset() + Metric.OFFSET_ID, metricId);
-            buf.putDouble(bufferClaim.offset() + Metric.OFFSET_VALUE, value);
-            buf.putLong(bufferClaim.offset() + Metric.OFFSET_TIMESTAMP, timestamp);
+            sendData(metricId, value, timestamp, buf, bufferClaim.offset());
             bufferClaim.commit();
             isSended = true;
         } else {
-            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(Metric.BYTES, Metric.ALIGNMENT));
-            buf.putInt(Metric.OFFSET_ID, metricId);
-            buf.putDouble(Metric.OFFSET_VALUE, value);
-            buf.putLong(Metric.OFFSET_TIMESTAMP, timestamp);
+            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(MetricConstants.BYTES, MetricConstants.ALIGNMENT));
+            sendData(metricId, value, timestamp, buf, 0);
             if (producer.getPublication().offer(buf) > 0) {
                 isSended = true;
             }

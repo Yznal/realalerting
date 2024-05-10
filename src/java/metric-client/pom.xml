@@ -39,7 +39,12 @@
       <artifactId>jctools-core</artifactId>
       <version>4.0.3</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.7.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

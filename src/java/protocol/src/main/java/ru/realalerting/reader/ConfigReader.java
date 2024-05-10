@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class ConfigReader {
     private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
     private static final String AERON_IPC = "aeron:ipc";
+    private static final String AERON_MDC_PUBLICATION = "aeron:udp?control-mode=dynamic|control=%s:%s";
+    private static final String AERON_MDC_SUBSCRIPTION = "aeron:udp?endpoint=%s:%s|control=%s:&s|control-mode=dynamic";
 
     public static RealAlertingConfig readProducerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
@@ -26,17 +28,23 @@ public class ConfigReader {
         var objectMapper = new ObjectMapper(new YAMLFactory());
         try {
             JsonNode producerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("producer");
-            String streamUri;
-            boolean isIpc = producerYamlSection.get("is-ipc").asBoolean();
-            if (isIpc) {
-                streamUri = AERON_IPC;
-            } else {
-                String ip = producerYamlSection.get("ip").asText();
-                String port = producerYamlSection.get("port").asText();
-                streamUri = String.format(AERON_UDP_FORMAT, ip, port);
-            }
+            String publicationType = producerYamlSection.get("publication-type").asText();
+            String streamUri = switch (publicationType) {
+                case "ipc" -> AERON_IPC;
+                case "udp" -> {
+                    String ip = producerYamlSection.get("ip").asText();
+                    String port = producerYamlSection.get("port").asText();
+                    yield String.format(AERON_UDP_FORMAT, ip, port);
+                }
+                case "mdc" -> {
+                    String ip = producerYamlSection.get("ip").asText();
+                    String port = producerYamlSection.get("port").asText();
+                    yield String.format(AERON_MDC_PUBLICATION, ip, port);
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + publicationType);
+            };
             int streamId = producerYamlSection.get("stream-id").asInt();
-            return new RealAlertingConfig(streamUri, streamId, isIpc);
+            return new RealAlertingConfig(streamUri, streamId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,17 +61,25 @@ public class ConfigReader {
         try {
             JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("consumer");
             JsonNode streams = consumerYamlSection.get("streams").get(0);
-            boolean isIpc = streams.get("is-ipc").asBoolean();
-            String streamUri;
-            if (isIpc) {
-                streamUri = AERON_IPC;
-            } else {
-                String ip = streams.get("ip").asText();
-                String port = streams.get("port").asText();
-                streamUri = String.format(AERON_UDP_FORMAT, ip, port);
-            }
+            String consumerType = streams.get("subscription-type").asText();
+            String streamUri = switch (consumerType) {
+                case "ipc" -> AERON_IPC;
+                case "udp" -> {
+                    String ip = streams.get("ip").asText();
+                    String port = streams.get("port").asText();
+                    yield String.format(AERON_UDP_FORMAT, ip, port);
+                }
+                case "mdc" -> {
+                    String ip = streams.get("ip").asText();
+                    String port = streams.get("port").asText();
+                    String publicationIp = streams.get("publication-ip").asText();
+                    String publicationPort = streams.get("publication-port").asText();
+                    yield String.format(AERON_MDC_SUBSCRIPTION, ip, port, publicationIp, publicationPort);
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + consumerType);
+            };
             int streamId = streams.get("stream-id").asInt();
-            return new RealAlertingConfig(streamUri, streamId, isIpc);
+            return new RealAlertingConfig(streamUri, streamId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -81,16 +97,24 @@ public class ConfigReader {
             JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("consumer");
             ArrayList<RealAlertingConfig> streams = new ArrayList<>();
             for (JsonNode node: consumerYamlSection.get("streams")) {
-                boolean isIpc = node.get("is-ipc").asBoolean();
-                String streamUri;
-                if (isIpc) {
-                    streamUri = AERON_IPC;
-                } else {
-                    String ip = node.get("ip").asText();
-                    String port = node.get("port").asText();
-                    streamUri = String.format(AERON_UDP_FORMAT, ip, port);
-                }
-                streams.add(new RealAlertingConfig(streamUri, node.get("stream-id").intValue(), isIpc));
+                String consumerType = node.get("subscription-type").asText();
+                String streamUri= switch (consumerType) {
+                    case "ipc" -> AERON_IPC;
+                    case "udp" -> {
+                        String ip = node.get("ip").asText();
+                        String port = node.get("port").asText();
+                        yield String.format(AERON_UDP_FORMAT, ip, port);
+                    }
+                    case "mdc" -> {
+                        String ip = node.get("ip").asText();
+                        String port = node.get("port").asText();
+                        String publicationIp = node.get("publication-ip").asText();
+                        String publicationPort = node.get("publication-port").asText();
+                        yield String.format(AERON_MDC_SUBSCRIPTION, ip, port, publicationIp, publicationPort);
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + consumerType);
+                };
+                streams.add(new RealAlertingConfig(streamUri, node.get("stream-id").intValue()));
             }
             return streams;
         } catch (IOException e) {

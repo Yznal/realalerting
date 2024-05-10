@@ -1,19 +1,17 @@
 package ru.realalerting.protocol.client;
 
-import ru.realalerting.consumer.Consumer;
+import io.aeron.logbuffer.Header;
+import org.agrona.DirectBuffer;
 import ru.realalerting.producer.Producer;
-
-import java.util.HashMap;
 
 
 /**
  * @author Karbayev Saruar
  */
-public final class CreateNewMetric {
-    private Producer producer;
-    private Consumer consumer;
+public class CreateNewMetric implements RequestProcessor {
 
-    public void doWork(int requestId, HashMap<String, String> tags) {
+    @Override
+    public void doWork(Producer producer, DirectBuffer directBuffer, int offset, int length, Header header) {
 
     }
 }

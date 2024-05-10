@@ -2,30 +2,25 @@ package ru.realalerting.metrciclient;
 
 import io.aeron.logbuffer.FragmentHandler;
 import io.aeron.logbuffer.Header;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.agrona.DirectBuffer;
-import ru.realalerting.consumer.Consumer;
 import ru.realalerting.producer.Producer;
+import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.Protocol;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MetricRegistry implements FragmentHandler {
-    private AtomicInteger tempId = new AtomicInteger(-1); // они всегда отрицательные
-    // TODO не нужен создавать временные metricId
-
-    // TODO requestId который генерится для запросов и передаем его в ClientConsumer, для хранения контекста запроса
-    // TODO для новой метрики хранит саму Metric
-    // TODO Map <requestId, Object>
-    private Int2ObjectOpenHashMap<Metric> metrics = new Int2ObjectOpenHashMap<>();
-    private Object2IntOpenHashMap<String[]> tagsIdMetrics = new Object2IntOpenHashMap<>(3000); // TODO ConcurentHashMap
-    private Int2ObjectOpenHashMap<String[]> idTagsMetrics = new Int2ObjectOpenHashMap<>(); // TODO удалить, т.к. не нужны временные id
-    // TODO не париться насчет уникальности по id и по tags
+    private AtomicInteger requsetId = new AtomicInteger(0); // они всегда отрицательные
+    private Int2ObjectOpenHashMap<Object> requestContexts = new Int2ObjectOpenHashMap<>();
+    private Int2ObjectOpenHashMap<Metric> metricByIds = new Int2ObjectOpenHashMap<>();
+    private ConcurrentHashMap<String[], Metric> metricByTags = new ConcurrentHashMap<>();
     private ClientProducer producer;
-    private ClientConsumer consumer;
+    private MetricProcessor consumer;
     private ClientMetricProducer metricProducer;
     private static MetricRegistry registry = null;
+
 
     public static MetricRegistry getInstance() {
         if (registry == null) {
@@ -34,42 +29,63 @@ public class MetricRegistry implements FragmentHandler {
         return registry;
     }
 
-    public void initialize(Producer producer, Consumer consumer, ClientMetricProducer metricProducer) {
+    public static void initialize(Producer producer, ClientMetricProducer metricProducer) {
         if (registry == null) {
-            registry = new MetricRegistry(producer, consumer, metricProducer);
+            registry = new MetricRegistry(producer, metricProducer);
         }
     }
 
-    private MetricRegistry(Producer producer, Consumer consumer, ClientMetricProducer metricProducer) {
+    private MetricRegistry(Producer producer, ClientMetricProducer metricProducer) {
         this.producer = new ClientProducer(producer);
-        this.consumer = new ClientConsumer(consumer);
+        this.consumer = new MetricProcessor();
         this.metricProducer = metricProducer;
     }
 
-    public Metric getMetric(String[] tags) {
-        if (tagsIdMetrics.containsKey(tags)) {
-            return metrics.get(tagsIdMetrics.get(tags));
+    public ClientProducer getProducer() {
+        return producer;
+    }
+
+    public MetricProcessor getConsumer() {
+        return consumer;
+    }
+
+    public ClientMetricProducer getMetricProducer() {
+        return metricProducer;
+    }
+
+    public Metric getMetric(String[] tags) { // паттерн для правильной записи в ConcurrentMap
+        Metric gettedMetric = metricByTags.get(tags);
+        if (gettedMetric != null) {
+            return gettedMetric;
         }
-        producer.getMetricId(tags);
-        Metric metric = new Metric(tempId.get(), producer, consumer, metricProducer);
-        tagsIdMetrics.put(tags, tempId.get());
-        idTagsMetrics.put(tempId.get(), tags);
-        metrics.put(tempId.getAndAdd(-1), metric);
+        gettedMetric = new Metric(getInstance(), metricProducer);
+        Metric metric = metricByTags.putIfAbsent(tags, gettedMetric);
+        if (metric != null) {
+            gettedMetric = metric;
+        } else {
+            int curRequestId = requsetId.getAndIncrement();
+            requestContexts.put(curRequestId, tags);
+            producer.getMetricId(curRequestId, tags); // TODO what if not sent
+        }
+        return gettedMetric;
+    }
+
+    public Metric getMetric(int metricId) { // TODO выше паттерн заюзать
+        if (metricByIds.containsKey(metricId)) {
+            return metricByIds.get(metricId);
+        }
+        Metric metric = new Metric(getInstance(), metricProducer);
+        metricByIds.put(metricId, metric); // TODO Actor для записи в Map
         return metric;
     }
 
-    public Metric getMetric(int id) {
-        return metrics.get(id);
-    }
-
-    void changeMetric(int oldId, int newId) {
-        Metric metric = metrics.get(oldId);
-        metrics.remove(oldId);
-        metrics.put(newId, metric);
-        String[] tags = idTagsMetrics.get(oldId);
-        tagsIdMetrics.replace(tags, newId);
-        idTagsMetrics.remove(oldId);
-        idTagsMetrics.put(newId, tags);
+    void changeMetric(int requestId, int newId) {
+        if (requestContexts.containsKey(requestId)) { // TODO выше паттерн заюзать
+            String[] tags = (String[]) requestContexts.get(requestId);
+            metricByTags.get(tags).changeId(newId);
+        } else {
+            throw new IllegalArgumentException("requestId=" + requestId + " not exists");
+        }
     }
 
     @Override
@@ -77,7 +93,7 @@ public class MetricRegistry implements FragmentHandler {
         int instructionId = directBuffer.getInt(offset);
         switch (instructionId) {
             case Protocol.INSTRUCTION_SET_METRIC_ID -> {
-                int[] ids = consumer.setMetricId(directBuffer, offset + ru.realalerting.protocol.Metric.LENGTH_ID, length, header);
+                int[] ids = consumer.setMetricId(directBuffer, offset + MetricConstants.LENGTH_ID, length, header);
                 changeMetric(ids[0], ids[1]);
             }
             default -> throw new IllegalStateException("Invalid instruction id: " + instructionId);

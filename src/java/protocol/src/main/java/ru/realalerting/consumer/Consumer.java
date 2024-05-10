@@ -17,7 +17,7 @@ import static java.util.Objects.isNull;
  * @author Karbayev Saruar
  */
 public class Consumer implements AutoCloseable {
-    private final Subscription subscription;
+    private Subscription subscription;
     private final IdleStrategy idle;
     private int retryCount = 1;
     private int maxFetchBytes = 20;
@@ -89,14 +89,13 @@ public class Consumer implements AutoCloseable {
         return count.get() < retryCount;
     }
 
-    public void aeronReconnect(RealAlertingDriverContext aeronContext) {
-        // TODO вечный aeron reconnect
+    public void aeronReconnect(RealAlertingDriverContext aeronContext, RealAlertingConfig config) {
         try {
             Aeron aeron = Aeron.connect(new Aeron.Context().aeronDirectoryName(
                     aeronContext.getMediaDriver().aeronDirectoryName()));
-//            subscription = aeron.addSubscription()
+            subscription = aeron.addSubscription(config.getUri(), config.getStreamId());
         } catch (Exception e) {
-            aeronReconnect(aeronContext);
+            aeronReconnect(aeronContext, config);
         }
     }
 

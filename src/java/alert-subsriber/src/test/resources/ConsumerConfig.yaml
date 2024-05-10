@@ -1,8 +1,11 @@
 consumer:
   streams:
-    - is-ipc : false
+    - subscription-type: udp
       ip: localhost
       port: 6001
       stream-id: 1
   idle-strategy: SleepingIdleStrategy
   media-path: /dev/shm/aeron
+
+  # TODO в UI нужно генерить такие другие конфиги, схожие с этим, но больше инфы
+  # TODO и написать чтобы разраб скопировал этот конфиг к себе в код

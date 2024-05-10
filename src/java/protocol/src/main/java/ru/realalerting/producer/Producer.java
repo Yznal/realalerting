@@ -15,8 +15,8 @@ import static java.util.Objects.isNull;
  * @author Karbayev Saruar
  */
 public class Producer implements AutoCloseable {
-    private final Publication publication;
-    private final IdleStrategy idle;
+    protected Publication publication;
+    protected IdleStrategy idle;
 
     public Producer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig) {
         this.publication = aeronContext.getAeron().addPublication(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
@@ -26,6 +26,11 @@ public class Producer implements AutoCloseable {
     public Producer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idleStrategy) {
         this.publication = aeronContext.getAeron().addPublication(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = idleStrategy;
+    }
+
+    protected Producer() {
+        publication = null;
+        idle = null;
     }
 
     public Publication getPublication() {

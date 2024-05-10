@@ -2,16 +2,17 @@ package ru.realalerting.metrciclient;
 
 import org.jctools.queues.MessagePassingQueue;
 import org.jctools.queues.MpmcArrayQueue;
+import ru.realalerting.alertlogic.AlertInfo;
+import ru.realalerting.alertlogic.AlertLogicBase;
 
 import java.time.Instant;
-import java.util.function.Consumer;
 
 public class Metric {
     private int metricId = -1;
     private String[] tags;
     private ClientMetricProducer metricProducer;
-    private final ClientProducer producer;
-    private final ClientConsumer consumer; // TODO consumer и producer удалить, и хранить MetricRegistry
+    private final MetricRegistry metricRegistry;
+    private AlertLogicBase alertLogic;
 
     private static class MetricData {
         long value;
@@ -23,7 +24,7 @@ public class Metric {
         }
     }
 
-    private MpmcArrayQueue<MetricData> q = new MpmcArrayQueue<>(3000);
+    private volatile MpmcArrayQueue<MetricData> q = new MpmcArrayQueue<>(3000);
 
     private final MessagePassingQueue.Consumer<MetricData> qSender = (x) -> {
         if (metricId < 0) {
@@ -33,11 +34,15 @@ public class Metric {
         }
     };
     // TODO constructor
-    Metric(int metricId, ClientProducer producer, ClientConsumer consumer, ClientMetricProducer metricProducer) {
-        this.metricId = metricId;
-        this.metricProducer = metricProducer; // TODO тут не знаем еще подписчиков на метрику
-        this.producer = producer;
-        this.consumer = consumer;
+    Metric(MetricRegistry metricRegistry, ClientMetricProducer metricProducer) {
+        this.metricRegistry  = metricRegistry;
+        this.metricProducer = metricProducer; // TODO у большинства Metric не будет mdc публикаций, они будут у клиента
+    }
+
+    Metric(MetricRegistry metricRegistry, ClientMetricProducer metricProducer, AlertLogicBase alertLogic) {
+        this.metricRegistry  = metricRegistry;
+        this.metricProducer = metricProducer;
+        this.alertLogic = alertLogic;
     }
 
     public int getMetricId() {
@@ -45,25 +50,29 @@ public class Metric {
     }
 
     void changeId(int newId) {
-        MetricRegistry.getInstance().changeMetric(metricId, newId);
         metricId = newId;
     }
 
     public boolean addValue(long value, long timestamp) {
-        if (metricId < 0) {
-            q.add(new MetricData(value, Instant.now().getEpochSecond())); // TODO Сомнительно, создаю много, есть алтернативы?
-            producer.getMetricId(tags);
-            // TODO обрабатывать запрос получения metricId
+        if (q == null) {
+            return metricProducer.sendMetric(metricId, value, timestamp);
+        }
+        if (metricId == -1) {
+            q.add(new MetricData(value, timestamp));
             return false;
         }
-        // TODO отправить значения метрики и timestamp
-
-        // TODO если очередь не пуста и мы уже знаем metricId
-        // TODO synchronized block чтобы не перемешать
-        return true;
+        synchronized (q) {
+            if (metricId != -1 && q != null) {
+                cleanQueue();
+                q = null;
+            }
+        }
+        return metricProducer.sendMetric(metricId, value, timestamp);
     }
 
     private void cleanQueue() {
-        q.drain(qSender);
+        if (!q.isEmpty()) {
+            q.drain(qSender);
+        }
     }
 }

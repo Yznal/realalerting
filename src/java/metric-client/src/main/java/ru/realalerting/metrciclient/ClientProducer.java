@@ -5,7 +5,7 @@ import org.agrona.BufferUtil;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import ru.realalerting.producer.Producer;
-import ru.realalerting.protocol.Metric;
+import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.Protocol;
 
 import java.nio.charset.StandardCharsets;
@@ -18,34 +18,50 @@ public class ClientProducer {
         this.producer = producer;
     }
 
-    public void getMetricId(String[] tags) {
-        // TODO Заменить Metric.Bytes
-        if (producer.getPublication().tryClaim(Metric.BYTES, bufferClaim) > 0) {
+    private void sendData(byte[][] tagsBytes, int requsetId, MutableDirectBuffer buf, int offset) {
+        buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID);
+        offset += MetricConstants.LENGTH_ID;
+        buf.putInt(offset, requsetId);
+        offset += MetricConstants.LENGTH_ID;
+        buf.putInt(offset, tagsBytes.length);
+        offset += MetricConstants.INT_SIZE;
+        for (int i = 0; i < tagsBytes.length; i++) {
+            buf.putInt(offset, tagsBytes[i].length);
+            offset += MetricConstants.INT_SIZE;
+            buf.putBytes(offset, tagsBytes[i]);
+            offset += tagsBytes[i].length;
+        }
+    }
+
+    private byte[][] stringsToBytes(String[] strings) {
+        byte[][] result = new byte[strings.length][];
+        for (int i = 0; i < strings.length; ++i) {
+            result[i] =strings[i].getBytes(StandardCharsets.UTF_8);
+        }
+        return result;
+    }
+
+    private int allTagsSizes(byte[][] tagsBytes) {
+        int result = 0;
+        for (int i = 0; i < tagsBytes.length; ++i) {
+            result += tagsBytes[i].length;
+        }
+        return result;
+    }
+
+    public void getMetricId(int requestId, String[] tags) {
+        byte[][] tagsBytes = stringsToBytes(tags);
+        int allTagsSize = allTagsSizes(tagsBytes);
+        int allocatedMemory = MetricConstants.LENGTH_ID + MetricConstants.LENGTH_ID + MetricConstants.INT_SIZE +
+                allTagsSize + tagsBytes.length * MetricConstants.INT_SIZE;
+        // int (id инструкции) + int(request id) + колиечство тэгов + сумма размеров всех тэгов + количество тэгов * int (длина тэга)
+        if (producer.getPublication().tryClaim(allocatedMemory, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
-            int offset = bufferClaim.offset();
-            buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID);
-            offset += Metric.LENGTH_ID;
-            buf.putInt(offset, tags.length);
-            offset += Metric.LENGTH_ID;
-            // TODO писать длину в буфер
-            for (int i = 0; i < tags.length; i++) {
-                // TODO в отдельный метод
-                buf.putBytes(offset, tags[i].getBytes(StandardCharsets.UTF_8));
-                // TODO посмотреть нормально ли с байтами
-                offset += tags[i].length();
-            }
+            sendData(tagsBytes, requestId, buf, bufferClaim.offset());
             bufferClaim.commit();
         } else {
-            // TODO тоже заменить Metric.Bytes
-            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(Metric.BYTES, Metric.ALIGNMENT));
-            // TODO тут смущает, кажется нужно вынести и очищать при переполнении (пока не надо)
-            int offset = 0;
-            buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID);
-            offset += Metric.LENGTH_ID;
-            for (int i = 0; i < tags.length; i++) {
-                buf.putStringAscii(offset, tags[i]);
-                offset += tags[i].length();
-            }
+            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(allocatedMemory, MetricConstants.LARGEST_ALIGMENT));
+            sendData(tagsBytes, requestId, buf, 0);
             producer.getPublication().offer(buf);
         }
     }

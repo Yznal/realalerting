@@ -37,7 +37,7 @@ public class ClickHouseSender extends AlertConsumer {
 //    private ClickHouseClient client;
     public static final String TAB_SEPARATED_FORMAT = "TabSeparated";
     public static char TAB_VALUE_SPLITTER = '\t';
-    private String insert = "INSERT INTO default.alerts (metric_id, value, timestamp) values (?, ?, ?)";
+    private String insert = "INSERT INTO default.alerts (metric_id, value, timestamp) FORMAT " + TAB_SEPARATED_FORMAT;
     private final Map<String, URI> preparedUris = new ConcurrentHashMap<>();
     private final HttpClient httpClient;
     private final ClickHouseProperties properties;
@@ -78,12 +78,10 @@ public class ClickHouseSender extends AlertConsumer {
 
 
         disruptor.handleEventsWith((alert, sequence, endOfBatch) -> {
+            // alertId добавить
             buffer.putInt(alert.metricId);
-            buffer.putChar(TAB_VALUE_SPLITTER);
             buffer.putLong(alert.value);
-            buffer.putChar(TAB_VALUE_SPLITTER);
             buffer.putLong(alert.timestamp);
-            buffer.putChar(TAB_VALUE_SPLITTER);
             batchSize++;
             if (batchSize == maxBatchSize || sb.length() > 100) {
                 executor.execute(() -> {
@@ -114,6 +112,7 @@ public class ClickHouseSender extends AlertConsumer {
     }
 
     private void SendToClickhouse() {
+
         InsertEntity insertEntity = InsertEntity.of(buffer);
         try {
             sendInsert(insertEntity, insert);

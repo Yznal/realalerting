@@ -19,6 +19,9 @@ public class InsertEntity extends AbstractHttpEntity {
     }
 
     public static InsertEntity of(ByteBuffer buffer) {
+        buffer.flip();
+        final byte[] bb = new byte[buffer.remaining()];
+        buffer.get(bb);
         return new InsertEntity(buffer.array());
     }
 

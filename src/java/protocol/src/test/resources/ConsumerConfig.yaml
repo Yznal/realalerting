@@ -1,6 +1,6 @@
 consumer:
   streams:
-    - is-ipc : false
+    - subscription-type: udp
       ip: localhost
       port: 6001
       stream-id: 1

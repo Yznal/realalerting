@@ -1,10 +1,6 @@
 package ru.realalerting.producer;
 
 import io.aeron.logbuffer.BufferClaim;
-import org.agrona.BufferUtil;
-import org.agrona.MutableDirectBuffer;
-import org.agrona.concurrent.UnsafeBuffer;
-import ru.realalerting.protocol.Metric;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
 

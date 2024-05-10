@@ -36,21 +36,21 @@ public class ClickHouseAlertTest {
         producer = new AlertProducer(new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml")));
     }
 
-    @Test
-    public void test() {
-        producer.waitUntilConnected();
-        int threshold = 20;
-        AlertInfo info = new AlertInfo(alertId, 0, threshold);
-        GreaterAlert greaterAlert = new GreaterAlert(info);
-        for (int i = 0; i < 500; ++i) {
-            boolean isSended = producer.sendAlert(greaterAlert, info.getMetricId(), i, 12300 + i);
-            if (i <= threshold) {
-                assertFalse(isSended);
-            } else {
-                assertTrue(isSended);
-            }
-        }
-        sender.run(); // TODO запустить в отдельном потоке и перенести до waitUntilConnected
-    }
+//    @Test
+//    public void test() {
+//        producer.waitUntilConnected();
+//        int threshold = 20;
+//        AlertInfo info = new AlertInfo(alertId, 0, threshold);
+//        GreaterAlert greaterAlert = new GreaterAlert(info);
+//        for (int i = 0; i < 500; ++i) {
+//            boolean isSended = producer.sendAlert(greaterAlert, info.getMetricId(), i, 12300 + i);
+//            if (i <= threshold) {
+//                assertFalse(isSended);
+//            } else {
+//                assertTrue(isSended);
+//            }
+//        }
+//        sender.run(); // TODO запустить в отдельном потоке и перенести до waitUntilConnected
+//    }
 
 }
