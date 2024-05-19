@@ -12,8 +12,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import ru.realalerting.alertsubscriber.AlertConsumer;
-import ru.realalerting.consumer.Consumer;
+import ru.realalerting.alertsubscriber.AlertSubscriber;
+import ru.realalerting.subscriber.Subscriber;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
 
@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
 /**
  * @author Karbayev Saruar
  */
-public class ClickHouseSender extends AlertConsumer {
+public class ClickHouseSender extends AlertSubscriber {
 //    private ClickHouseNodes servers;
 //    private ClickHouseClient client;
     public static final String TAB_SEPARATED_FORMAT = "TabSeparated";
@@ -107,8 +107,8 @@ public class ClickHouseSender extends AlertConsumer {
         httpPost = new HttpPost(uri);
     }
 
-    public Consumer getSubscription() {
-        return this.consumer;
+    public Subscriber getSubscription() {
+        return this.subscriber;
     }
 
     private void SendToClickhouse() {

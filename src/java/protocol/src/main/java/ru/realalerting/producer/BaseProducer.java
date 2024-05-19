@@ -8,12 +8,13 @@ import ru.realalerting.reader.RealAlertingConfig;
  * @author Karbayev Saruar
  */
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class BaseProducer {
+public class BaseProducer implements AutoCloseable {
     protected final Producer producer;
     protected final AtomicBoolean isRunning = new AtomicBoolean(false);
-    protected final BufferClaim bufferClaim = new BufferClaim();
-
+    protected final ThreadLocal<BufferClaim> bufferClaim = ThreadLocal.withInitial(() -> new BufferClaim());
+    protected int dataLeaked = 0;
 
     public BaseProducer(Producer producer) {
         this.producer = producer;
@@ -29,6 +30,14 @@ public class BaseProducer {
 
     public BaseProducer(RealAlertingDriverContext aeronContext, int streamId, boolean isIpc) {
         producer = new Producer(aeronContext, new RealAlertingConfig(streamId, isIpc));
+    }
+
+    public Producer getProducer() {
+        return producer;
+    }
+
+    public BufferClaim getBufferClaim() {
+        return bufferClaim.get();
     }
 
     public boolean isRunning() {
@@ -49,5 +58,12 @@ public class BaseProducer {
 
     public void waitUntilConnected() {
         producer.waitUntilConnected();
+    }
+
+    @Override
+    public void close() {
+        if (producer != null) {
+            producer.close();
+        }
     }
 }

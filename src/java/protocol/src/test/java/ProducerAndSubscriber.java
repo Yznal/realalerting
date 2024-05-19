@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.realalerting.alertlogic.AlertInfo;
 import ru.realalerting.alertlogic.GreaterAlert;
+import ru.realalerting.subscriber.Subscriber;
 import ru.realalerting.producer.AlertProducer;
-import ru.realalerting.consumer.Consumer;
 import ru.realalerting.producer.Producer;
 import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.protocol.MetricConstants;
@@ -26,17 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Karbayev Saruar
  */
-public class ProducerAndConsumer {
+public class ProducerAndSubscriber {
 
     private static Producer producer;
-    private static Consumer consumer;
+    private static Subscriber subscriber;
     private static RealAlertingDriverContext context;
 
     @BeforeAll
     static void run() throws IOException {
         context = new RealAlertingDriverContext("/dev/shm/aeron");
         producer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml"));
-        consumer = new Consumer(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
+        subscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ProducerAndConsumer {
                 int response = buffer.getInt(offset);
                 assertEquals(sendInt, response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -89,7 +89,7 @@ public class ProducerAndConsumer {
                 String response = buffer.getStringWithoutLengthAscii(offset, sendData.length);
                 assertEquals(new String(sendData, StandardCharsets.UTF_8), response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -116,7 +116,7 @@ public class ProducerAndConsumer {
                 String response = buffer.getStringUtf8(offset);
                 assertEquals(sendData, response);
             };
-            poll = consumer.getSubscription().poll(handler, 256);
+            poll = subscriber.getSubscription().poll(handler, 256);
         }
     }
 
@@ -134,32 +134,32 @@ public class ProducerAndConsumer {
             idle.idle();
         }
 
-        long index = producer.getPublication().tryClaim(MetricConstants.BYTES, bufClaim);
+        long index = producer.getPublication().tryClaim(MetricConstants.METRIC_BYTES, bufClaim);
         assert(index > 0);
         MutableDirectBuffer buf = bufClaim.buffer();
-        buf.putInt(bufClaim.offset() + MetricConstants.OFFSET_ID, id[0]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_TIMESTAMP, timestamp[0]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_VALUE, value[0]);
+        buf.putInt(bufClaim.offset() + MetricConstants.ID_OFFSET, id[0]);
+        buf.putLong(bufClaim.offset() + MetricConstants.TIMESTAMP_OFFSET, timestamp[0]);
+        buf.putLong(bufClaim.offset() + MetricConstants.VALUE_OFFSET, value[0]);
         bufClaim.commit();
 
-        index = producer.getPublication().tryClaim(MetricConstants.BYTES, bufClaim);
+        index = producer.getPublication().tryClaim(MetricConstants.METRIC_BYTES, bufClaim);
         assert(index > 0);
-        buf.putInt(bufClaim.offset() + MetricConstants.OFFSET_ID, id[1]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_TIMESTAMP, timestamp[1]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_VALUE, value[1]);
+        buf.putInt(bufClaim.offset() + MetricConstants.ID_OFFSET, id[1]);
+        buf.putLong(bufClaim.offset() + MetricConstants.TIMESTAMP_OFFSET, timestamp[1]);
+        buf.putLong(bufClaim.offset() + MetricConstants.VALUE_OFFSET, value[1]);
         bufClaim.commit();
 
         int poll = -1;
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
             int responseId = buffer.getInt(offset);
-            long responseValue = buffer.getLong(offset + MetricConstants.OFFSET_VALUE);
-            long responseTimestamp = buffer.getLong(offset + MetricConstants.OFFSET_TIMESTAMP);
+            long responseValue = buffer.getLong(offset + MetricConstants.VALUE_OFFSET);
+            long responseTimestamp = buffer.getLong(offset + MetricConstants.TIMESTAMP_OFFSET);
             assertEquals(responseId, id[messageId.get()]);
             assertEquals(responseValue, value[messageId.get()]);
             assertEquals(responseTimestamp, timestamp[messageId.getAndIncrement()]);
         };
         while (poll <= 0) {
-            poll = consumer.getSubscription().poll(handler, MetricConstants.BYTES);
+            poll = subscriber.getSubscription().poll(handler, MetricConstants.METRIC_BYTES);
             idle.idle();
         }
     }
@@ -178,31 +178,31 @@ public class ProducerAndConsumer {
             idle.idle();
         }
 
-        long index = producer.getPublication().tryClaim(2 * MetricConstants.BYTES, bufClaim);
+        long index = producer.getPublication().tryClaim(2 * MetricConstants.METRIC_BYTES, bufClaim);
         assert(index > 0);
         MutableDirectBuffer buf = bufClaim.buffer();
-        buf.putInt(bufClaim.offset() + MetricConstants.OFFSET_ID, id[0]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_TIMESTAMP, timestamp[0]);
-        buf.putLong(bufClaim.offset() + MetricConstants.OFFSET_VALUE, value[0]);
+        buf.putInt(bufClaim.offset() + MetricConstants.ID_OFFSET, id[0]);
+        buf.putLong(bufClaim.offset() + MetricConstants.TIMESTAMP_OFFSET, timestamp[0]);
+        buf.putLong(bufClaim.offset() + MetricConstants.VALUE_OFFSET, value[0]);
 
-        buf.putInt(bufClaim.offset() + MetricConstants.BYTES + MetricConstants.OFFSET_ID, id[1]);
-        buf.putLong(bufClaim.offset() + MetricConstants.BYTES + MetricConstants.OFFSET_TIMESTAMP, timestamp[1]);
-        buf.putLong(bufClaim.offset() + MetricConstants.BYTES + MetricConstants.OFFSET_VALUE, value[1]);
+        buf.putInt(bufClaim.offset() + MetricConstants.METRIC_BYTES + MetricConstants.ID_OFFSET, id[1]);
+        buf.putLong(bufClaim.offset() + MetricConstants.METRIC_BYTES + MetricConstants.TIMESTAMP_OFFSET, timestamp[1]);
+        buf.putLong(bufClaim.offset() + MetricConstants.METRIC_BYTES + MetricConstants.VALUE_OFFSET, value[1]);
         bufClaim.commit();
 
         int poll = -1;
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
-            for (int i = 0; i * MetricConstants.BYTES < length; ++i) {
-                int responseId = buffer.getInt(offset + i * MetricConstants.BYTES);
-                long responseValue = buffer.getLong(offset + i * MetricConstants.BYTES + MetricConstants.OFFSET_VALUE);
-                long responseTimestamp = buffer.getLong(offset + i * MetricConstants.BYTES + MetricConstants.OFFSET_TIMESTAMP);
+            for (int i = 0; i * MetricConstants.METRIC_BYTES < length; ++i) {
+                int responseId = buffer.getInt(offset + i * MetricConstants.METRIC_BYTES);
+                long responseValue = buffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.VALUE_OFFSET);
+                long responseTimestamp = buffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.TIMESTAMP_OFFSET);
                 assertEquals(responseId, id[messageId.get()]);
                 assertEquals(responseValue, value[messageId.get()]);
                 assertEquals(responseTimestamp, timestamp[messageId.getAndIncrement()]);
             }
         };
         while (poll <= 0) {
-            poll = consumer.getSubscription().poll(handler, MetricConstants.BYTES);
+            poll = subscriber.getSubscription().poll(handler, MetricConstants.METRIC_BYTES);
             idle.idle();
         }
     }
@@ -222,19 +222,18 @@ public class ProducerAndConsumer {
         int poll = -1;
         AtomicInteger metric_count = new AtomicInteger(3);
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
-            for (int i = 0; i * MetricConstants.BYTES < length; ++i) {
-                int responseId = buffer.getInt(offset + i * MetricConstants.BYTES);
-                long responseValue = buffer.getLong(offset + i * MetricConstants.BYTES + MetricConstants.OFFSET_VALUE);
-                long responseTimestamp = buffer.getLong(offset + i * MetricConstants.BYTES + MetricConstants.OFFSET_TIMESTAMP);
+            for (int i = 0; i * MetricConstants.METRIC_BYTES < length; ++i) {
+                int responseId = buffer.getInt(offset + i * MetricConstants.METRIC_BYTES);
+                long responseValue = buffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.VALUE_OFFSET);
+                long responseTimestamp = buffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.TIMESTAMP_OFFSET);
                 assertEquals(responseId, 0);
                 assertEquals(responseValue, 10 * metric_count.getAndIncrement());
                 assertEquals(responseTimestamp, 12300);
             }
         };
         while (poll <= 0) {
-            poll = consumer.getSubscription().poll(handler, MetricConstants.BYTES);
+            poll = subscriber.getSubscription().poll(handler, MetricConstants.METRIC_BYTES);
             idle.idle();
         }
-        // TODO Multicast добавить в publication and consumer (кажется только для ClientMetricProducer и AlertNode)
     }
 }

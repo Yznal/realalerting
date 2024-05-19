@@ -11,9 +11,13 @@ import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.Protocol;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GetMetricId implements RequestProcessor {
     private final BufferClaim bufferClaim = new BufferClaim();
+    private final ConcurrentHashMap<List<CharSequence>, Integer> idByTags = new ConcurrentHashMap<>();
 
     @Override
     public void doWork(Producer producer, DirectBuffer directBuffer, int offset, int length, Header header) {
@@ -21,30 +25,42 @@ public class GetMetricId implements RequestProcessor {
         offset += MetricConstants.ID_SIZE;
         int tagsCount = directBuffer.getInt(offset);
         offset += MetricConstants.INT_SIZE;
-        String[] tags = new String[tagsCount];
-        byte[][] tagsBytes = new byte[tagsCount][];
-        // TODO нужен один массив (возможно лучше засунуть сначала все размеры)
-        //  а потом byte отправлять
-        int tagLen;
-        for (int i = 0; i < tagsCount; i++) {
-            tagLen = directBuffer.getInt(offset);
+        int[] tagsLen = new int[tagsCount];
+        int allTagLen = 0;
+        for (int i = 0; i < tagsCount; ++i) {
+            tagsLen[i] = directBuffer.getInt(offset);
+            allTagLen += tagsLen[i];
             offset += MetricConstants.INT_SIZE;
-            tagsBytes[i] = new byte[tagLen];
-            directBuffer.getBytes(offset, tagsBytes[i], 0, tagLen);
-            offset += tagLen;
-            tags[i] = new String(tagsBytes[i], StandardCharsets.UTF_8); // TODO конструктор с offset
-            // TODO вместо String charSequence при передаче
         }
-        int metricId = getMetricId(tags);
-        // TODO если нет id, то должен его создать ассинхроно в bd
-        sendGetMetricIdResponse(producer, requestId, metricId);
+        byte[] tagsBytes = new byte[allTagLen];
+        directBuffer.getBytes(offset, tagsBytes, 0, allTagLen);
+        offset += allTagLen;
+        int byteOffset = 0;
+        ArrayList<CharSequence> tags = new ArrayList<>(tagsCount);
+        for (int i = 0; i < tagsCount; ++i) {
+            tags.add(new String(tagsBytes, byteOffset, tagsLen[i], StandardCharsets.UTF_8));
+            byteOffset += tagsLen[i];
+        }
+        Integer metricId = idByTags.get(tags);
+        if (metricId != null) {
+            sendGetMetricIdResponse(producer, requestId, metricId);
+        } else {
+            createMetricId(tags);
+        }
     }
 
-    private int getMetricId(String[] tags) {
-        return 0;
-        // TODO запрос в ControlPlane
-        //  должен быть ассинхронным database.getMetricId(String[] tags, IntConsumer callback)
-        //  создать map где храняться id метрик, но тогда нужно периодически подгружать эту map из базы
+    public void addToMap(List<CharSequence> tags, int metricId) { // TODO функцию после того как подключим ControlPlane
+        idByTags.put(tags, metricId);
+    }
+
+    private void updateMap() {
+        // TODO периодически должен скачивать и подгружать в мапу из ControlPlane асинхронно
+    }
+
+    private void createMetricId(List<CharSequence> tags) {
+
+        // TODO если нет id, то должен его создать асинхронно в bd
+        //  database.getMetricId(String[] tags, IntConsumer callback)
     }
 
     private void sendData(int requestId, int metricId, MutableDirectBuffer buf, int offset) {
@@ -58,17 +74,11 @@ public class GetMetricId implements RequestProcessor {
 
     private boolean sendGetMetricIdResponse(Producer producer, int requestId, int metricId) {
         boolean isSended = false;
-        if (producer.getPublication().tryClaim(MetricConstants.BYTES, bufferClaim) > 0) {
+        if (producer.getPublication().tryClaim(MetricConstants.METRIC_BYTES, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
             sendData(requestId, metricId, buf, bufferClaim.offset());
             bufferClaim.commit();
             isSended = true;
-        } else {
-            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(MetricConstants.BYTES, MetricConstants.ALIGNMENT));
-            sendData(requestId, metricId, buf, 0);
-            if (producer.getPublication().offer(buf) > 0) {
-                isSended = true;
-            }
         }
         return isSended;
     }

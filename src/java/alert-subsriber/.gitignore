@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+!**/src/main/resources/ClickhouseSetup.txt
+!**/src/main/resources/ClickhouseConnection.yaml
+!**/src/main/resources/grafana.ini

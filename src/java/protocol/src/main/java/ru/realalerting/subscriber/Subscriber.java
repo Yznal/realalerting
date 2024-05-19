@@ -1,4 +1,4 @@
-package ru.realalerting.consumer;
+package ru.realalerting.subscriber;
 
 import io.aeron.Aeron;
 import io.aeron.Subscription;
@@ -16,50 +16,50 @@ import static java.util.Objects.isNull;
 /**
  * @author Karbayev Saruar
  */
-public class Consumer implements AutoCloseable {
+public class Subscriber implements AutoCloseable {
     private Subscription subscription;
     private final IdleStrategy idle;
     private int retryCount = 1;
     private int maxFetchBytes = 20;
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idle,
-                    int retryCount, int maxFetchBytes) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idle,
+                      int retryCount, int maxFetchBytes) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         this.idle = idle;
         this.retryCount = retryCount;
         this.maxFetchBytes = maxFetchBytes;
     }
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig,
-                    int retryCount, int maxFetchBytes) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig,
+                      int retryCount, int maxFetchBytes) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = new SleepingIdleStrategy();
         this.retryCount = retryCount;
         this.maxFetchBytes = maxFetchBytes;
     }
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idle,
-                    MetricConsumerConfig config) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idle,
+                      MetricConsumerConfig config) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         this.idle = idle;
         this.retryCount = config.getRetryCount();
         this.maxFetchBytes = config.getMaxFetchBytes();
     }
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig,
-                    MetricConsumerConfig config) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig,
+                      MetricConsumerConfig config) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = new SleepingIdleStrategy();
         this.retryCount = config.getRetryCount();
         this.maxFetchBytes = config.getMaxFetchBytes();
     }
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = new SleepingIdleStrategy();
     }
 
-    public Consumer(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idleStrategy) {
+    public Subscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig realAlertingConfig, IdleStrategy idleStrategy) {
         subscription = aeronContext.getAeron().addSubscription(realAlertingConfig.getUri(), realAlertingConfig.getStreamId());
         idle = idleStrategy;
     }

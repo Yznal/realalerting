@@ -11,14 +11,14 @@ import static org.agrona.BitUtil.SIZE_OF_DOUBLE;
  */
 public final class MetricConstants {
     public static final int ID_SIZE = SIZE_OF_INT;
-    public static final int LENGTH_VALUE = SIZE_OF_LONG; // TODO !Length Size
-    public static final int LENGTH_TIMESTAMP = SIZE_OF_LONG;
-    public static final int BYTES = ID_SIZE + LENGTH_TIMESTAMP + LENGTH_VALUE;
+    public static final int VALUE_SIZE = SIZE_OF_LONG;
+    public static final int TIMESTAMPS_SIZE = SIZE_OF_LONG;
+    public static final int METRIC_BYTES = ID_SIZE + TIMESTAMPS_SIZE + VALUE_SIZE;
 
 
-    public static final int OFFSET_ID = 0;
-    public static final int OFFSET_VALUE = OFFSET_ID + ID_SIZE;
-    public static final int OFFSET_TIMESTAMP = OFFSET_VALUE + LENGTH_VALUE;
+    public static final int ID_OFFSET = 0;
+    public static final int VALUE_OFFSET = ID_OFFSET + ID_SIZE;
+    public static final int TIMESTAMP_OFFSET = VALUE_OFFSET + VALUE_SIZE;
 
     public static final int ALIGNMENT = 32;
     public static final int LARGEST_ALIGMENT = 8192;

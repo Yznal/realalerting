@@ -1,16 +1,14 @@
-package ru.realalerting.metrciclient;
+package ru.realalerting.producer;
 
 import com.lmax.disruptor.EventTranslatorThreeArg;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import org.agrona.BufferUtil;
+import io.aeron.logbuffer.BufferClaim;
 import org.agrona.MutableDirectBuffer;
-import org.agrona.concurrent.UnsafeBuffer;
-import ru.realalerting.alertlogic.AlertLogicBase;
 import ru.realalerting.alertsubscriber.clickhouse.SimpleObjectPool;
-import ru.realalerting.producer.MetricProducer;
-import ru.realalerting.producer.Producer;
 import ru.realalerting.protocol.MetricConstants;
+import ru.realalerting.protocol.RealAlertingDriverContext;
+import ru.realalerting.reader.RealAlertingConfig;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -18,7 +16,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class ClientMetricProducer extends MetricProducer {
+public class MetricBatchThreadProducer extends MetricProducer {
+
+    public MetricBatchThreadProducer(Producer producer) {
+        super(producer);
+    }
+
+    public MetricBatchThreadProducer(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo) {
+        super(aeronContext, connectInfo);
+    }
+
+    public MetricBatchThreadProducer(RealAlertingDriverContext aeronContext, int streamId, boolean isIpc) {
+        super(aeronContext, streamId, isIpc);
+    }
+
+    public MetricBatchThreadProducer(RealAlertingDriverContext aeronContext, String uri, int streamId) {
+        super(aeronContext, uri, streamId);
+    }
 
     public static final class Metric {
         int metricId;
@@ -33,7 +47,7 @@ public class ClientMetricProducer extends MetricProducer {
         metric.value = value;
     };
 
-    private Disruptor<Metric> disruptor; // TODO возможно не нужен, т.к. publication thread safe (почитать в доках)
+    private Disruptor<Metric> disruptor;
     int batchSize = 0;
     int maxBatchSize = 200;
     final Executor executor = Executors.newSingleThreadExecutor();
@@ -41,7 +55,7 @@ public class ClientMetricProducer extends MetricProducer {
     private final Map<Metric, Integer> bufferMetric = new ConcurrentHashMap<>();
     final SimpleObjectPool pool = new SimpleObjectPool<>(10, 1000,
             () -> ByteBuffer.allocate(bufferSize),
-            ByteBuffer::clear); // TODO не нужен
+            ByteBuffer::clear);
     ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
     {
@@ -70,38 +84,23 @@ public class ClientMetricProducer extends MetricProducer {
     }
 
 
-    ClientMetricProducer(Producer metricProducer, Producer alertProducer) {
-        super(metricProducer);
-    }
-
     private boolean sendMetricBatch() {
         boolean isSended = false;
-        if (this.producer.getPublication().tryClaim(batchSize * MetricConstants.BYTES, this.bufferClaim) > 0L) {
-            MutableDirectBuffer buf = this.bufferClaim.buffer();
-            buf.putBytes(bufferClaim.offset(), buffer, batchSize * MetricConstants.BYTES);
-            this.bufferClaim.commit();
+        BufferClaim curBufferClaim = this.bufferClaim.get();
+        if (this.producer.getPublication().tryClaim(batchSize * MetricConstants.METRIC_BYTES, curBufferClaim) > 0L) {
+            MutableDirectBuffer buf = curBufferClaim.buffer();
+            buf.putBytes(curBufferClaim.offset(), buffer, batchSize * MetricConstants.METRIC_BYTES);
+            curBufferClaim.commit();
             isSended = true;
 
-        } else { // TODO не нужен, если не получилось, то увеличиваем счетсик пролитых данных
-            UnsafeBuffer buf = new UnsafeBuffer(BufferUtil.allocateDirectAligned(
-                    batchSize * MetricConstants.BYTES, MetricConstants.ALIGNMENT));
-            buf.putBytes(bufferClaim.offset(), buffer, batchSize * MetricConstants.BYTES);
-            if (this.producer.getPublication().offer(buf) > 0L) {
-                isSended = true;
-            }
+        } else {
+            ++dataLeaked;
         }
         return isSended;
     }
 
-    @Override
-    public boolean sendMetric(int metricId, long value, long timestamp) {
+    // TODO override sendMetric?
+    public void sendMetricBatch(int metricId, long value, long timestamp) {
         disruptor.publishEvent(TRANSLATOR, metricId, value, timestamp);
-        return true;
-    }
-
-    public void sendMetric(AlertLogicBase alertLogic, int metricId, long value, long timestamp) {
-        if (alertLogic.calculateAlert(metricId, value, timestamp)) {
-            sendMetric(metricId, value, timestamp);
-        }
     }
 }
