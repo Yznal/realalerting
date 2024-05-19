@@ -7,6 +7,7 @@ import ru.realalerting.subscriber.MetricSubscriber;
 import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
+import ru.realalerting.subscriber.Subscriber;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -15,11 +16,21 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class AlertSubscriber extends MetricSubscriber {
     protected int alertId;
-    private AtomicLong lastTimestamp = new AtomicLong();
+    protected AtomicLong lastTimestamp = new AtomicLong();
 
     public AlertSubscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo,
                            IdleStrategy idleStrategy, int alertId) {
         super(aeronContext, connectInfo, idleStrategy);
+        this.alertId = alertId;
+    }
+
+    public AlertSubscriber(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo, int alertId) {
+        super(aeronContext, connectInfo);
+        this.alertId = alertId;
+    }
+
+    public AlertSubscriber(Subscriber subscriber, int alertId) {
+        super(subscriber);
         this.alertId = alertId;
     }
 
@@ -35,7 +46,7 @@ public abstract class AlertSubscriber extends MetricSubscriber {
             int id = directBuffer.getInt(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.ID_OFFSET);
             long value = directBuffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.VALUE_OFFSET);
             long timestamp = directBuffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.TIMESTAMP_OFFSET);
-            if (lastTimestamp.get() > timestamp) { // дедупликация
+            if (lastTimestamp.get() < timestamp) { // дедупликация
                 onAlert(id, value, timestamp);
                 lastTimestamp.set(timestamp);
             }

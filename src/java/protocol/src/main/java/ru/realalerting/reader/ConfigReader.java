@@ -16,7 +16,7 @@ public class ConfigReader {
     private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
     private static final String AERON_IPC = "aeron:ipc";
     private static final String AERON_MDC_PUBLICATION = "aeron:udp?control-mode=dynamic|control=%s:%s";
-    private static final String AERON_MDC_SUBSCRIPTION = "aeron:udp?endpoint=%s:%s|control=%s:&s|control-mode=dynamic";
+    private static final String AERON_MDC_SUBSCRIPTION = "aeron:udp?endpoint=%s:%s|control=%s:%s|control-mode=dynamic";
 
     public static RealAlertingConfig readProducerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);

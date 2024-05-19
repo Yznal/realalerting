@@ -2,6 +2,7 @@ package ru.realalerting.subscriber;
 
 import io.aeron.logbuffer.FragmentHandler;
 import org.agrona.concurrent.Agent;
+import org.agrona.concurrent.AgentRunner;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,6 +21,11 @@ public abstract class BaseSubscriber implements FragmentHandler, AutoCloseable, 
 
     public Subscriber getConsumer() {
         return subscriber;
+    }
+
+    public void start() {
+        final AgentRunner receiveAgentRunner = new AgentRunner(subscriber.getIdle(), Throwable::printStackTrace, null, this);
+        AgentRunner.startOnThread(receiveAgentRunner);
     }
 
     @Override

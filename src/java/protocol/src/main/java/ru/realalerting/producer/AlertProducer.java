@@ -47,12 +47,13 @@ public class AlertProducer extends MetricProducer {
         buf.putInt(offset + MetricConstants.ID_OFFSET, metricId);
         buf.putLong(offset + MetricConstants.VALUE_OFFSET, value);
         buf.putLong(offset + MetricConstants.TIMESTAMP_OFFSET, timestamp);
+        System.out.println("Отправили подписчику алерта - " + alertId + " with value - " + value);
     }
 
     private boolean sendSingleMetricWithAlertId(int alertId, int metricId, long value, long timestamp) {
         boolean isSended = false;
         BufferClaim curBufferClaim = this.bufferClaim.get();
-        if (producer.getPublication().tryClaim(MetricConstants.METRIC_BYTES, curBufferClaim) > 0) {
+        if (producer.getPublication().tryClaim(MetricConstants.ID_SIZE + MetricConstants.METRIC_BYTES, curBufferClaim) > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             sendData(alertId, metricId, value, timestamp, buf, curBufferClaim.offset());
             curBufferClaim.commit();
@@ -65,6 +66,7 @@ public class AlertProducer extends MetricProducer {
 
     public boolean sendAlertWithAlertId(AlertLogicBase alertLogic, int alertId, int metricId, long value, long timestamp) {
         if (alertLogic.calculateAlert(metricId, value, timestamp)) {
+            System.out.println("Алерт отправлен - " + alertId + " with value - " + value);
             return sendSingleMetricWithAlertId(alertId, metricId, value, timestamp);
         }
         return false;

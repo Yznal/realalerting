@@ -191,7 +191,6 @@ public class ClickHouseSender extends AlertSubscriber {
 
     @Override
     public void onAlert(int metricId, long value, long timestamp) {
-        System.out.println(value);
         disruptor.publishEvent(TRANSLATOR, metricId, timestamp, value);
     }
 }
