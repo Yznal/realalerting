@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>ru.realalerting</groupId>
+  <artifactId>metric-client</artifactId>
+  <version>1.0</version>
+  <name>metric-client</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>ru.realalerting</groupId>
+      <artifactId>protocol</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ru.realalerting</groupId>
+      <artifactId>alert-logic</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ru.realalerting</groupId>
+      <artifactId>alert-subscriber</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jctools/jctools-core -->
+    <dependency>
+      <groupId>org.jctools</groupId>
+      <artifactId>jctools-core</artifactId>
+      <version>4.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.7.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+<!--  <plugin>-->
+<!--    <groupId>org.apache.maven.plugins</groupId>-->
+<!--    <artifactId>maven-surefire-plugin</artifactId>-->
+<!--    <configuration>-->
+<!--      <argLine>-->
+<!--        &#45;&#45;add-opens java.base/java.time=ALL-UNNAMED-->
+<!--        ${surefireArgLine}-->
+<!--      </argLine>-->
+<!--    </configuration>-->
+<!--  </plugin>-->
+
+</project>
