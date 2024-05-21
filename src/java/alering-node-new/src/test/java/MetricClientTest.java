@@ -7,7 +7,6 @@ import ru.realalerting.alertlogic.AlertInfo;
 import ru.realalerting.alertlogic.GreaterAlert;
 import ru.realalerting.alertnode.AlertNode;
 import ru.realalerting.alertnode.AlertSystemBalancer;
-import ru.realalerting.alertsubscriber.AlertSubscriber;
 import ru.realalerting.metrciclient.Metric;
 import ru.realalerting.metrciclient.MetricRegistry;
 import ru.realalerting.producer.MetricProducer;
@@ -37,8 +36,6 @@ public class MetricClientTest {
 
     private static AlertSubscriberTest alertSubscriber;
 
-//    private static Subscriber alertSubscriber;
-
     private static Producer alertNodeProducer1;
     private static Producer alertNodeProducer2;
     private static Subscriber alertNodeSubscriber1;
@@ -63,15 +60,14 @@ public class MetricClientTest {
 
         MetricRegistry.initialize(clientProducer, clientConsumer, clientMetricProducer, context);
         metricRegistry = MetricRegistry.getInstance();
-    }
 
-    static void setupServer() {
         alertSubscriber = new AlertSubscriberTest(new Subscriber(context,
                 ConfigReader.readConsumerFromFile("src/test/resources/AlertConsumerConfig.yaml")),
                 alertId, metricId, alertValue, alertTimestamp);
         alertSubscriber.start();
+    }
 
-
+    static void setupServer() {
         serverProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ServerProducerConfig.yaml"));
         serverSubscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ServerConsumerConfig.yaml"));
 
@@ -131,6 +127,7 @@ public class MetricClientTest {
 
         long alertValue1 = 13, alertValue2 = alertValue;
         long alertTimestamp1 = 100, alertTimestamp2 = alertTimestamp;
+        //отправляем запрос на получение метрики.
         metric.addValue(alertValue1, alertTimestamp1);
         metric.addValue(alertValue2, alertTimestamp2);
         assertEquals(metric.getMetricId(), -1);

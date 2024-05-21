@@ -13,7 +13,8 @@ public class Metric implements AutoCloseable {
     private volatile int metricId = -1;
     private MetricRegistry metricRegistry;
     private AlertProducer alertProducer;
-    private AlertLogicBase alertLogic;
+    // TODO хранить alertId которые нужно отправлять
+    private AlertLogicBase alertLogic; // TODO Map по AlertId
     private volatile MpmcArrayQueue<MetricData> q = new MpmcArrayQueue<>(3000);
 
     private static class MetricData {

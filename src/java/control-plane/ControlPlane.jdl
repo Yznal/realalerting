@@ -1,0 +1,115 @@
+application {
+    config {
+        // Application name
+        baseName ControlPlane
+        // Package names
+        packageName ru.realalerting.controlplane
+        // App types
+        applicationType monolith
+        // The port number
+        serverPort 8080
+        buildTool maven
+        databaseType sql
+        languages [en, ru]
+        prodDatabaseType postgresql
+    }
+}
+
+enum MetricType {
+    INT, DOUBLE 
+      /** возможно нужно не по типам, а по способу взаимодействия
+      * счетчик (может идти только вврех),
+      * числовой (вверх и вниз)
+      * показатель (дробное число - значение чего-то)
+      * и т.д. **/
+  }
+
+enum AlertType {
+  	CRITICAL, REGULAR
+}
+
+entity MetricMeta {
+    label01 String
+    // ....
+    label256 String
+}
+
+entity Client {
+    protocolAddress String
+    protocolPort Int
+    protocolUri String
+    protocolStreamId Int
+    metricProducerAddress String
+    metricProducerPort Int
+    metricProducerUri String
+    metricProducerStreamId Int
+}
+
+entity MetricTagsValue {
+    value01 String
+    // ....
+    value256 String
+}
+
+entity Tenant {
+    name String
+    description String
+}
+
+entity Metric {
+    type MetricType required
+    name String
+    description String
+}
+
+entity Alert {
+    type AlertType required
+    name String
+    description String
+}
+
+entity AlertSubscriber {
+    subscriberAddress String
+    subscriberPort Int
+    subscriberUri String
+    subscriberStreamId Int
+}
+
+entity MetricSubscriber {
+    subscriberAddress String
+    subscriberPort Int
+    subscriberUri String
+    subscriberStreamId Int
+}
+
+
+relationship OneToOne {
+    MetricMeta{tenant required} to Tenant
+}
+
+relationship OneToMany {
+    Tenant to Client{tenant required}
+    Tenant to MetricTagsValue{tenant required}
+}
+
+relationship OneToMany {
+     Client to Metric{client required}
+}
+
+relationship OneToMany {
+    Client to MetricSubscriber{client required}
+}
+
+relationship OneToOne {
+    MetricTagsValue{metric required} to Metric
+}
+
+relationship OneToMany {
+    Metric to Alert{metric required} 
+    Metric to MetricSubscriber{metric required}
+}
+
+relationship ManyToOne {
+    AlertSubscriber{alert required} to Alert
+    AlertSubscriber{client required} to Client
+}

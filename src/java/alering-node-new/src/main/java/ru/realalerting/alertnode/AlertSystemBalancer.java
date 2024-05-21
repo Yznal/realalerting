@@ -1,5 +1,7 @@
 package ru.realalerting.alertnode;
 
+import ru.realalerting.alertlogic.AlertInfo;
+import ru.realalerting.alertlogic.AlertLogicBase;
 import ru.realalerting.producer.Producer;
 import ru.realalerting.protocol.client.ApiNode;
 import ru.realalerting.subscriber.Subscriber;
@@ -38,5 +40,19 @@ public class AlertSystemBalancer {
     public AlertNode[] getAlertNodesByClientId(int clientId) {
         return new AlertNode[]{alertNodes[alertNodeIdByClientId.get(2 * clientId)],
                 alertNodes[alertNodeIdByClientId.get(2 * clientId + 1)]};
+    }
+
+    public void addAlertToClientsAlertNodes(int clientId, AlertInfo alertInfo, AlertLogicBase alertLogic) {
+        AlertNode node1 = alertNodes[alertNodeIdByClientId.get(2 * clientId)];
+        AlertNode node2 = alertNodes[alertNodeIdByClientId.get(2 * clientId + 1)];
+        node1.addAlert(alertInfo, alertLogic);
+        node2.addAlert(alertInfo, alertLogic);
+    }
+
+    public void startClientsAlertNodes(int clientId) throws Exception {
+        AlertNode node1 = alertNodes[alertNodeIdByClientId.get(2 * clientId)];
+        AlertNode node2 = alertNodes[alertNodeIdByClientId.get(2 * clientId + 1)];
+        node1.start();
+        node2.start();
     }
 }

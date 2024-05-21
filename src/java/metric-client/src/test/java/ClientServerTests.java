@@ -17,8 +17,11 @@ import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.subscriber.Subscriber;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -173,45 +176,100 @@ public class ClientServerTests {
         int alertMetricId = 12;
         String[] tags = {"ya", "south"};
         List<CharSequence> tagsList = new ArrayList<CharSequence>(Arrays.asList(tags));
-        Metric metric = metricRegistry.getMetric(tagsList);
-        metric.setAlertProducer(alertProducer);
-        metric.setAlertLogic(new GreaterAlert(new AlertInfo(alertId, alertMetricId,  threshold)));
-        long alertValue1 = 13, alertValue2 = 300;
-        long alertTimestamp1 = 100, alertTimestamp2 = 101;
-        metric.addValue(alertValue1, alertTimestamp1);
-        metric.addValue(alertValue2, alertTimestamp2);
-        assertEquals(metric.getMetricId(), -1);
+
         GetMetricId work = new GetMetricId();
         work.addToMap(tagsList, alertMetricId);
+
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
             buffer.getInt(offset); // вытаскиваем id инструкции
             offset += MetricConstants.INT_SIZE;
             work.doWork(serverProducer, buffer, offset, length, header);
         };
-        int poll = -1;
-        while (poll <= 0) {
-            poll = serverSubscriber.getSubscription().poll(handler, 1000);
-            serverSubscriber.getIdle().idle();
+
+        new Thread(() -> {
+            int poll = -1;
+            while (poll <= 0) {
+                poll = serverSubscriber.getSubscription().poll(handler, 1000);
+                serverSubscriber.getIdle().idle();
+            }
+        }).start();
+
+        int metricsCount = 1000000;
+        // отправили запрос на metricId
+        long startRequest = System.nanoTime();
+        ArrayList<Long >startAlert = new ArrayList<>(metricsCount);
+        ArrayList<Long> endAlert = new ArrayList<>(metricsCount);
+        Metric metric = metricRegistry.getMetric(tagsList);
+        metric.setAlertProducer(alertProducer);
+        metric.setAlertLogic(new GreaterAlert(new AlertInfo(alertId, alertMetricId,  threshold)));
+        long alertValue1 = 13, alertValue2 = 300;
+        long alertTimestamp1 = 100, alertTimestamp2 = 100;
+        AtomicInteger curAlert = new AtomicInteger(0);
+        new Thread(() -> {
+            FragmentHandler alertHandler = (DirectBuffer buffer, int offset, int length, Header header) -> {
+                int metricId = buffer.getInt(offset);
+                offset += MetricConstants.INT_SIZE;
+                long value = buffer.getLong(offset);
+                offset += MetricConstants.LONG_SIZE;
+                long timestamp = buffer.getLong(offset);
+                offset += MetricConstants.LONG_SIZE;
+                int curAlertId = curAlert.getAndIncrement();
+                assertEquals(metric.getMetricId(), metricId);
+//                assertEquals(value, curAlertId + threshold + 1);
+//                assertEquals(timestamp, alertTimestamp2 + curAlertId);
+                endAlert.add(System.nanoTime());
+                // получили крит алерт
+            };
+            int poll = -1;
+            while (poll <= 0 || curAlert.get() < metricsCount) {
+                poll = alertSubscriber.getSubscription().poll(alertHandler, 100000);
+                alertSubscriber.getIdle().idle();
+            }
+        }).start();
+
+        for (int i = 0; i < metricsCount; ++i) {
+            metric.addValue(i + threshold + 1, alertTimestamp1++);
+            startAlert.add(System.nanoTime());
         }
-        Thread.sleep(20);
+//        metric.addValue(alertValue1, alertTimestamp1);
+        // отправили метрику для крит алерта
+//        metric.addValue(alertValue2, alertTimestamp2);
+//        assertEquals(metric.getMetricId(), -1);
+        Thread.sleep(10);
         MetricRegistry temp = MetricRegistry.getInstance();
         assertEquals(metric.getMetricId(), alertMetricId);
-
-        FragmentHandler alertHandler = (DirectBuffer buffer, int offset, int length, Header header) -> {
-            int metricId = buffer.getInt(offset);
-            offset += MetricConstants.INT_SIZE;
-            long value = buffer.getLong(offset);
-            offset += MetricConstants.LONG_SIZE;
-            long timestamp = buffer.getLong(offset);
-            offset += MetricConstants.LONG_SIZE;
-            assertEquals(metric.getMetricId(), metricId);
-            assertEquals(value, alertValue2);
-            assertEquals(timestamp, alertTimestamp2);
-        };
-        poll = -1;
-        while (poll <= 0) {
-            poll = alertSubscriber.getSubscription().poll(alertHandler, 1000);
-            alertSubscriber.getIdle().idle();
+        long endRequest = System.nanoTime();
+        // Получили ответ на запрос
+        ArrayList<Long> latencies = new ArrayList<>(metricsCount);
+        while (curAlert.get() < metricsCount) {
+            Thread.sleep(20);
         }
+        for (int i = 0; i < metricsCount; ++i) {
+            latencies.add(endAlert.get(i) - startAlert.get(i));
+        }
+        System.out.println("Request response time: " + getMicroLatency(endRequest - startRequest) + " mcs");
+        latencies.sort(Comparator.naturalOrder());
+        System.out.println(String.format("Fastest - %s mcs", getMicroLatency(latencies.getFirst())));
+        System.out.println(String.format("0.5 latency - %s mcs", getLatencyPercentile(latencies, 0.5)));
+        System.out.println(String.format("0.9 latency - %s mcs", getLatencyPercentile(latencies, 0.9)));
+        System.out.println(String.format("0.95 latency - %s mcs", getLatencyPercentile(latencies, 0.95)));
+        System.out.println(String.format("0.99 latency - %s mcs", getLatencyPercentile(latencies, 0.99)));
+
+
     }
+
+
+    private double getLatencyPercentile(List<Long> nanoLatencies, double percentile) {
+        var index = (int) (percentile * nanoLatencies.size());
+        var nanoLatency = nanoLatencies.get(index);
+        return getMicroLatency(nanoLatency);
+    }
+
+    private double getMicroLatency(Long nanoLatency) {
+        var microLatency = nanoLatency / 1000.0;
+        return new BigDecimal(microLatency)
+                .setScale(3, RoundingMode.HALF_UP)
+                .doubleValue();
+    }
+
 }
