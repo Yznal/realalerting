@@ -50,6 +50,20 @@ public class CacheConfiguration {
             createCache(cm, ru.realalerting.controlplane.domain.User.class.getName());
             createCache(cm, ru.realalerting.controlplane.domain.Authority.class.getName());
             createCache(cm, ru.realalerting.controlplane.domain.User.class.getName() + ".authorities");
+            createCache(cm, ru.realalerting.controlplane.domain.MetricMeta.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.Client.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.Client.class.getName() + ".metrics");
+            createCache(cm, ru.realalerting.controlplane.domain.Client.class.getName() + ".metricSubscribers");
+            createCache(cm, ru.realalerting.controlplane.domain.MetricTagsValue.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.Tenant.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.Tenant.class.getName() + ".clients");
+            createCache(cm, ru.realalerting.controlplane.domain.Tenant.class.getName() + ".metricTagsValues");
+            createCache(cm, ru.realalerting.controlplane.domain.Metric.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.Metric.class.getName() + ".alerts");
+            createCache(cm, ru.realalerting.controlplane.domain.Metric.class.getName() + ".metricSubscribers");
+            createCache(cm, ru.realalerting.controlplane.domain.Alert.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.AlertSubscriber.class.getName());
+            createCache(cm, ru.realalerting.controlplane.domain.MetricSubscriber.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

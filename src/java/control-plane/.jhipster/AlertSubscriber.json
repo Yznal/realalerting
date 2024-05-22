@@ -1,0 +1,42 @@
+{
+  "annotations": {
+    "changelogDate": "20240522084014"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "subscriberAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "subscriberPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "subscriberUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "subscriberStreamId",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "AlertSubscriber",
+  "relationships": [
+    {
+      "otherEntityName": "alert",
+      "relationshipName": "alert",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

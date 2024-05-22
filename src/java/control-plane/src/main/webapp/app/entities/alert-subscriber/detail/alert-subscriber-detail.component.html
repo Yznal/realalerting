@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (alertSubscriber()) {
+      <div>
+        <h2 data-cy="alertSubscriberDetailsHeading">
+          <span jhiTranslate="controlPlaneApp.alertSubscriber.detail.title">Alert Subscriber</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ alertSubscriber()!.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.subscriberAddress">Subscriber Address</span></dt>
+          <dd>
+            <span>{{ alertSubscriber()!.subscriberAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.subscriberPort">Subscriber Port</span></dt>
+          <dd>
+            <span>{{ alertSubscriber()!.subscriberPort }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.subscriberUri">Subscriber Uri</span></dt>
+          <dd>
+            <span>{{ alertSubscriber()!.subscriberUri }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.subscriberStreamId">Subscriber Stream Id</span></dt>
+          <dd>
+            <span>{{ alertSubscriber()!.subscriberStreamId }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.alert">Alert</span></dt>
+          <dd>
+            @if (alertSubscriber()!.alert) {
+              <div>
+                <a [routerLink]="['/alert', alertSubscriber()!.alert?.id, 'view']">{{ alertSubscriber()!.alert?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.client">Client</span></dt>
+          <dd>
+            @if (alertSubscriber()!.client) {
+              <div>
+                <a [routerLink]="['/client', alertSubscriber()!.client?.id, 'view']">{{ alertSubscriber()!.client?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/alert-subscriber', alertSubscriber()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,30 @@
+{
+  "controlPlaneApp": {
+    "metric": {
+      "home": {
+        "title": "Metrics",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Metric",
+        "createOrEditLabel": "Create or edit a Metric",
+        "notFound": "No Metrics found"
+      },
+      "created": "A new Metric is created with identifier {{ param }}",
+      "updated": "A Metric is updated with identifier {{ param }}",
+      "deleted": "A Metric is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Metric {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric"
+      },
+      "id": "ID",
+      "type": "Type",
+      "name": "Name",
+      "description": "Description",
+      "alert": "Alert",
+      "metricSubscriber": "Metric Subscriber",
+      "client": "Client",
+      "metricTagsValue": "Metric Tags Value"
+    }
+  }
+}

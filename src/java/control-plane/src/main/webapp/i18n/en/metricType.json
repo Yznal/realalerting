@@ -1,0 +1,9 @@
+{
+  "controlPlaneApp": {
+    "MetricType": {
+      "null": "",
+      "INT": "INT",
+      "DOUBLE": "DOUBLE"
+    }
+  }
+}

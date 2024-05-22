@@ -1,0 +1,27 @@
+{
+  "annotations": {
+    "changelogDate": "20240522084008"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "label01",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "label256",
+      "fieldType": "String"
+    }
+  ],
+  "name": "MetricMeta",
+  "relationships": [
+    {
+      "otherEntityName": "tenant",
+      "relationshipName": "tenant",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

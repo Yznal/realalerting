@@ -1,0 +1,170 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-client-heading" data-cy="ClientCreateUpdateHeading" jhiTranslate="controlPlaneApp.client.home.createOrEditLabel">
+        Create or edit a Client
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="controlPlaneApp.client.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolAddress" jhiTranslate="controlPlaneApp.client.protocolAddress"
+            >Protocol Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="protocolAddress"
+            id="field_protocolAddress"
+            data-cy="protocolAddress"
+            formControlName="protocolAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolPort" jhiTranslate="controlPlaneApp.client.protocolPort">Protocol Port</label>
+          <input
+            type="number"
+            class="form-control"
+            name="protocolPort"
+            id="field_protocolPort"
+            data-cy="protocolPort"
+            formControlName="protocolPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolUri" jhiTranslate="controlPlaneApp.client.protocolUri">Protocol Uri</label>
+          <input
+            type="text"
+            class="form-control"
+            name="protocolUri"
+            id="field_protocolUri"
+            data-cy="protocolUri"
+            formControlName="protocolUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolStreamId" jhiTranslate="controlPlaneApp.client.protocolStreamId"
+            >Protocol Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="protocolStreamId"
+            id="field_protocolStreamId"
+            data-cy="protocolStreamId"
+            formControlName="protocolStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerAddress" jhiTranslate="controlPlaneApp.client.metricProducerAddress"
+            >Metric Producer Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="metricProducerAddress"
+            id="field_metricProducerAddress"
+            data-cy="metricProducerAddress"
+            formControlName="metricProducerAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerPort" jhiTranslate="controlPlaneApp.client.metricProducerPort"
+            >Metric Producer Port</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="metricProducerPort"
+            id="field_metricProducerPort"
+            data-cy="metricProducerPort"
+            formControlName="metricProducerPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerUri" jhiTranslate="controlPlaneApp.client.metricProducerUri"
+            >Metric Producer Uri</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="metricProducerUri"
+            id="field_metricProducerUri"
+            data-cy="metricProducerUri"
+            formControlName="metricProducerUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerStreamId" jhiTranslate="controlPlaneApp.client.metricProducerStreamId"
+            >Metric Producer Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="metricProducerStreamId"
+            id="field_metricProducerStreamId"
+            data-cy="metricProducerStreamId"
+            formControlName="metricProducerStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_tenant" jhiTranslate="controlPlaneApp.client.tenant">Tenant</label>
+          <select
+            class="form-control"
+            id="field_tenant"
+            data-cy="tenant"
+            name="tenant"
+            formControlName="tenant"
+            [compareWith]="compareTenant"
+          >
+            @if (editForm.get(['tenant'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (tenantOption of tenantsSharedCollection; track $index) {
+              <option [ngValue]="tenantOption">{{ tenantOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['tenant'])!.invalid && (editForm.get(['tenant'])!.dirty || editForm.get(['tenant'])!.touched)) {
+          <div>
+            @if (editForm.get(['tenant'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

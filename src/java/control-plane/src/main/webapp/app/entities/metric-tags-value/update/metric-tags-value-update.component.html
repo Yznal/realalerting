@@ -1,0 +1,102 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-metric-tags-value-heading"
+        data-cy="MetricTagsValueCreateUpdateHeading"
+        jhiTranslate="controlPlaneApp.metricTagsValue.home.createOrEditLabel"
+      >
+        Create or edit a Metric Tags Value
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="controlPlaneApp.metricTagsValue.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_value01" jhiTranslate="controlPlaneApp.metricTagsValue.value01">Value 01</label>
+          <input type="text" class="form-control" name="value01" id="field_value01" data-cy="value01" formControlName="value01" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_value256" jhiTranslate="controlPlaneApp.metricTagsValue.value256">Value 256</label>
+          <input type="text" class="form-control" name="value256" id="field_value256" data-cy="value256" formControlName="value256" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metric" jhiTranslate="controlPlaneApp.metricTagsValue.metric">Metric</label>
+          <select
+            class="form-control"
+            id="field_metric"
+            data-cy="metric"
+            name="metric"
+            formControlName="metric"
+            [compareWith]="compareMetric"
+          >
+            @if (editForm.get(['metric'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (metricOption of metricsCollection; track $index) {
+              <option [ngValue]="metricOption">{{ metricOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['metric'])!.invalid && (editForm.get(['metric'])!.dirty || editForm.get(['metric'])!.touched)) {
+          <div>
+            @if (editForm.get(['metric'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_tenant" jhiTranslate="controlPlaneApp.metricTagsValue.tenant">Tenant</label>
+          <select
+            class="form-control"
+            id="field_tenant"
+            data-cy="tenant"
+            name="tenant"
+            formControlName="tenant"
+            [compareWith]="compareTenant"
+          >
+            @if (editForm.get(['tenant'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (tenantOption of tenantsSharedCollection; track $index) {
+              <option [ngValue]="tenantOption">{{ tenantOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['tenant'])!.invalid && (editForm.get(['tenant'])!.dirty || editForm.get(['tenant'])!.touched)) {
+          <div>
+            @if (editForm.get(['tenant'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

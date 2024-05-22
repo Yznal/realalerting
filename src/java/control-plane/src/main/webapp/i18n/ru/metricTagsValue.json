@@ -1,0 +1,27 @@
+{
+  "controlPlaneApp": {
+    "metricTagsValue": {
+      "home": {
+        "title": "Metric Tags Values",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Metric Tags Value",
+        "createOrEditLabel": "Создать или отредактировать Metric Tags Value",
+        "notFound": "Metric Tags Values не найдено"
+      },
+      "created": "Новый Metric Tags Value создан с идентификатором {{ param }}",
+      "updated": "Metric Tags Value обновлен с идентификатором {{ param }}",
+      "deleted": "Metric Tags Value удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Metric Tags Value {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric Tags Value"
+      },
+      "id": "ID",
+      "value01": "Value 01",
+      "value256": "Value 256",
+      "metric": "Metric",
+      "tenant": "Tenant"
+    }
+  }
+}

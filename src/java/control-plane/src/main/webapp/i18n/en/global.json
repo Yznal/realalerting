@@ -8,7 +8,15 @@
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "adminAuthority": "Authority",
+        "metricMeta": "Metric Meta",
+        "client": "Client",
+        "metricTagsValue": "Metric Tags Value",
+        "tenant": "Tenant",
+        "metric": "Metric",
+        "alert": "Alert",
+        "alertSubscriber": "Alert Subscriber",
+        "metricSubscriber": "Metric Subscriber"
       },
       "account": {
         "main": "Account",

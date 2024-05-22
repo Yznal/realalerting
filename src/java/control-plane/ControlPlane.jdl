@@ -13,10 +13,11 @@ application {
         languages [en, ru]
         prodDatabaseType postgresql
     }
+    entities *
 }
 
 enum MetricType {
-    INT, DOUBLE 
+    INT, DOUBLE
       /** возможно нужно не по типам, а по способу взаимодействия
       * счетчик (может идти только вврех),
       * числовой (вверх и вниз)
@@ -36,13 +37,13 @@ entity MetricMeta {
 
 entity Client {
     protocolAddress String
-    protocolPort Int
+    protocolPort Integer
     protocolUri String
-    protocolStreamId Int
+    protocolStreamId Integer
     metricProducerAddress String
-    metricProducerPort Int
+    metricProducerPort Integer
     metricProducerUri String
-    metricProducerStreamId Int
+    metricProducerStreamId Integer
 }
 
 entity MetricTagsValue {
@@ -70,16 +71,16 @@ entity Alert {
 
 entity AlertSubscriber {
     subscriberAddress String
-    subscriberPort Int
+    subscriberPort Integer
     subscriberUri String
-    subscriberStreamId Int
+    subscriberStreamId Integer
 }
 
 entity MetricSubscriber {
     subscriberAddress String
-    subscriberPort Int
+    subscriberPort Integer
     subscriberUri String
-    subscriberStreamId Int
+    subscriberStreamId Integer
 }
 
 
@@ -105,7 +106,7 @@ relationship OneToOne {
 }
 
 relationship OneToMany {
-    Metric to Alert{metric required} 
+    Metric to Alert{metric required}
     Metric to MetricSubscriber{metric required}
 }
 

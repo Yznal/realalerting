@@ -1,0 +1,29 @@
+{
+  "controlPlaneApp": {
+    "metricSubscriber": {
+      "home": {
+        "title": "Metric Subscribers",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Metric Subscriber",
+        "createOrEditLabel": "Создать или отредактировать Metric Subscriber",
+        "notFound": "Metric Subscribers не найдено"
+      },
+      "created": "Новый Metric Subscriber создан с идентификатором {{ param }}",
+      "updated": "Metric Subscriber обновлен с идентификатором {{ param }}",
+      "deleted": "Metric Subscriber удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Metric Subscriber {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric Subscriber"
+      },
+      "id": "ID",
+      "subscriberAddress": "Subscriber Address",
+      "subscriberPort": "Subscriber Port",
+      "subscriberUri": "Subscriber Uri",
+      "subscriberStreamId": "Subscriber Stream Id",
+      "client": "Client",
+      "metric": "Metric"
+    }
+  }
+}

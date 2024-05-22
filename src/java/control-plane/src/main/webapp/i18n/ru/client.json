@@ -1,0 +1,34 @@
+{
+  "controlPlaneApp": {
+    "client": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Client",
+        "createOrEditLabel": "Создать или отредактировать Client",
+        "notFound": "Clients не найдено"
+      },
+      "created": "Новый Client создан с идентификатором {{ param }}",
+      "updated": "Client обновлен с идентификатором {{ param }}",
+      "deleted": "Client удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Client {{ id }}?"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "ID",
+      "protocolAddress": "Protocol Address",
+      "protocolPort": "Protocol Port",
+      "protocolUri": "Protocol Uri",
+      "protocolStreamId": "Protocol Stream Id",
+      "metricProducerAddress": "Metric Producer Address",
+      "metricProducerPort": "Metric Producer Port",
+      "metricProducerUri": "Metric Producer Uri",
+      "metricProducerStreamId": "Metric Producer Stream Id",
+      "metric": "Metric",
+      "metricSubscriber": "Metric Subscriber",
+      "tenant": "Tenant"
+    }
+  }
+}

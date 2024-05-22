@@ -1,0 +1,33 @@
+{
+  "annotations": {
+    "changelogDate": "20240522084013"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "AlertType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "CRITICAL,REGULAR"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Alert",
+  "relationships": [
+    {
+      "otherEntityName": "metric",
+      "relationshipName": "metric",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

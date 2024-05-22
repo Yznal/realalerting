@@ -1,0 +1,155 @@
+<div>
+  <h2 id="page-heading" data-cy="ClientHeading">
+    <span jhiTranslate="controlPlaneApp.client.home.title">Clients</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.client.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-client"
+        [routerLink]="['/client/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.client.home.createLabel">Create a new Client</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (clients?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="controlPlaneApp.client.home.notFound">No Clients found</span>
+    </div>
+  }
+
+  @if (clients && clients.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolAddress">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolAddress">Protocol Address</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolPort">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolPort">Protocol Port</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolUri">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolUri">Protocol Uri</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolStreamId">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolStreamId">Protocol Stream Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metricProducerAddress">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.metricProducerAddress">Metric Producer Address</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metricProducerPort">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.metricProducerPort">Metric Producer Port</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metricProducerUri">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.metricProducerUri">Metric Producer Uri</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metricProducerStreamId">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.metricProducerStreamId">Metric Producer Stream Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tenant.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.tenant">Tenant</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (client of clients; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/client', client.id, 'view']">{{ client.id }}</a>
+              </td>
+              <td>{{ client.protocolAddress }}</td>
+              <td>{{ client.protocolPort }}</td>
+              <td>{{ client.protocolUri }}</td>
+              <td>{{ client.protocolStreamId }}</td>
+              <td>{{ client.metricProducerAddress }}</td>
+              <td>{{ client.metricProducerPort }}</td>
+              <td>{{ client.metricProducerUri }}</td>
+              <td>{{ client.metricProducerStreamId }}</td>
+              <td>
+                @if (client.tenant) {
+                  <div>
+                    <a [routerLink]="['/tenant', client.tenant.id, 'view']">{{ client.tenant.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/client', client.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/client', client.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(client)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,50 @@
+{
+  "annotations": {
+    "changelogDate": "20240522084012"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "MetricType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "INT,DOUBLE",
+      "fieldValuesJavadocs": {
+        "DOUBLE": "возможно нужно не по типам, а по способу взаимодействия\n      * счетчик (может идти только вврех),\n      * числовой (вверх и вниз)\n      * показатель (дробное число - значение чего-то)\n      * и т.д."
+      }
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Metric",
+  "relationships": [
+    {
+      "otherEntityName": "alert",
+      "otherEntityRelationshipName": "metric",
+      "relationshipName": "alert",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "metricSubscriber",
+      "otherEntityRelationshipName": "metric",
+      "relationshipName": "metricSubscriber",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

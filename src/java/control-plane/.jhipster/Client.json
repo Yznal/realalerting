@@ -1,0 +1,65 @@
+{
+  "annotations": {
+    "changelogDate": "20240522084009"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "protocolAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "protocolPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "protocolUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "protocolStreamId",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "metricProducerAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "metricProducerPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "metricProducerUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "metricProducerStreamId",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "Client",
+  "relationships": [
+    {
+      "otherEntityName": "metric",
+      "otherEntityRelationshipName": "client",
+      "relationshipName": "metric",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "metricSubscriber",
+      "otherEntityRelationshipName": "client",
+      "relationshipName": "metricSubscriber",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "tenant",
+      "relationshipName": "tenant",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}
