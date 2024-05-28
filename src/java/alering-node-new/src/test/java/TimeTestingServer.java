@@ -1,10 +1,12 @@
 import io.aeron.logbuffer.FragmentHandler;
 import io.aeron.logbuffer.Header;
+import io.vertx.sqlclient.SqlClient;
 import org.agrona.DirectBuffer;
 import ru.realalerting.alertlogic.*;
 import ru.realalerting.alertnode.AlertNode;
 import ru.realalerting.alertnode.AlertSystemBalancer;
 import ru.realalerting.producer.Producer;
+import ru.realalerting.protocol.DataBaseConnection;
 import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.protocol.client.GetMetricId;
@@ -12,6 +14,7 @@ import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.subscriber.Subscriber;
 
 public class TimeTestingServer {
+    private SqlClient client = DataBaseConnection.connect(5);
 
     int clientCount = 3;
     int alertPerClient = 4;
@@ -71,7 +74,7 @@ public class TimeTestingServer {
             FragmentHandler serverGetIdHandler = (DirectBuffer buffer, int offset, int length, Header header) -> {
                 buffer.getInt(offset); // вытаскиваем id инструкции
                 offset += MetricConstants.INT_SIZE;
-                work.doWork(apiNodes[finalI].serverProducer, buffer, offset, length, header);
+                work.doWork(client, apiNodes[finalI].serverProducer, buffer, offset, length, header);
             };
             new Thread(() -> {
                 int poll = -1;

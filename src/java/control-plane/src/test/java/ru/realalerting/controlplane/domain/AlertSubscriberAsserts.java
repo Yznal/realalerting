@@ -62,7 +62,7 @@ public class AlertSubscriberAsserts {
     public static void assertAlertSubscriberUpdatableRelationshipsEquals(AlertSubscriber expected, AlertSubscriber actual) {
         assertThat(expected)
             .as("Verify AlertSubscriber relationships")
-            .satisfies(e -> assertThat(e.getAlert()).as("check alert").isEqualTo(actual.getAlert()))
-            .satisfies(e -> assertThat(e.getClient()).as("check client").isEqualTo(actual.getClient()));
+            .satisfies(e -> assertThat(e.getClient()).as("check client").isEqualTo(actual.getClient()))
+            .satisfies(e -> assertThat(e.getRealAlert()).as("check realAlert").isEqualTo(actual.getRealAlert()));
     }
 }

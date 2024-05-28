@@ -1,25 +1,31 @@
 import { IMetric, NewMetric } from './metric.model';
 
 export const sampleWithRequiredData: IMetric = {
-  id: 10457,
+  id: 14158,
   type: 'DOUBLE',
 };
 
 export const sampleWithPartialData: IMetric = {
-  id: 14158,
+  id: 19099,
   type: 'DOUBLE',
-  name: 'telex underneath solidify',
+  criticalAlertProducerAddress: 'ah',
+  criticalAlertProducerPort: 8188,
+  criticalAlertProducerStreamId: 4566,
 };
 
 export const sampleWithFullData: IMetric = {
-  id: 13381,
-  type: 'DOUBLE',
-  name: 'underperform sleepy',
-  description: 'sorrowful utterly defenseless',
+  id: 27435,
+  type: 'INT',
+  name: 'moist provided',
+  description: 'rotating before furthermore',
+  criticalAlertProducerAddress: 'worm standard cofactor',
+  criticalAlertProducerPort: 3477,
+  criticalAlertProducerUri: 'among green crowd',
+  criticalAlertProducerStreamId: 4926,
 };
 
 export const sampleWithNewData: NewMetric = {
-  type: 'DOUBLE',
+  type: 'INT',
   id: null,
 };
 

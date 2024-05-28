@@ -47,10 +47,45 @@ public class ClientAsserts {
     public static void assertClientUpdatableFieldsEquals(Client expected, Client actual) {
         assertThat(expected)
             .as("Verify Client relevant properties")
-            .satisfies(e -> assertThat(e.getProtocolAddress()).as("check protocolAddress").isEqualTo(actual.getProtocolAddress()))
-            .satisfies(e -> assertThat(e.getProtocolPort()).as("check protocolPort").isEqualTo(actual.getProtocolPort()))
-            .satisfies(e -> assertThat(e.getProtocolUri()).as("check protocolUri").isEqualTo(actual.getProtocolUri()))
-            .satisfies(e -> assertThat(e.getProtocolStreamId()).as("check protocolStreamId").isEqualTo(actual.getProtocolStreamId()))
+            .satisfies(
+                e ->
+                    assertThat(e.getProtocolProducerAddress())
+                        .as("check protocolProducerAddress")
+                        .isEqualTo(actual.getProtocolProducerAddress())
+            )
+            .satisfies(
+                e -> assertThat(e.getProtocolProducerPort()).as("check protocolProducerPort").isEqualTo(actual.getProtocolProducerPort())
+            )
+            .satisfies(
+                e -> assertThat(e.getProtocolProducerUri()).as("check protocolProducerUri").isEqualTo(actual.getProtocolProducerUri())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getProtocolProducerStreamId())
+                        .as("check protocolProducerStreamId")
+                        .isEqualTo(actual.getProtocolProducerStreamId())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getProtocolSubscriberAddress())
+                        .as("check protocolSubscriberAddress")
+                        .isEqualTo(actual.getProtocolSubscriberAddress())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getProtocolSubscriberPort())
+                        .as("check protocolSubscriberPort")
+                        .isEqualTo(actual.getProtocolSubscriberPort())
+            )
+            .satisfies(
+                e -> assertThat(e.getProtocolSubscriberUri()).as("check protocolSubscriberUri").isEqualTo(actual.getProtocolSubscriberUri())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getProtocolSubscriberStreamId())
+                        .as("check protocolSubscriberStreamId")
+                        .isEqualTo(actual.getProtocolSubscriberStreamId())
+            )
             .satisfies(
                 e -> assertThat(e.getMetricProducerAddress()).as("check metricProducerAddress").isEqualTo(actual.getMetricProducerAddress())
             )

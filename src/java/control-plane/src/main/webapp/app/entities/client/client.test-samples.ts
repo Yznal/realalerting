@@ -1,28 +1,34 @@
 import { IClient, NewClient } from './client.model';
 
 export const sampleWithRequiredData: IClient = {
-  id: 9211,
+  id: 13318,
 };
 
 export const sampleWithPartialData: IClient = {
-  id: 31401,
-  protocolAddress: 'except criticize',
-  protocolUri: 'before',
-  protocolStreamId: 6879,
-  metricProducerPort: 14281,
-  metricProducerStreamId: 12242,
+  id: 13559,
+  protocolProducerPort: 8709,
+  protocolProducerStreamId: 16276,
+  protocolSubscriberUri: 'cone host unsightly',
+  metricProducerAddress: 'disengagement for what',
+  metricProducerPort: 21697,
+  metricProducerUri: 'outgoing not',
+  metricProducerStreamId: 30153,
 };
 
 export const sampleWithFullData: IClient = {
-  id: 18974,
-  protocolAddress: 'voluntarily even',
-  protocolPort: 6392,
-  protocolUri: 'disarmament enormous',
-  protocolStreamId: 16473,
-  metricProducerAddress: 'beech site',
-  metricProducerPort: 20812,
-  metricProducerUri: 'unless drafty beautifully',
-  metricProducerStreamId: 8770,
+  id: 30846,
+  protocolProducerAddress: 'deliberately',
+  protocolProducerPort: 20399,
+  protocolProducerUri: 'slur woot',
+  protocolProducerStreamId: 1700,
+  protocolSubscriberAddress: 'disloyal',
+  protocolSubscriberPort: 4954,
+  protocolSubscriberUri: 'boohoo artifact',
+  protocolSubscriberStreamId: 10303,
+  metricProducerAddress: 'interconnect',
+  metricProducerPort: 16166,
+  metricProducerUri: 'worth',
+  metricProducerStreamId: 23891,
 };
 
 export const sampleWithNewData: NewClient = {

@@ -1,5 +1,5 @@
-import { IAlert } from 'app/entities/alert/alert.model';
 import { IClient } from 'app/entities/client/client.model';
+import { IRealAlert } from 'app/entities/real-alert/real-alert.model';
 
 export interface IAlertSubscriber {
   id: number;
@@ -7,8 +7,8 @@ export interface IAlertSubscriber {
   subscriberPort?: number | null;
   subscriberUri?: string | null;
   subscriberStreamId?: number | null;
-  alert?: IAlert | null;
   client?: IClient | null;
+  realAlert?: IRealAlert | null;
 }
 
 export type NewAlertSubscriber = Omit<IAlertSubscriber, 'id'> & { id: null };

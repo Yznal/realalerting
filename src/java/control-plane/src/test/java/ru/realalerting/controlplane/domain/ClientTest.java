@@ -1,9 +1,11 @@
 package ru.realalerting.controlplane.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.realalerting.controlplane.domain.AlertSubscriberTestSamples.*;
 import static ru.realalerting.controlplane.domain.ClientTestSamples.*;
 import static ru.realalerting.controlplane.domain.MetricSubscriberTestSamples.*;
 import static ru.realalerting.controlplane.domain.MetricTestSamples.*;
+import static ru.realalerting.controlplane.domain.RealAlertTestSamples.*;
 import static ru.realalerting.controlplane.domain.TenantTestSamples.*;
 
 import java.util.HashSet;
@@ -69,6 +71,50 @@ class ClientTest {
         client.setMetricSubscribers(new HashSet<>());
         assertThat(client.getMetricSubscribers()).doesNotContain(metricSubscriberBack);
         assertThat(metricSubscriberBack.getClient()).isNull();
+    }
+
+    @Test
+    void realAlertTest() throws Exception {
+        Client client = getClientRandomSampleGenerator();
+        RealAlert realAlertBack = getRealAlertRandomSampleGenerator();
+
+        client.addRealAlert(realAlertBack);
+        assertThat(client.getRealAlerts()).containsOnly(realAlertBack);
+        assertThat(realAlertBack.getClient()).isEqualTo(client);
+
+        client.removeRealAlert(realAlertBack);
+        assertThat(client.getRealAlerts()).doesNotContain(realAlertBack);
+        assertThat(realAlertBack.getClient()).isNull();
+
+        client.realAlerts(new HashSet<>(Set.of(realAlertBack)));
+        assertThat(client.getRealAlerts()).containsOnly(realAlertBack);
+        assertThat(realAlertBack.getClient()).isEqualTo(client);
+
+        client.setRealAlerts(new HashSet<>());
+        assertThat(client.getRealAlerts()).doesNotContain(realAlertBack);
+        assertThat(realAlertBack.getClient()).isNull();
+    }
+
+    @Test
+    void alertSubscriberTest() throws Exception {
+        Client client = getClientRandomSampleGenerator();
+        AlertSubscriber alertSubscriberBack = getAlertSubscriberRandomSampleGenerator();
+
+        client.addAlertSubscriber(alertSubscriberBack);
+        assertThat(client.getAlertSubscribers()).containsOnly(alertSubscriberBack);
+        assertThat(alertSubscriberBack.getClient()).isEqualTo(client);
+
+        client.removeAlertSubscriber(alertSubscriberBack);
+        assertThat(client.getAlertSubscribers()).doesNotContain(alertSubscriberBack);
+        assertThat(alertSubscriberBack.getClient()).isNull();
+
+        client.alertSubscribers(new HashSet<>(Set.of(alertSubscriberBack)));
+        assertThat(client.getAlertSubscribers()).containsOnly(alertSubscriberBack);
+        assertThat(alertSubscriberBack.getClient()).isEqualTo(client);
+
+        client.setAlertSubscribers(new HashSet<>());
+        assertThat(client.getAlertSubscribers()).doesNotContain(alertSubscriberBack);
+        assertThat(alertSubscriberBack.getClient()).isNull();
     }
 
     @Test

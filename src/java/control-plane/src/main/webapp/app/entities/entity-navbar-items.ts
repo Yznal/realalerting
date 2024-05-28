@@ -27,9 +27,9 @@ export const EntityNavbarItems: NavbarItem[] = [
     translationKey: 'global.menu.entities.metric',
   },
   {
-    name: 'Alert',
-    route: '/alert',
-    translationKey: 'global.menu.entities.alert',
+    name: 'RealAlert',
+    route: '/real-alert',
+    translationKey: 'global.menu.entities.realAlert',
   },
   {
     name: 'AlertSubscriber',

@@ -70,15 +70,15 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="alert.id">
-              <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.alertSubscriber.alert">Alert</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="client.id">
               <div class="d-flex">
                 <span jhiTranslate="controlPlaneApp.alertSubscriber.client">Client</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="realAlert.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.alertSubscriber.realAlert">Real Alert</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
@@ -96,16 +96,16 @@
               <td>{{ alertSubscriber.subscriberUri }}</td>
               <td>{{ alertSubscriber.subscriberStreamId }}</td>
               <td>
-                @if (alertSubscriber.alert) {
+                @if (alertSubscriber.client) {
                   <div>
-                    <a [routerLink]="['/alert', alertSubscriber.alert.id, 'view']">{{ alertSubscriber.alert.id }}</a>
+                    <a [routerLink]="['/client', alertSubscriber.client.id, 'view']">{{ alertSubscriber.client.id }}</a>
                   </div>
                 }
               </td>
               <td>
-                @if (alertSubscriber.client) {
+                @if (alertSubscriber.realAlert) {
                   <div>
-                    <a [routerLink]="['/client', alertSubscriber.client.id, 'view']">{{ alertSubscriber.client.id }}</a>
+                    <a [routerLink]="['/real-alert', alertSubscriber.realAlert.id, 'view']">{{ alertSubscriber.realAlert.id }}</a>
                   </div>
                 }
               </td>

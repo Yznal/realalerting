@@ -1,11 +1,11 @@
 package ru.realalerting.controlplane.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.realalerting.controlplane.domain.AlertTestSamples.*;
 import static ru.realalerting.controlplane.domain.ClientTestSamples.*;
 import static ru.realalerting.controlplane.domain.MetricSubscriberTestSamples.*;
 import static ru.realalerting.controlplane.domain.MetricTagsValueTestSamples.*;
 import static ru.realalerting.controlplane.domain.MetricTestSamples.*;
+import static ru.realalerting.controlplane.domain.RealAlertTestSamples.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,25 +29,25 @@ class MetricTest {
     }
 
     @Test
-    void alertTest() throws Exception {
+    void realAlertTest() throws Exception {
         Metric metric = getMetricRandomSampleGenerator();
-        Alert alertBack = getAlertRandomSampleGenerator();
+        RealAlert realAlertBack = getRealAlertRandomSampleGenerator();
 
-        metric.addAlert(alertBack);
-        assertThat(metric.getAlerts()).containsOnly(alertBack);
-        assertThat(alertBack.getMetric()).isEqualTo(metric);
+        metric.addRealAlert(realAlertBack);
+        assertThat(metric.getRealAlerts()).containsOnly(realAlertBack);
+        assertThat(realAlertBack.getMetric()).isEqualTo(metric);
 
-        metric.removeAlert(alertBack);
-        assertThat(metric.getAlerts()).doesNotContain(alertBack);
-        assertThat(alertBack.getMetric()).isNull();
+        metric.removeRealAlert(realAlertBack);
+        assertThat(metric.getRealAlerts()).doesNotContain(realAlertBack);
+        assertThat(realAlertBack.getMetric()).isNull();
 
-        metric.alerts(new HashSet<>(Set.of(alertBack)));
-        assertThat(metric.getAlerts()).containsOnly(alertBack);
-        assertThat(alertBack.getMetric()).isEqualTo(metric);
+        metric.realAlerts(new HashSet<>(Set.of(realAlertBack)));
+        assertThat(metric.getRealAlerts()).containsOnly(realAlertBack);
+        assertThat(realAlertBack.getMetric()).isEqualTo(metric);
 
-        metric.setAlerts(new HashSet<>());
-        assertThat(metric.getAlerts()).doesNotContain(alertBack);
-        assertThat(alertBack.getMetric()).isNull();
+        metric.setRealAlerts(new HashSet<>());
+        assertThat(metric.getRealAlerts()).doesNotContain(realAlertBack);
+        assertThat(realAlertBack.getMetric()).isNull();
     }
 
     @Test

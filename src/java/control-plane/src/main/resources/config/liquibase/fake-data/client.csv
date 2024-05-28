@@ -1,11 +1,11 @@
-id;protocol_address;protocol_port;protocol_uri;protocol_stream_id;metric_producer_address;metric_producer_port;metric_producer_uri;metric_producer_stream_id;tenant_id
-1;wherever;24575;inveigle carpet;2052;nerve compromise likewise;8552;freely rigidly;13022;1
-2;geez perfect;19894;minus sleepily strictly;10712;beneficial actually;29326;vivaciously;26284;2
-3;whenever simplification best;12358;lest towards fast;19865;limply;32512;tray grimy;13944;3
-4;algebra;29825;regularly steep or;16760;hot;5585;wild;95;4
-5;house mmm;25299;deviate long-term use;15923;than;17253;fully finally;2207;5
-6;understated than;2762;irritably ick;2857;trifle;10048;phooey;29409;6
-7;bowed;8063;regarding;13339;immediately why;8111;how ew;7697;7
-8;immediately reinstate while;11165;after interwork knock;10136;seldom;752;blue international;28394;8
-9;woot likable;1838;dolman rapidly certainty;24279;expensive mundane;27339;pfft closely;7960;9
-10;aboard;30479;crush yowza fill;14577;moody;13856;qua gosh;18253;10
+id;protocol_producer_address;protocol_producer_port;protocol_producer_uri;protocol_producer_stream_id;protocol_subscriber_address;protocol_subscriber_port;protocol_subscriber_uri;protocol_subscriber_stream_id;metric_producer_address;metric_producer_port;metric_producer_uri;metric_producer_stream_id;tenant_id
+1;wherever;24575;inveigle carpet;2052;nerve compromise likewise;8552;freely rigidly;13022;geez perfect;19894;minus sleepily strictly;10712;1
+2;beneficial actually;29326;vivaciously;26284;whenever simplification best;12358;lest towards fast;19865;limply;32512;tray grimy;13944;2
+3;algebra;29825;regularly steep or;16760;hot;5585;wild;95;house mmm;25299;deviate long-term use;15923;3
+4;than;17253;fully finally;2207;understated than;2762;irritably ick;2857;trifle;10048;phooey;29409;4
+5;bowed;8063;regarding;13339;immediately why;8111;how ew;7697;immediately reinstate while;11165;after interwork knock;10136;5
+6;seldom;752;blue international;28394;woot likable;1838;dolman rapidly certainty;24279;expensive mundane;27339;pfft closely;7960;6
+7;aboard;30479;crush yowza fill;14577;moody;13856;qua gosh;18253;glug;15496;lest;28623;7
+8;brr probation plastic;27988;unethically arrange warlock;29773;opposite;20399;aw drat;26080;bonding;11898;slobber;5275;8
+9;blah than out;9743;reach opposite;31416;misinterpret;11002;merrily half vivaciously;29467;unwitting;6711;on around emergency;14657;9
+10;versus loudly where;8574;lest pen countryside;6982;outfit;19728;provided;28595;minus whether smooth;31361;that generously book;32209;10

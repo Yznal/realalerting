@@ -38,10 +38,22 @@ public class Metric implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "critical_alert_producer_address")
+    private String criticalAlertProducerAddress;
+
+    @Column(name = "critical_alert_producer_port")
+    private Integer criticalAlertProducerPort;
+
+    @Column(name = "critical_alert_producer_uri")
+    private String criticalAlertProducerUri;
+
+    @Column(name = "critical_alert_producer_stream_id")
+    private Integer criticalAlertProducerStreamId;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "metric")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "metric" }, allowSetters = true)
-    private Set<Alert> alerts = new HashSet<>();
+    @JsonIgnoreProperties(value = { "alertSubscribers", "client", "metric" }, allowSetters = true)
+    private Set<RealAlert> realAlerts = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "metric")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -50,7 +62,7 @@ public class Metric implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "tenant" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "realAlerts", "alertSubscribers", "tenant" }, allowSetters = true)
     private Client client;
 
     @JsonIgnoreProperties(value = { "metric", "tenant" }, allowSetters = true)
@@ -111,34 +123,86 @@ public class Metric implements Serializable {
         this.description = description;
     }
 
-    public Set<Alert> getAlerts() {
-        return this.alerts;
+    public String getCriticalAlertProducerAddress() {
+        return this.criticalAlertProducerAddress;
     }
 
-    public void setAlerts(Set<Alert> alerts) {
-        if (this.alerts != null) {
-            this.alerts.forEach(i -> i.setMetric(null));
-        }
-        if (alerts != null) {
-            alerts.forEach(i -> i.setMetric(this));
-        }
-        this.alerts = alerts;
-    }
-
-    public Metric alerts(Set<Alert> alerts) {
-        this.setAlerts(alerts);
+    public Metric criticalAlertProducerAddress(String criticalAlertProducerAddress) {
+        this.setCriticalAlertProducerAddress(criticalAlertProducerAddress);
         return this;
     }
 
-    public Metric addAlert(Alert alert) {
-        this.alerts.add(alert);
-        alert.setMetric(this);
+    public void setCriticalAlertProducerAddress(String criticalAlertProducerAddress) {
+        this.criticalAlertProducerAddress = criticalAlertProducerAddress;
+    }
+
+    public Integer getCriticalAlertProducerPort() {
+        return this.criticalAlertProducerPort;
+    }
+
+    public Metric criticalAlertProducerPort(Integer criticalAlertProducerPort) {
+        this.setCriticalAlertProducerPort(criticalAlertProducerPort);
         return this;
     }
 
-    public Metric removeAlert(Alert alert) {
-        this.alerts.remove(alert);
-        alert.setMetric(null);
+    public void setCriticalAlertProducerPort(Integer criticalAlertProducerPort) {
+        this.criticalAlertProducerPort = criticalAlertProducerPort;
+    }
+
+    public String getCriticalAlertProducerUri() {
+        return this.criticalAlertProducerUri;
+    }
+
+    public Metric criticalAlertProducerUri(String criticalAlertProducerUri) {
+        this.setCriticalAlertProducerUri(criticalAlertProducerUri);
+        return this;
+    }
+
+    public void setCriticalAlertProducerUri(String criticalAlertProducerUri) {
+        this.criticalAlertProducerUri = criticalAlertProducerUri;
+    }
+
+    public Integer getCriticalAlertProducerStreamId() {
+        return this.criticalAlertProducerStreamId;
+    }
+
+    public Metric criticalAlertProducerStreamId(Integer criticalAlertProducerStreamId) {
+        this.setCriticalAlertProducerStreamId(criticalAlertProducerStreamId);
+        return this;
+    }
+
+    public void setCriticalAlertProducerStreamId(Integer criticalAlertProducerStreamId) {
+        this.criticalAlertProducerStreamId = criticalAlertProducerStreamId;
+    }
+
+    public Set<RealAlert> getRealAlerts() {
+        return this.realAlerts;
+    }
+
+    public void setRealAlerts(Set<RealAlert> realAlerts) {
+        if (this.realAlerts != null) {
+            this.realAlerts.forEach(i -> i.setMetric(null));
+        }
+        if (realAlerts != null) {
+            realAlerts.forEach(i -> i.setMetric(this));
+        }
+        this.realAlerts = realAlerts;
+    }
+
+    public Metric realAlerts(Set<RealAlert> realAlerts) {
+        this.setRealAlerts(realAlerts);
+        return this;
+    }
+
+    public Metric addRealAlert(RealAlert realAlert) {
+        this.realAlerts.add(realAlert);
+        realAlert.setMetric(this);
+        return this;
+    }
+
+    public Metric removeRealAlert(RealAlert realAlert) {
+        this.realAlerts.remove(realAlert);
+        realAlert.setMetric(null);
         return this;
     }
 
@@ -232,6 +296,10 @@ public class Metric implements Serializable {
             ", type='" + getType() + "'" +
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
+            ", criticalAlertProducerAddress='" + getCriticalAlertProducerAddress() + "'" +
+            ", criticalAlertProducerPort=" + getCriticalAlertProducerPort() +
+            ", criticalAlertProducerUri='" + getCriticalAlertProducerUri() + "'" +
+            ", criticalAlertProducerStreamId=" + getCriticalAlertProducerStreamId() +
             "}";
     }
 }

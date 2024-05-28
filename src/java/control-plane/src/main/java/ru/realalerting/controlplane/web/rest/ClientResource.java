@@ -123,17 +123,29 @@ public class ClientResource {
         Optional<Client> result = clientRepository
             .findById(client.getId())
             .map(existingClient -> {
-                if (client.getProtocolAddress() != null) {
-                    existingClient.setProtocolAddress(client.getProtocolAddress());
+                if (client.getProtocolProducerAddress() != null) {
+                    existingClient.setProtocolProducerAddress(client.getProtocolProducerAddress());
                 }
-                if (client.getProtocolPort() != null) {
-                    existingClient.setProtocolPort(client.getProtocolPort());
+                if (client.getProtocolProducerPort() != null) {
+                    existingClient.setProtocolProducerPort(client.getProtocolProducerPort());
                 }
-                if (client.getProtocolUri() != null) {
-                    existingClient.setProtocolUri(client.getProtocolUri());
+                if (client.getProtocolProducerUri() != null) {
+                    existingClient.setProtocolProducerUri(client.getProtocolProducerUri());
                 }
-                if (client.getProtocolStreamId() != null) {
-                    existingClient.setProtocolStreamId(client.getProtocolStreamId());
+                if (client.getProtocolProducerStreamId() != null) {
+                    existingClient.setProtocolProducerStreamId(client.getProtocolProducerStreamId());
+                }
+                if (client.getProtocolSubscriberAddress() != null) {
+                    existingClient.setProtocolSubscriberAddress(client.getProtocolSubscriberAddress());
+                }
+                if (client.getProtocolSubscriberPort() != null) {
+                    existingClient.setProtocolSubscriberPort(client.getProtocolSubscriberPort());
+                }
+                if (client.getProtocolSubscriberUri() != null) {
+                    existingClient.setProtocolSubscriberUri(client.getProtocolSubscriberUri());
+                }
+                if (client.getProtocolSubscriberStreamId() != null) {
+                    existingClient.setProtocolSubscriberStreamId(client.getProtocolSubscriberStreamId());
                 }
                 if (client.getMetricProducerAddress() != null) {
                     existingClient.setMetricProducerAddress(client.getMetricProducerAddress());

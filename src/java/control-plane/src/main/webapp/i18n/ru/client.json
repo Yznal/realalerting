@@ -18,16 +18,22 @@
         "title": "Client"
       },
       "id": "ID",
-      "protocolAddress": "Protocol Address",
-      "protocolPort": "Protocol Port",
-      "protocolUri": "Protocol Uri",
-      "protocolStreamId": "Protocol Stream Id",
+      "protocolProducerAddress": "Protocol Producer Address",
+      "protocolProducerPort": "Protocol Producer Port",
+      "protocolProducerUri": "Protocol Producer Uri",
+      "protocolProducerStreamId": "Protocol Producer Stream Id",
+      "protocolSubscriberAddress": "Protocol Subscriber Address",
+      "protocolSubscriberPort": "Protocol Subscriber Port",
+      "protocolSubscriberUri": "Protocol Subscriber Uri",
+      "protocolSubscriberStreamId": "Protocol Subscriber Stream Id",
       "metricProducerAddress": "Metric Producer Address",
       "metricProducerPort": "Metric Producer Port",
       "metricProducerUri": "Metric Producer Uri",
       "metricProducerStreamId": "Metric Producer Stream Id",
       "metric": "Metric",
       "metricSubscriber": "Metric Subscriber",
+      "realAlert": "Real Alert",
+      "alertSubscriber": "Alert Subscriber",
       "tenant": "Tenant"
     }
   }

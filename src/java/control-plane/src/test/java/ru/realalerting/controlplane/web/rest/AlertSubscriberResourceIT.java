@@ -20,9 +20,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import ru.realalerting.controlplane.IntegrationTest;
-import ru.realalerting.controlplane.domain.Alert;
 import ru.realalerting.controlplane.domain.AlertSubscriber;
 import ru.realalerting.controlplane.domain.Client;
+import ru.realalerting.controlplane.domain.RealAlert;
 import ru.realalerting.controlplane.repository.AlertSubscriberRepository;
 
 /**
@@ -78,16 +78,6 @@ class AlertSubscriberResourceIT {
             .subscriberUri(DEFAULT_SUBSCRIBER_URI)
             .subscriberStreamId(DEFAULT_SUBSCRIBER_STREAM_ID);
         // Add required entity
-        Alert alert;
-        if (TestUtil.findAll(em, Alert.class).isEmpty()) {
-            alert = AlertResourceIT.createEntity(em);
-            em.persist(alert);
-            em.flush();
-        } else {
-            alert = TestUtil.findAll(em, Alert.class).get(0);
-        }
-        alertSubscriber.setAlert(alert);
-        // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
             client = ClientResourceIT.createEntity(em);
@@ -97,6 +87,16 @@ class AlertSubscriberResourceIT {
             client = TestUtil.findAll(em, Client.class).get(0);
         }
         alertSubscriber.setClient(client);
+        // Add required entity
+        RealAlert realAlert;
+        if (TestUtil.findAll(em, RealAlert.class).isEmpty()) {
+            realAlert = RealAlertResourceIT.createEntity(em);
+            em.persist(realAlert);
+            em.flush();
+        } else {
+            realAlert = TestUtil.findAll(em, RealAlert.class).get(0);
+        }
+        alertSubscriber.setRealAlert(realAlert);
         return alertSubscriber;
     }
 
@@ -113,16 +113,6 @@ class AlertSubscriberResourceIT {
             .subscriberUri(UPDATED_SUBSCRIBER_URI)
             .subscriberStreamId(UPDATED_SUBSCRIBER_STREAM_ID);
         // Add required entity
-        Alert alert;
-        if (TestUtil.findAll(em, Alert.class).isEmpty()) {
-            alert = AlertResourceIT.createUpdatedEntity(em);
-            em.persist(alert);
-            em.flush();
-        } else {
-            alert = TestUtil.findAll(em, Alert.class).get(0);
-        }
-        alertSubscriber.setAlert(alert);
-        // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
             client = ClientResourceIT.createUpdatedEntity(em);
@@ -132,6 +122,16 @@ class AlertSubscriberResourceIT {
             client = TestUtil.findAll(em, Client.class).get(0);
         }
         alertSubscriber.setClient(client);
+        // Add required entity
+        RealAlert realAlert;
+        if (TestUtil.findAll(em, RealAlert.class).isEmpty()) {
+            realAlert = RealAlertResourceIT.createUpdatedEntity(em);
+            em.persist(realAlert);
+            em.flush();
+        } else {
+            realAlert = TestUtil.findAll(em, RealAlert.class).get(0);
+        }
+        alertSubscriber.setRealAlert(realAlert);
         return alertSubscriber;
     }
 

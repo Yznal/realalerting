@@ -49,7 +49,31 @@ public class MetricAsserts {
             .as("Verify Metric relevant properties")
             .satisfies(e -> assertThat(e.getType()).as("check type").isEqualTo(actual.getType()))
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
-            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()));
+            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
+            .satisfies(
+                e ->
+                    assertThat(e.getCriticalAlertProducerAddress())
+                        .as("check criticalAlertProducerAddress")
+                        .isEqualTo(actual.getCriticalAlertProducerAddress())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getCriticalAlertProducerPort())
+                        .as("check criticalAlertProducerPort")
+                        .isEqualTo(actual.getCriticalAlertProducerPort())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getCriticalAlertProducerUri())
+                        .as("check criticalAlertProducerUri")
+                        .isEqualTo(actual.getCriticalAlertProducerUri())
+            )
+            .satisfies(
+                e ->
+                    assertThat(e.getCriticalAlertProducerStreamId())
+                        .as("check criticalAlertProducerStreamId")
+                        .isEqualTo(actual.getCriticalAlertProducerStreamId())
+            );
     }
 
     /**

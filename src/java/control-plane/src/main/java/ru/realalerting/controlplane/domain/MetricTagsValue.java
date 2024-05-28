@@ -30,7 +30,7 @@ public class MetricTagsValue implements Serializable {
     @Column(name = "value_256")
     private String value256;
 
-    @JsonIgnoreProperties(value = { "alerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "realAlerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @NotNull
     @JoinColumn(unique = true)

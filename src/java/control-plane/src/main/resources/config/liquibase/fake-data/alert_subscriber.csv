@@ -1,4 +1,4 @@
-id;subscriber_address;subscriber_port;subscriber_uri;subscriber_stream_id;alert_id;client_id
+id;subscriber_address;subscriber_port;subscriber_uri;subscriber_stream_id;client_id;real_alert_id
 1;ack and geez;28572;frightfully;1221;1;1
 2;anonymise concrete index;30924;as snakebite after;14979;2;2
 3;wan mechanically;32710;dodge;18683;3;3

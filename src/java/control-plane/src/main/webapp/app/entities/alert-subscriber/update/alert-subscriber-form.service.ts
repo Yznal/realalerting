@@ -22,8 +22,8 @@ type AlertSubscriberFormGroupContent = {
   subscriberPort: FormControl<IAlertSubscriber['subscriberPort']>;
   subscriberUri: FormControl<IAlertSubscriber['subscriberUri']>;
   subscriberStreamId: FormControl<IAlertSubscriber['subscriberStreamId']>;
-  alert: FormControl<IAlertSubscriber['alert']>;
   client: FormControl<IAlertSubscriber['client']>;
+  realAlert: FormControl<IAlertSubscriber['realAlert']>;
 };
 
 export type AlertSubscriberFormGroup = FormGroup<AlertSubscriberFormGroupContent>;
@@ -47,10 +47,10 @@ export class AlertSubscriberFormService {
       subscriberPort: new FormControl(alertSubscriberRawValue.subscriberPort),
       subscriberUri: new FormControl(alertSubscriberRawValue.subscriberUri),
       subscriberStreamId: new FormControl(alertSubscriberRawValue.subscriberStreamId),
-      alert: new FormControl(alertSubscriberRawValue.alert, {
+      client: new FormControl(alertSubscriberRawValue.client, {
         validators: [Validators.required],
       }),
-      client: new FormControl(alertSubscriberRawValue.client, {
+      realAlert: new FormControl(alertSubscriberRawValue.realAlert, {
         validators: [Validators.required],
       }),
     });

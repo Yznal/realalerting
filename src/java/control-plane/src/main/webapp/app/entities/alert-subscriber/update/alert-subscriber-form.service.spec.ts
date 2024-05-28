@@ -24,8 +24,8 @@ describe('AlertSubscriber Form Service', () => {
             subscriberPort: expect.any(Object),
             subscriberUri: expect.any(Object),
             subscriberStreamId: expect.any(Object),
-            alert: expect.any(Object),
             client: expect.any(Object),
+            realAlert: expect.any(Object),
           }),
         );
       });
@@ -40,8 +40,8 @@ describe('AlertSubscriber Form Service', () => {
             subscriberPort: expect.any(Object),
             subscriberUri: expect.any(Object),
             subscriberStreamId: expect.any(Object),
-            alert: expect.any(Object),
             client: expect.any(Object),
+            realAlert: expect.any(Object),
           }),
         );
       });

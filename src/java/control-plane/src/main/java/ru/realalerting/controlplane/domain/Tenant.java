@@ -33,7 +33,7 @@ public class Tenant implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tenant")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "tenant" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "realAlerts", "alertSubscribers", "tenant" }, allowSetters = true)
     private Set<Client> clients = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tenant")

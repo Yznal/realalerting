@@ -45,6 +45,7 @@ public class ClickHouseSender extends AlertSubscriber {
     private HttpPost httpPost;
     private HttpResponse response;
 
+
     public static class Alert {
         int metricId;
         long value;
@@ -190,7 +191,7 @@ public class ClickHouseSender extends AlertSubscriber {
     }
 
     @Override
-    public void onAlert(int metricId, long value, long timestamp) {
+    public void onAlert(int alertId, int metricId, long value, long timestamp) {
         disruptor.publishEvent(TRANSLATOR, metricId, timestamp, value);
     }
 }

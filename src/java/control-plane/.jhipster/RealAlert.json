@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "changelogDate": "20240527144923"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "AlertType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "CRITICAL,REGULAR"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "conf",
+      "fieldType": "String"
+    }
+  ],
+  "name": "RealAlert",
+  "relationships": [
+    {
+      "otherEntityName": "alertSubscriber",
+      "otherEntityRelationshipName": "realAlert",
+      "relationshipName": "alertSubscriber",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "metric",
+      "relationshipName": "metric",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

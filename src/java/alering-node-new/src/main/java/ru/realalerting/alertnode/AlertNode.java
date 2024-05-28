@@ -22,6 +22,16 @@ public class AlertNode {
 
     public AlertNode() {}
 
+    public AlertNode(Producer producer, Subscriber subscriber) {
+        alertProducer = new AlertProducer(producer);
+        metricSubscriber = new MetricSubscriber(subscriber) {
+            @Override
+            public void onFragment(DirectBuffer directBuffer, int offset, int length, Header header) {
+                metricProcessing(directBuffer, offset, length, header);
+            }
+        };
+    }
+
     public AlertNode(AlertProducer alertProducer, MetricSubscriber metricSubscriber) {
         this.alertProducer = alertProducer;
         this.metricSubscriber = metricSubscriber;
@@ -54,7 +64,7 @@ public class AlertNode {
     }
 
     public void start() throws Exception {
-        alertProducer.start();
+//        alertProducer.start();
         final AgentRunner receiveAgentRunner = new AgentRunner(metricSubscriber.getConsumer().getIdle(), Throwable::printStackTrace, null, metricSubscriber);
         AgentRunner.startOnThread(receiveAgentRunner);
     }

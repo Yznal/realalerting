@@ -22,8 +22,8 @@
       "subscriberPort": "Subscriber Port",
       "subscriberUri": "Subscriber Uri",
       "subscriberStreamId": "Subscriber Stream Id",
-      "alert": "Alert",
-      "client": "Client"
+      "client": "Client",
+      "realAlert": "Real Alert"
     }
   }
 }

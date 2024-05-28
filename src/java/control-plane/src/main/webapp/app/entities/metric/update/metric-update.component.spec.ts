@@ -49,10 +49,10 @@ describe('Metric Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Client query and add missing value', () => {
       const metric: IMetric = { id: 456 };
-      const client: IClient = { id: 19346 };
+      const client: IClient = { id: 14305 };
       metric.client = client;
 
-      const clientCollection: IClient[] = [{ id: 28663 }];
+      const clientCollection: IClient[] = [{ id: 23144 }];
       jest.spyOn(clientService, 'query').mockReturnValue(of(new HttpResponse({ body: clientCollection })));
       const additionalClients = [client];
       const expectedCollection: IClient[] = [...additionalClients, ...clientCollection];
@@ -71,7 +71,7 @@ describe('Metric Management Update Component', () => {
 
     it('Should update editForm', () => {
       const metric: IMetric = { id: 456 };
-      const client: IClient = { id: 20733 };
+      const client: IClient = { id: 14684 };
       metric.client = client;
 
       activatedRoute.data = of({ metric });

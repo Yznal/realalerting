@@ -38,12 +38,12 @@ public class MetricSubscriber implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "tenant" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "realAlerts", "alertSubscribers", "tenant" }, allowSetters = true)
     private Client client;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "alerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "realAlerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
     private Metric metric;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

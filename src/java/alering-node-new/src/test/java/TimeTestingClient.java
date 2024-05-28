@@ -45,23 +45,23 @@ public class TimeTestingClient {
             clients[clientId] = new Client();
             clients[clientId].clientId = clientId;
         }
-        for (int i = 0; i < clientCount; ++i) {
-            // TODO
-
-            for (int metricId = 0; metricId < metricCount; ++metricCount) {
-
-
-                for (int alertId = 0; alertId < alertCount; ++alertId) {
-
-
-
-
-                }
-            }
-        }
-
-        for (int i = 0; i <)
-
+//        for (int i = 0; i < clientCount; ++i) {
+//            // TODO
+//
+//            for (int metricId = 0; metricId < metricCount; ++metricCount) {
+//
+//
+//                for (int alertId = 0; alertId < alertCount; ++alertId) {
+//
+//
+//
+//
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i <)
+//
     }
 
 

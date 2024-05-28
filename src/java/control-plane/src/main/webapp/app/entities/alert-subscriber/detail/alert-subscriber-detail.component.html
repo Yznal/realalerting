@@ -33,19 +33,19 @@
           <dd>
             <span>{{ alertSubscriber()!.subscriberStreamId }}</span>
           </dd>
-          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.alert">Alert</span></dt>
-          <dd>
-            @if (alertSubscriber()!.alert) {
-              <div>
-                <a [routerLink]="['/alert', alertSubscriber()!.alert?.id, 'view']">{{ alertSubscriber()!.alert?.id }}</a>
-              </div>
-            }
-          </dd>
           <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.client">Client</span></dt>
           <dd>
             @if (alertSubscriber()!.client) {
               <div>
                 <a [routerLink]="['/client', alertSubscriber()!.client?.id, 'view']">{{ alertSubscriber()!.client?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.alertSubscriber.realAlert">Real Alert</span></dt>
+          <dd>
+            @if (alertSubscriber()!.realAlert) {
+              <div>
+                <a [routerLink]="['/real-alert', alertSubscriber()!.realAlert?.id, 'view']">{{ alertSubscriber()!.realAlert?.id }}</a>
               </div>
             }
           </dd>

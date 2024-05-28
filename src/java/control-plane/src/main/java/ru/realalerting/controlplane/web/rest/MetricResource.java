@@ -133,6 +133,18 @@ public class MetricResource {
                 if (metric.getDescription() != null) {
                     existingMetric.setDescription(metric.getDescription());
                 }
+                if (metric.getCriticalAlertProducerAddress() != null) {
+                    existingMetric.setCriticalAlertProducerAddress(metric.getCriticalAlertProducerAddress());
+                }
+                if (metric.getCriticalAlertProducerPort() != null) {
+                    existingMetric.setCriticalAlertProducerPort(metric.getCriticalAlertProducerPort());
+                }
+                if (metric.getCriticalAlertProducerUri() != null) {
+                    existingMetric.setCriticalAlertProducerUri(metric.getCriticalAlertProducerUri());
+                }
+                if (metric.getCriticalAlertProducerStreamId() != null) {
+                    existingMetric.setCriticalAlertProducerStreamId(metric.getCriticalAlertProducerStreamId());
+                }
 
                 return existingMetric;
             })

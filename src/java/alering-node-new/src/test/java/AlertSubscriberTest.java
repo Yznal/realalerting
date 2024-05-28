@@ -71,9 +71,4 @@ public class AlertSubscriberTest extends AlertSubscriber {
         assertEquals(alertTimestamp, responseTimestamp);
         alertArrived = true;
     }
-
-    @Override
-    public void onAlert(int i, long l, long l1) {
-
-    }
 }

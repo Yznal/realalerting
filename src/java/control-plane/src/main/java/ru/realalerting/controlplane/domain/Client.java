@@ -26,17 +26,29 @@ public class Client implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "protocol_address")
-    private String protocolAddress;
+    @Column(name = "protocol_producer_address")
+    private String protocolProducerAddress;
 
-    @Column(name = "protocol_port")
-    private Integer protocolPort;
+    @Column(name = "protocol_producer_port")
+    private Integer protocolProducerPort;
 
-    @Column(name = "protocol_uri")
-    private String protocolUri;
+    @Column(name = "protocol_producer_uri")
+    private String protocolProducerUri;
 
-    @Column(name = "protocol_stream_id")
-    private Integer protocolStreamId;
+    @Column(name = "protocol_producer_stream_id")
+    private Integer protocolProducerStreamId;
+
+    @Column(name = "protocol_subscriber_address")
+    private String protocolSubscriberAddress;
+
+    @Column(name = "protocol_subscriber_port")
+    private Integer protocolSubscriberPort;
+
+    @Column(name = "protocol_subscriber_uri")
+    private String protocolSubscriberUri;
+
+    @Column(name = "protocol_subscriber_stream_id")
+    private Integer protocolSubscriberStreamId;
 
     @Column(name = "metric_producer_address")
     private String metricProducerAddress;
@@ -52,13 +64,23 @@ public class Client implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "alerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "realAlerts", "metricSubscribers", "client", "metricTagsValue" }, allowSetters = true)
     private Set<Metric> metrics = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "client", "metric" }, allowSetters = true)
     private Set<MetricSubscriber> metricSubscribers = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "alertSubscribers", "client", "metric" }, allowSetters = true)
+    private Set<RealAlert> realAlerts = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "client", "realAlert" }, allowSetters = true)
+    private Set<AlertSubscriber> alertSubscribers = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -80,56 +102,108 @@ public class Client implements Serializable {
         this.id = id;
     }
 
-    public String getProtocolAddress() {
-        return this.protocolAddress;
+    public String getProtocolProducerAddress() {
+        return this.protocolProducerAddress;
     }
 
-    public Client protocolAddress(String protocolAddress) {
-        this.setProtocolAddress(protocolAddress);
+    public Client protocolProducerAddress(String protocolProducerAddress) {
+        this.setProtocolProducerAddress(protocolProducerAddress);
         return this;
     }
 
-    public void setProtocolAddress(String protocolAddress) {
-        this.protocolAddress = protocolAddress;
+    public void setProtocolProducerAddress(String protocolProducerAddress) {
+        this.protocolProducerAddress = protocolProducerAddress;
     }
 
-    public Integer getProtocolPort() {
-        return this.protocolPort;
+    public Integer getProtocolProducerPort() {
+        return this.protocolProducerPort;
     }
 
-    public Client protocolPort(Integer protocolPort) {
-        this.setProtocolPort(protocolPort);
+    public Client protocolProducerPort(Integer protocolProducerPort) {
+        this.setProtocolProducerPort(protocolProducerPort);
         return this;
     }
 
-    public void setProtocolPort(Integer protocolPort) {
-        this.protocolPort = protocolPort;
+    public void setProtocolProducerPort(Integer protocolProducerPort) {
+        this.protocolProducerPort = protocolProducerPort;
     }
 
-    public String getProtocolUri() {
-        return this.protocolUri;
+    public String getProtocolProducerUri() {
+        return this.protocolProducerUri;
     }
 
-    public Client protocolUri(String protocolUri) {
-        this.setProtocolUri(protocolUri);
+    public Client protocolProducerUri(String protocolProducerUri) {
+        this.setProtocolProducerUri(protocolProducerUri);
         return this;
     }
 
-    public void setProtocolUri(String protocolUri) {
-        this.protocolUri = protocolUri;
+    public void setProtocolProducerUri(String protocolProducerUri) {
+        this.protocolProducerUri = protocolProducerUri;
     }
 
-    public Integer getProtocolStreamId() {
-        return this.protocolStreamId;
+    public Integer getProtocolProducerStreamId() {
+        return this.protocolProducerStreamId;
     }
 
-    public Client protocolStreamId(Integer protocolStreamId) {
-        this.setProtocolStreamId(protocolStreamId);
+    public Client protocolProducerStreamId(Integer protocolProducerStreamId) {
+        this.setProtocolProducerStreamId(protocolProducerStreamId);
         return this;
     }
 
-    public void setProtocolStreamId(Integer protocolStreamId) {
-        this.protocolStreamId = protocolStreamId;
+    public void setProtocolProducerStreamId(Integer protocolProducerStreamId) {
+        this.protocolProducerStreamId = protocolProducerStreamId;
+    }
+
+    public String getProtocolSubscriberAddress() {
+        return this.protocolSubscriberAddress;
+    }
+
+    public Client protocolSubscriberAddress(String protocolSubscriberAddress) {
+        this.setProtocolSubscriberAddress(protocolSubscriberAddress);
+        return this;
+    }
+
+    public void setProtocolSubscriberAddress(String protocolSubscriberAddress) {
+        this.protocolSubscriberAddress = protocolSubscriberAddress;
+    }
+
+    public Integer getProtocolSubscriberPort() {
+        return this.protocolSubscriberPort;
+    }
+
+    public Client protocolSubscriberPort(Integer protocolSubscriberPort) {
+        this.setProtocolSubscriberPort(protocolSubscriberPort);
+        return this;
+    }
+
+    public void setProtocolSubscriberPort(Integer protocolSubscriberPort) {
+        this.protocolSubscriberPort = protocolSubscriberPort;
+    }
+
+    public String getProtocolSubscriberUri() {
+        return this.protocolSubscriberUri;
+    }
+
+    public Client protocolSubscriberUri(String protocolSubscriberUri) {
+        this.setProtocolSubscriberUri(protocolSubscriberUri);
+        return this;
+    }
+
+    public void setProtocolSubscriberUri(String protocolSubscriberUri) {
+        this.protocolSubscriberUri = protocolSubscriberUri;
+    }
+
+    public Integer getProtocolSubscriberStreamId() {
+        return this.protocolSubscriberStreamId;
+    }
+
+    public Client protocolSubscriberStreamId(Integer protocolSubscriberStreamId) {
+        this.setProtocolSubscriberStreamId(protocolSubscriberStreamId);
+        return this;
+    }
+
+    public void setProtocolSubscriberStreamId(Integer protocolSubscriberStreamId) {
+        this.protocolSubscriberStreamId = protocolSubscriberStreamId;
     }
 
     public String getMetricProducerAddress() {
@@ -246,6 +320,68 @@ public class Client implements Serializable {
         return this;
     }
 
+    public Set<RealAlert> getRealAlerts() {
+        return this.realAlerts;
+    }
+
+    public void setRealAlerts(Set<RealAlert> realAlerts) {
+        if (this.realAlerts != null) {
+            this.realAlerts.forEach(i -> i.setClient(null));
+        }
+        if (realAlerts != null) {
+            realAlerts.forEach(i -> i.setClient(this));
+        }
+        this.realAlerts = realAlerts;
+    }
+
+    public Client realAlerts(Set<RealAlert> realAlerts) {
+        this.setRealAlerts(realAlerts);
+        return this;
+    }
+
+    public Client addRealAlert(RealAlert realAlert) {
+        this.realAlerts.add(realAlert);
+        realAlert.setClient(this);
+        return this;
+    }
+
+    public Client removeRealAlert(RealAlert realAlert) {
+        this.realAlerts.remove(realAlert);
+        realAlert.setClient(null);
+        return this;
+    }
+
+    public Set<AlertSubscriber> getAlertSubscribers() {
+        return this.alertSubscribers;
+    }
+
+    public void setAlertSubscribers(Set<AlertSubscriber> alertSubscribers) {
+        if (this.alertSubscribers != null) {
+            this.alertSubscribers.forEach(i -> i.setClient(null));
+        }
+        if (alertSubscribers != null) {
+            alertSubscribers.forEach(i -> i.setClient(this));
+        }
+        this.alertSubscribers = alertSubscribers;
+    }
+
+    public Client alertSubscribers(Set<AlertSubscriber> alertSubscribers) {
+        this.setAlertSubscribers(alertSubscribers);
+        return this;
+    }
+
+    public Client addAlertSubscriber(AlertSubscriber alertSubscriber) {
+        this.alertSubscribers.add(alertSubscriber);
+        alertSubscriber.setClient(this);
+        return this;
+    }
+
+    public Client removeAlertSubscriber(AlertSubscriber alertSubscriber) {
+        this.alertSubscribers.remove(alertSubscriber);
+        alertSubscriber.setClient(null);
+        return this;
+    }
+
     public Tenant getTenant() {
         return this.tenant;
     }
@@ -283,10 +419,14 @@ public class Client implements Serializable {
     public String toString() {
         return "Client{" +
             "id=" + getId() +
-            ", protocolAddress='" + getProtocolAddress() + "'" +
-            ", protocolPort=" + getProtocolPort() +
-            ", protocolUri='" + getProtocolUri() + "'" +
-            ", protocolStreamId=" + getProtocolStreamId() +
+            ", protocolProducerAddress='" + getProtocolProducerAddress() + "'" +
+            ", protocolProducerPort=" + getProtocolProducerPort() +
+            ", protocolProducerUri='" + getProtocolProducerUri() + "'" +
+            ", protocolProducerStreamId=" + getProtocolProducerStreamId() +
+            ", protocolSubscriberAddress='" + getProtocolSubscriberAddress() + "'" +
+            ", protocolSubscriberPort=" + getProtocolSubscriberPort() +
+            ", protocolSubscriberUri='" + getProtocolSubscriberUri() + "'" +
+            ", protocolSubscriberStreamId=" + getProtocolSubscriberStreamId() +
             ", metricProducerAddress='" + getMetricProducerAddress() + "'" +
             ", metricProducerPort=" + getMetricProducerPort() +
             ", metricProducerUri='" + getMetricProducerUri() + "'" +

@@ -42,30 +42,58 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="protocolAddress">
+            <th scope="col" jhiSortBy="protocolProducerAddress">
               <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.client.protocolAddress">Protocol Address</span>
+                <span jhiTranslate="controlPlaneApp.client.protocolProducerAddress">Protocol Producer Address</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="protocolPort">
+            <th scope="col" jhiSortBy="protocolProducerPort">
               <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.client.protocolPort">Protocol Port</span>
+                <span jhiTranslate="controlPlaneApp.client.protocolProducerPort">Protocol Producer Port</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="protocolUri">
+            <th scope="col" jhiSortBy="protocolProducerUri">
               <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.client.protocolUri">Protocol Uri</span>
+                <span jhiTranslate="controlPlaneApp.client.protocolProducerUri">Protocol Producer Uri</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="protocolStreamId">
+            <th scope="col" jhiSortBy="protocolProducerStreamId">
               <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.client.protocolStreamId">Protocol Stream Id</span>
+                <span jhiTranslate="controlPlaneApp.client.protocolProducerStreamId">Protocol Producer Stream Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolSubscriberAddress">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolSubscriberAddress">Protocol Subscriber Address</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolSubscriberPort">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolSubscriberPort">Protocol Subscriber Port</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolSubscriberUri">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolSubscriberUri">Protocol Subscriber Uri</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="protocolSubscriberStreamId">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.client.protocolSubscriberStreamId">Protocol Subscriber Stream Id</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
@@ -113,10 +141,14 @@
               <td>
                 <a [routerLink]="['/client', client.id, 'view']">{{ client.id }}</a>
               </td>
-              <td>{{ client.protocolAddress }}</td>
-              <td>{{ client.protocolPort }}</td>
-              <td>{{ client.protocolUri }}</td>
-              <td>{{ client.protocolStreamId }}</td>
+              <td>{{ client.protocolProducerAddress }}</td>
+              <td>{{ client.protocolProducerPort }}</td>
+              <td>{{ client.protocolProducerUri }}</td>
+              <td>{{ client.protocolProducerStreamId }}</td>
+              <td>{{ client.protocolSubscriberAddress }}</td>
+              <td>{{ client.protocolSubscriberPort }}</td>
+              <td>{{ client.protocolSubscriberUri }}</td>
+              <td>{{ client.protocolSubscriberStreamId }}</td>
               <td>{{ client.metricProducerAddress }}</td>
               <td>{{ client.metricProducerPort }}</td>
               <td>{{ client.metricProducerUri }}</td>

@@ -29,6 +29,22 @@
           <dd>
             <span>{{ metric()!.description }}</span>
           </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerAddress">Critical Alert Producer Address</span></dt>
+          <dd>
+            <span>{{ metric()!.criticalAlertProducerAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerPort">Critical Alert Producer Port</span></dt>
+          <dd>
+            <span>{{ metric()!.criticalAlertProducerPort }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerUri">Critical Alert Producer Uri</span></dt>
+          <dd>
+            <span>{{ metric()!.criticalAlertProducerUri }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerStreamId">Critical Alert Producer Stream Id</span></dt>
+          <dd>
+            <span>{{ metric()!.criticalAlertProducerStreamId }}</span>
+          </dd>
           <dt><span jhiTranslate="controlPlaneApp.metric.client">Client</span></dt>
           <dd>
             @if (metric()!.client) {

@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20240522084014"
+    "changelogDate": "20240527145023"
   },
   "applications": ["ControlPlane"],
   "fields": [
@@ -24,16 +24,16 @@
   "name": "AlertSubscriber",
   "relationships": [
     {
-      "otherEntityName": "alert",
-      "relationshipName": "alert",
-      "relationshipSide": "left",
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "right",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": "required"
     },
     {
-      "otherEntityName": "client",
-      "relationshipName": "client",
-      "relationshipSide": "left",
+      "otherEntityName": "realAlert",
+      "relationshipName": "realAlert",
+      "relationshipSide": "right",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": "required"
     }

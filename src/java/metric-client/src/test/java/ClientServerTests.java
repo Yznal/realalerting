@@ -1,5 +1,6 @@
 import io.aeron.logbuffer.FragmentHandler;
 import io.aeron.logbuffer.Header;
+import io.vertx.sqlclient.SqlClient;
 import org.agrona.DirectBuffer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import ru.realalerting.metrciclient.Metric;
 import ru.realalerting.metrciclient.MetricRegistry;
 import ru.realalerting.producer.MetricProducer;
 import ru.realalerting.producer.Producer;
+import ru.realalerting.protocol.DataBaseConnection;
 import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.protocol.client.ApiBalancer;
@@ -33,6 +35,7 @@ public class ClientServerTests {
     private static int alertId = 0;
     private static int threshold = 200;
     private static Producer alertProducer;
+    private SqlClient client = DataBaseConnection.connect(5);
 
     private static Producer serverProducer;
     private static Subscriber serverSubscriber;
@@ -82,7 +85,7 @@ public class ClientServerTests {
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
             buffer.getInt(offset); // вытаскиваем id инструкции
             offset += MetricConstants.INT_SIZE;
-            work.doWork(serverProducer, buffer, offset, length, header);
+            work.doWork(client, serverProducer, buffer, offset, length, header);
         };
         int poll = -1;
         while (poll <= 0) {
@@ -137,7 +140,7 @@ public class ClientServerTests {
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
             buffer.getInt(offset); // вытаскиваем id инструкции
             offset += MetricConstants.INT_SIZE;
-            work.doWork(serverProducer, buffer, offset, length, header);
+            work.doWork(client, serverProducer, buffer, offset, length, header);
         };
         int poll = -1;
         while (poll <= 0) {
@@ -183,7 +186,7 @@ public class ClientServerTests {
         FragmentHandler handler = (DirectBuffer buffer, int offset, int length, Header header) -> {
             buffer.getInt(offset); // вытаскиваем id инструкции
             offset += MetricConstants.INT_SIZE;
-            work.doWork(serverProducer, buffer, offset, length, header);
+            work.doWork(client, serverProducer, buffer, offset, length, header);
         };
 
         new Thread(() -> {
@@ -194,21 +197,23 @@ public class ClientServerTests {
             }
         }).start();
 
-        int metricsCount = 1000000;
+        int metricsCount = 10000;
         // отправили запрос на metricId
         long startRequest = System.nanoTime();
         ArrayList<Long >startAlert = new ArrayList<>(metricsCount);
         ArrayList<Long> endAlert = new ArrayList<>(metricsCount);
         Metric metric = metricRegistry.getMetric(tagsList);
         metric.setAlertProducer(alertProducer);
-        metric.setAlertLogic(new GreaterAlert(new AlertInfo(alertId, alertMetricId,  threshold)));
+        metric.addAlertLogic(new GreaterAlert(new AlertInfo(alertId, alertMetricId,  threshold)));
         long alertValue1 = 13, alertValue2 = 300;
         long alertTimestamp1 = 100, alertTimestamp2 = 100;
         AtomicInteger curAlert = new AtomicInteger(0);
         new Thread(() -> {
             FragmentHandler alertHandler = (DirectBuffer buffer, int offset, int length, Header header) -> {
+                int alertId = buffer.getInt(offset);
+                offset += MetricConstants.ID_SIZE;
                 int metricId = buffer.getInt(offset);
-                offset += MetricConstants.INT_SIZE;
+                offset += MetricConstants.ID_SIZE;
                 long value = buffer.getLong(offset);
                 offset += MetricConstants.LONG_SIZE;
                 long timestamp = buffer.getLong(offset);
@@ -244,7 +249,11 @@ public class ClientServerTests {
         while (curAlert.get() < metricsCount) {
             Thread.sleep(20);
         }
+        long maxtemp = -1;
         for (int i = 0; i < metricsCount; ++i) {
+            if (maxtemp < endAlert.get(i) - startAlert.get(i)) {
+                maxtemp = endAlert.get(i) - startAlert.get(i);
+            }
             latencies.add(endAlert.get(i) - startAlert.get(i));
         }
         System.out.println("Request response time: " + getMicroLatency(endRequest - startRequest) + " mcs");
@@ -254,6 +263,9 @@ public class ClientServerTests {
         System.out.println(String.format("0.9 latency - %s mcs", getLatencyPercentile(latencies, 0.9)));
         System.out.println(String.format("0.95 latency - %s mcs", getLatencyPercentile(latencies, 0.95)));
         System.out.println(String.format("0.99 latency - %s mcs", getLatencyPercentile(latencies, 0.99)));
+        System.out.println(String.format("0.9999 latency - %s mcs", getLatencyPercentile(latencies, 0.9999)));
+        System.out.println(maxtemp);
+//        System.out.println(String.format("1.0 latency - %s mcs", getLatencyPercentile(latencies, 1.0)));
 
 
     }

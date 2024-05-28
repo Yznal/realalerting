@@ -36,10 +36,16 @@ entity MetricMeta {
 }
 
 entity Client {
-    protocolAddress String
-    protocolPort Integer
-    protocolUri String
-    protocolStreamId Integer
+    protocolProducerAddress String
+    protocolProducerPort Integer
+    protocolProducerUri String
+    protocolProducerStreamId Integer
+    
+    protocolSubscriberAddress String
+    protocolSubscriberPort Integer
+    protocolSubscriberUri String
+    protocolSubscriberStreamId Integer
+    
     metricProducerAddress String
     metricProducerPort Integer
     metricProducerUri String
@@ -61,12 +67,19 @@ entity Metric {
     type MetricType required
     name String
     description String
+    
+    criticalAlertProducerAddress String
+    criticalAlertProducerPort Integer
+    criticalAlertProducerUri String
+    criticalAlertProducerStreamId Integer
 }
 
-entity Alert {
+entity RealAlert {
     type AlertType required
     name String
     description String
+    conf String
+    
 }
 
 entity AlertSubscriber {
@@ -95,10 +108,9 @@ relationship OneToMany {
 
 relationship OneToMany {
      Client to Metric{client required}
-}
-
-relationship OneToMany {
-    Client to MetricSubscriber{client required}
+     Client to MetricSubscriber{client required}
+     Client to RealAlert{client required}
+     Client to AlertSubscriber{client required}
 }
 
 relationship OneToOne {
@@ -106,11 +118,10 @@ relationship OneToOne {
 }
 
 relationship OneToMany {
-    Metric to Alert{metric required}
+    Metric to RealAlert{metric required}
     Metric to MetricSubscriber{metric required}
 }
 
-relationship ManyToOne {
-    AlertSubscriber{alert required} to Alert
-    AlertSubscriber{client required} to Client
+relationship OneToMany {
+    RealAlert to AlertSubscriber{realAlert required}
 }

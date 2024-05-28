@@ -18,10 +18,14 @@ type ClientFormDefaults = Pick<NewClient, 'id'>;
 
 type ClientFormGroupContent = {
   id: FormControl<IClient['id'] | NewClient['id']>;
-  protocolAddress: FormControl<IClient['protocolAddress']>;
-  protocolPort: FormControl<IClient['protocolPort']>;
-  protocolUri: FormControl<IClient['protocolUri']>;
-  protocolStreamId: FormControl<IClient['protocolStreamId']>;
+  protocolProducerAddress: FormControl<IClient['protocolProducerAddress']>;
+  protocolProducerPort: FormControl<IClient['protocolProducerPort']>;
+  protocolProducerUri: FormControl<IClient['protocolProducerUri']>;
+  protocolProducerStreamId: FormControl<IClient['protocolProducerStreamId']>;
+  protocolSubscriberAddress: FormControl<IClient['protocolSubscriberAddress']>;
+  protocolSubscriberPort: FormControl<IClient['protocolSubscriberPort']>;
+  protocolSubscriberUri: FormControl<IClient['protocolSubscriberUri']>;
+  protocolSubscriberStreamId: FormControl<IClient['protocolSubscriberStreamId']>;
   metricProducerAddress: FormControl<IClient['metricProducerAddress']>;
   metricProducerPort: FormControl<IClient['metricProducerPort']>;
   metricProducerUri: FormControl<IClient['metricProducerUri']>;
@@ -46,10 +50,14 @@ export class ClientFormService {
           validators: [Validators.required],
         },
       ),
-      protocolAddress: new FormControl(clientRawValue.protocolAddress),
-      protocolPort: new FormControl(clientRawValue.protocolPort),
-      protocolUri: new FormControl(clientRawValue.protocolUri),
-      protocolStreamId: new FormControl(clientRawValue.protocolStreamId),
+      protocolProducerAddress: new FormControl(clientRawValue.protocolProducerAddress),
+      protocolProducerPort: new FormControl(clientRawValue.protocolProducerPort),
+      protocolProducerUri: new FormControl(clientRawValue.protocolProducerUri),
+      protocolProducerStreamId: new FormControl(clientRawValue.protocolProducerStreamId),
+      protocolSubscriberAddress: new FormControl(clientRawValue.protocolSubscriberAddress),
+      protocolSubscriberPort: new FormControl(clientRawValue.protocolSubscriberPort),
+      protocolSubscriberUri: new FormControl(clientRawValue.protocolSubscriberUri),
+      protocolSubscriberStreamId: new FormControl(clientRawValue.protocolSubscriberStreamId),
       metricProducerAddress: new FormControl(clientRawValue.metricProducerAddress),
       metricProducerPort: new FormControl(clientRawValue.metricProducerPort),
       metricProducerUri: new FormControl(clientRawValue.metricProducerUri),

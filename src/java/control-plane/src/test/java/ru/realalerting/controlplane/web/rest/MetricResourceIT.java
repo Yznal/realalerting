@@ -42,6 +42,18 @@ class MetricResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CRITICAL_ALERT_PRODUCER_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_CRITICAL_ALERT_PRODUCER_ADDRESS = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_CRITICAL_ALERT_PRODUCER_PORT = 1;
+    private static final Integer UPDATED_CRITICAL_ALERT_PRODUCER_PORT = 2;
+
+    private static final String DEFAULT_CRITICAL_ALERT_PRODUCER_URI = "AAAAAAAAAA";
+    private static final String UPDATED_CRITICAL_ALERT_PRODUCER_URI = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_CRITICAL_ALERT_PRODUCER_STREAM_ID = 1;
+    private static final Integer UPDATED_CRITICAL_ALERT_PRODUCER_STREAM_ID = 2;
+
     private static final String ENTITY_API_URL = "/api/metrics";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -69,7 +81,14 @@ class MetricResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Metric createEntity(EntityManager em) {
-        Metric metric = new Metric().type(DEFAULT_TYPE).name(DEFAULT_NAME).description(DEFAULT_DESCRIPTION);
+        Metric metric = new Metric()
+            .type(DEFAULT_TYPE)
+            .name(DEFAULT_NAME)
+            .description(DEFAULT_DESCRIPTION)
+            .criticalAlertProducerAddress(DEFAULT_CRITICAL_ALERT_PRODUCER_ADDRESS)
+            .criticalAlertProducerPort(DEFAULT_CRITICAL_ALERT_PRODUCER_PORT)
+            .criticalAlertProducerUri(DEFAULT_CRITICAL_ALERT_PRODUCER_URI)
+            .criticalAlertProducerStreamId(DEFAULT_CRITICAL_ALERT_PRODUCER_STREAM_ID);
         // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
@@ -90,7 +109,14 @@ class MetricResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Metric createUpdatedEntity(EntityManager em) {
-        Metric metric = new Metric().type(UPDATED_TYPE).name(UPDATED_NAME).description(UPDATED_DESCRIPTION);
+        Metric metric = new Metric()
+            .type(UPDATED_TYPE)
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .criticalAlertProducerAddress(UPDATED_CRITICAL_ALERT_PRODUCER_ADDRESS)
+            .criticalAlertProducerPort(UPDATED_CRITICAL_ALERT_PRODUCER_PORT)
+            .criticalAlertProducerUri(UPDATED_CRITICAL_ALERT_PRODUCER_URI)
+            .criticalAlertProducerStreamId(UPDATED_CRITICAL_ALERT_PRODUCER_STREAM_ID);
         // Add required entity
         Client client;
         if (TestUtil.findAll(em, Client.class).isEmpty()) {
@@ -176,7 +202,11 @@ class MetricResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(metric.getId().intValue())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].criticalAlertProducerAddress").value(hasItem(DEFAULT_CRITICAL_ALERT_PRODUCER_ADDRESS)))
+            .andExpect(jsonPath("$.[*].criticalAlertProducerPort").value(hasItem(DEFAULT_CRITICAL_ALERT_PRODUCER_PORT)))
+            .andExpect(jsonPath("$.[*].criticalAlertProducerUri").value(hasItem(DEFAULT_CRITICAL_ALERT_PRODUCER_URI)))
+            .andExpect(jsonPath("$.[*].criticalAlertProducerStreamId").value(hasItem(DEFAULT_CRITICAL_ALERT_PRODUCER_STREAM_ID)));
     }
 
     @Test
@@ -193,7 +223,11 @@ class MetricResourceIT {
             .andExpect(jsonPath("$.id").value(metric.getId().intValue()))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.criticalAlertProducerAddress").value(DEFAULT_CRITICAL_ALERT_PRODUCER_ADDRESS))
+            .andExpect(jsonPath("$.criticalAlertProducerPort").value(DEFAULT_CRITICAL_ALERT_PRODUCER_PORT))
+            .andExpect(jsonPath("$.criticalAlertProducerUri").value(DEFAULT_CRITICAL_ALERT_PRODUCER_URI))
+            .andExpect(jsonPath("$.criticalAlertProducerStreamId").value(DEFAULT_CRITICAL_ALERT_PRODUCER_STREAM_ID));
     }
 
     @Test
@@ -215,7 +249,14 @@ class MetricResourceIT {
         Metric updatedMetric = metricRepository.findById(metric.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedMetric are not directly saved in db
         em.detach(updatedMetric);
-        updatedMetric.type(UPDATED_TYPE).name(UPDATED_NAME).description(UPDATED_DESCRIPTION);
+        updatedMetric
+            .type(UPDATED_TYPE)
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .criticalAlertProducerAddress(UPDATED_CRITICAL_ALERT_PRODUCER_ADDRESS)
+            .criticalAlertProducerPort(UPDATED_CRITICAL_ALERT_PRODUCER_PORT)
+            .criticalAlertProducerUri(UPDATED_CRITICAL_ALERT_PRODUCER_URI)
+            .criticalAlertProducerStreamId(UPDATED_CRITICAL_ALERT_PRODUCER_STREAM_ID);
 
         restMetricMockMvc
             .perform(
@@ -291,7 +332,13 @@ class MetricResourceIT {
         Metric partialUpdatedMetric = new Metric();
         partialUpdatedMetric.setId(metric.getId());
 
-        partialUpdatedMetric.type(UPDATED_TYPE).name(UPDATED_NAME).description(UPDATED_DESCRIPTION);
+        partialUpdatedMetric
+            .type(UPDATED_TYPE)
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .criticalAlertProducerAddress(UPDATED_CRITICAL_ALERT_PRODUCER_ADDRESS)
+            .criticalAlertProducerUri(UPDATED_CRITICAL_ALERT_PRODUCER_URI)
+            .criticalAlertProducerStreamId(UPDATED_CRITICAL_ALERT_PRODUCER_STREAM_ID);
 
         restMetricMockMvc
             .perform(
@@ -319,7 +366,14 @@ class MetricResourceIT {
         Metric partialUpdatedMetric = new Metric();
         partialUpdatedMetric.setId(metric.getId());
 
-        partialUpdatedMetric.type(UPDATED_TYPE).name(UPDATED_NAME).description(UPDATED_DESCRIPTION);
+        partialUpdatedMetric
+            .type(UPDATED_TYPE)
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .criticalAlertProducerAddress(UPDATED_CRITICAL_ALERT_PRODUCER_ADDRESS)
+            .criticalAlertProducerPort(UPDATED_CRITICAL_ALERT_PRODUCER_PORT)
+            .criticalAlertProducerUri(UPDATED_CRITICAL_ALERT_PRODUCER_URI)
+            .criticalAlertProducerStreamId(UPDATED_CRITICAL_ALERT_PRODUCER_STREAM_ID);
 
         restMetricMockMvc
             .perform(

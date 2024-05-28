@@ -2,85 +2,49 @@ package ru.realalerting.protocol.client;
 
 import io.aeron.logbuffer.FragmentHandler;
 import io.aeron.logbuffer.Header;
+import io.vertx.sqlclient.SqlClient;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.Agent;
+import org.agrona.concurrent.AgentRunner;
 import ru.realalerting.producer.Producer;
+import ru.realalerting.protocol.ClientProtocolConnection;
 import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.Protocol;
 import ru.realalerting.subscriber.Subscriber;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class ApiNode implements FragmentHandler, AutoCloseable, Agent {
-    private Producer apiResponseProducer;
-    private Subscriber apiRequestSubscriber;
-    private int maxFragments = 1000;
+public class ApiNode {
+    private Int2ObjectOpenHashMap<ClientProtocolConnection> connections = new Int2ObjectOpenHashMap<>();
+    private Int2ObjectOpenHashMap<AgentRunner> runners = new Int2ObjectOpenHashMap<>();
     private GetMetricId getMetricId = new GetMetricId();
+    private SqlClient database;
 
-    public ApiNode() {
+    public ApiNode() {}
 
+    public ApiNode(SqlClient database) {
+        this.database = database;
     }
 
-    public ApiNode(Producer apiResponseProducer, Subscriber apiRequestSubscriber) {
-        this.apiResponseProducer = apiResponseProducer;
-        this.apiRequestSubscriber = apiRequestSubscriber;
+    public void setDatabase(SqlClient database) {
+        this.database = database;
     }
 
-    Subscriber getApiRequestSubscriber() {
-        return apiRequestSubscriber;
+    public void addClient(int clientId, Producer producer, Subscriber subscriber) {
+        connections.put(clientId, new ClientProtocolConnection(clientId, producer, subscriber, getMetricId, database));
     }
 
-    public void setApiResponseProducer(Producer apiResponseProducer) {
-        this.apiResponseProducer = apiResponseProducer;
-    }
-
-    public void setApiRequestSubscriber(Subscriber apiRequestSubscriber) {
-        this.apiRequestSubscriber = apiRequestSubscriber;
-    }
-
-    public void waitUntilConnected() {
-        if (apiResponseProducer != null) {
-            apiResponseProducer.waitUntilConnected();
-        }
-//        apiRequestSubscriber.waitUntilConnected();
-    }
-
-//    public void addToMap(List<CharSequence> tags, int metricId) { // TODO удалить функцию после того как подключим ControlPlane
-//        getMetricId.getIdByTags().put(tags, metricId);
-//    }
-
-
-    @Override
-    public void onFragment(DirectBuffer buffer, int offset, int length, Header header) {
-        int instructionId = buffer.getInt(offset);
-        offset += MetricConstants.INT_SIZE;
-        switch (instructionId) {
-            case Protocol.INSTRUCTION_GET_METRIC_ID -> {
-                getMetricId.doWork(apiResponseProducer, buffer, offset, length, header);
-            }
-            default -> throw new IllegalStateException("Invalid instruction id in api node: " + instructionId);
+    public void startClient(int clientId) {
+        ClientProtocolConnection connection = connections.get(clientId);
+        if (connection != null) {
+            connection.waitUntilConnected();
+            final AgentRunner receiveAgentRunner = new AgentRunner(connection.getApiRequestSubscriber().getIdle(), Throwable::printStackTrace, null, connection);
+            runners.put(clientId, receiveAgentRunner);
+            AgentRunner.startOnThread(receiveAgentRunner);
         }
     }
 
-    @Override
-    public void close() throws Exception {
-        if (apiRequestSubscriber != null) {
-            apiResponseProducer.close();
-        }
-        if (apiResponseProducer != null) {
-            apiRequestSubscriber.close();
-        }
-
-    }
-
-    @Override
-    public int doWork() throws Exception {
-        apiRequestSubscriber.getSubscription().poll(this, maxFragments);
-        return 0;
-    }
-
-    @Override
-    public String roleName() {
-        return "Api server";
-    }
 }

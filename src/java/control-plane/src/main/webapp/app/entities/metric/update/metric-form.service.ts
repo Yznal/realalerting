@@ -21,6 +21,10 @@ type MetricFormGroupContent = {
   type: FormControl<IMetric['type']>;
   name: FormControl<IMetric['name']>;
   description: FormControl<IMetric['description']>;
+  criticalAlertProducerAddress: FormControl<IMetric['criticalAlertProducerAddress']>;
+  criticalAlertProducerPort: FormControl<IMetric['criticalAlertProducerPort']>;
+  criticalAlertProducerUri: FormControl<IMetric['criticalAlertProducerUri']>;
+  criticalAlertProducerStreamId: FormControl<IMetric['criticalAlertProducerStreamId']>;
   client: FormControl<IMetric['client']>;
 };
 
@@ -46,6 +50,10 @@ export class MetricFormService {
       }),
       name: new FormControl(metricRawValue.name),
       description: new FormControl(metricRawValue.description),
+      criticalAlertProducerAddress: new FormControl(metricRawValue.criticalAlertProducerAddress),
+      criticalAlertProducerPort: new FormControl(metricRawValue.criticalAlertProducerPort),
+      criticalAlertProducerUri: new FormControl(metricRawValue.criticalAlertProducerUri),
+      criticalAlertProducerStreamId: new FormControl(metricRawValue.criticalAlertProducerStreamId),
       client: new FormControl(metricRawValue.client, {
         validators: [Validators.required],
       }),

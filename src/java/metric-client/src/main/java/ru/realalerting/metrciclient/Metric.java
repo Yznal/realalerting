@@ -9,13 +9,16 @@ import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.ConfigReader;
 import ru.realalerting.reader.RealAlertingConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Metric implements AutoCloseable {
     private volatile int metricId = -1;
+    private volatile int alertId = -1;
     private MetricRegistry metricRegistry;
     private AlertProducer alertProducer;
-    // TODO хранить alertId которые нужно отправлять
-    private AlertLogicBase alertLogic; // TODO Map по AlertId
-    private volatile MpmcArrayQueue<MetricData> q = new MpmcArrayQueue<>(3000);
+    private List<AlertLogicBase> alertLogicBases = new ArrayList<>();
+    private volatile MpmcArrayQueue<MetricData> q = new MpmcArrayQueue<>(3000000);
 
     private static class MetricData {
         long value;
@@ -31,8 +34,8 @@ public class Metric implements AutoCloseable {
         if (metricId < 0) {
             q.add(x);
         } else {
-            if (alertProducer != null && alertLogic != null) {
-                alertProducer.sendAlert(alertLogic, metricId, x.value, x.timestamp);
+            if (alertProducer != null) {
+                sendToAllAlerts(x.value, x.timestamp);
             }
             metricRegistry.getMetricProducer().sendSingleMetric(metricId, x.value, x.timestamp);
         }
@@ -42,9 +45,9 @@ public class Metric implements AutoCloseable {
         this.metricRegistry  = metricRegistry;
     }
 
-    Metric(MetricRegistry metricRegistry, AlertLogicBase alertLogic) {
+    Metric(MetricRegistry metricRegistry, List<AlertLogicBase> alertLogics) {
         this.metricRegistry  = metricRegistry;
-        this.alertLogic = alertLogic;
+        this.alertLogicBases = alertLogics;
     }
 
     Metric(MetricRegistry metricRegistry, int metricId) {
@@ -52,10 +55,8 @@ public class Metric implements AutoCloseable {
         this.metricId = metricId;
     }
 
-    Metric(MetricRegistry metricRegistry, AlertLogicBase alertLogic, int metricId) {
-        this.metricRegistry  = metricRegistry;
-        this.alertLogic = alertLogic;
-        this.metricId = metricId;
+    public void setAlertId(int alertId) {
+        this.alertId = alertId;
     }
 
     public void setAlertProducer(Producer alertProducer) {
@@ -76,12 +77,19 @@ public class Metric implements AutoCloseable {
         this.alertProducer = new AlertProducer(driverContext, ConfigReader.readProducerFromFile(path));
     }
 
-    public void setAlertLogic(AlertLogicBase alertLogic) {
-        this.alertLogic = alertLogic;
+    public void addAlertLogic(AlertLogicBase alertLogic) {
+        alertLogicBases.add(alertLogic);
     }
 
     public int getMetricId() {
         return metricId;
+    }
+
+    private void sendToAllAlerts(long value, long timestamp) {
+        for (int i = 0; i < alertLogicBases.size(); i++) {
+            alertProducer.sendAlertWithAlertId(alertLogicBases.get(i),
+                    alertLogicBases.get(i).getAlertInfo().getAlertId(), metricId, value, timestamp);
+        }
     }
 
     void changeId(int newId) {
@@ -97,8 +105,8 @@ public class Metric implements AutoCloseable {
     public boolean addValue(long value, long timestamp) {
         var q = this.q;
         if (q == null) {
-            if (alertProducer != null && alertLogic != null) {
-                alertProducer.sendAlert(alertLogic, metricId, value, timestamp);
+            if (alertProducer != null) {
+                sendToAllAlerts(value, timestamp);
             }
             return metricRegistry.getMetricProducer().sendSingleMetric(metricId, value, timestamp);
         }
@@ -113,8 +121,8 @@ public class Metric implements AutoCloseable {
                 }
             }
         }
-        if (alertProducer != null && alertLogic != null) {
-            alertProducer.sendAlert(alertLogic, metricId, value, timestamp);
+        if (alertProducer != null) {
+            sendToAllAlerts(value, timestamp);
         }
         return metricRegistry.getMetricProducer().sendSingleMetric(metricId, value, timestamp);
     }

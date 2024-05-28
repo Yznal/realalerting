@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20240522084012"
+    "changelogDate": "20240527144823"
   },
   "applications": ["ControlPlane"],
   "fields": [
@@ -20,14 +20,30 @@
     {
       "fieldName": "description",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "criticalAlertProducerUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerStreamId",
+      "fieldType": "Integer"
     }
   ],
   "name": "Metric",
   "relationships": [
     {
-      "otherEntityName": "alert",
+      "otherEntityName": "realAlert",
       "otherEntityRelationshipName": "metric",
-      "relationshipName": "alert",
+      "relationshipName": "realAlert",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     },

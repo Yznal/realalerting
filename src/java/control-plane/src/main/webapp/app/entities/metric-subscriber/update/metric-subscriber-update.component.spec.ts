@@ -53,10 +53,10 @@ describe('MetricSubscriber Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Client query and add missing value', () => {
       const metricSubscriber: IMetricSubscriber = { id: 456 };
-      const client: IClient = { id: 6589 };
+      const client: IClient = { id: 30935 };
       metricSubscriber.client = client;
 
-      const clientCollection: IClient[] = [{ id: 4954 }];
+      const clientCollection: IClient[] = [{ id: 14818 }];
       jest.spyOn(clientService, 'query').mockReturnValue(of(new HttpResponse({ body: clientCollection })));
       const additionalClients = [client];
       const expectedCollection: IClient[] = [...additionalClients, ...clientCollection];
@@ -75,10 +75,10 @@ describe('MetricSubscriber Management Update Component', () => {
 
     it('Should call Metric query and add missing value', () => {
       const metricSubscriber: IMetricSubscriber = { id: 456 };
-      const metric: IMetric = { id: 14916 };
+      const metric: IMetric = { id: 4774 };
       metricSubscriber.metric = metric;
 
-      const metricCollection: IMetric[] = [{ id: 8786 }];
+      const metricCollection: IMetric[] = [{ id: 4831 }];
       jest.spyOn(metricService, 'query').mockReturnValue(of(new HttpResponse({ body: metricCollection })));
       const additionalMetrics = [metric];
       const expectedCollection: IMetric[] = [...additionalMetrics, ...metricCollection];
@@ -97,9 +97,9 @@ describe('MetricSubscriber Management Update Component', () => {
 
     it('Should update editForm', () => {
       const metricSubscriber: IMetricSubscriber = { id: 456 };
-      const client: IClient = { id: 13497 };
+      const client: IClient = { id: 27064 };
       metricSubscriber.client = client;
-      const metric: IMetric = { id: 14809 };
+      const metric: IMetric = { id: 3014 };
       metricSubscriber.metric = metric;
 
       activatedRoute.data = of({ metricSubscriber });

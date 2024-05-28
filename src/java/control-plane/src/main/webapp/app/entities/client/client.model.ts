@@ -2,10 +2,14 @@ import { ITenant } from 'app/entities/tenant/tenant.model';
 
 export interface IClient {
   id: number;
-  protocolAddress?: string | null;
-  protocolPort?: number | null;
-  protocolUri?: string | null;
-  protocolStreamId?: number | null;
+  protocolProducerAddress?: string | null;
+  protocolProducerPort?: number | null;
+  protocolProducerUri?: string | null;
+  protocolProducerStreamId?: number | null;
+  protocolSubscriberAddress?: string | null;
+  protocolSubscriberPort?: number | null;
+  protocolSubscriberUri?: string | null;
+  protocolSubscriberStreamId?: number | null;
   metricProducerAddress?: string | null;
   metricProducerPort?: number | null;
   metricProducerUri?: string | null;

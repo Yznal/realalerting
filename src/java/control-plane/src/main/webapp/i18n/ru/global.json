@@ -14,7 +14,7 @@
         "metricTagsValue": "Metric Tags Value",
         "tenant": "Tenant",
         "metric": "Metric",
-        "alert": "Alert",
+        "realAlert": "Real Alert",
         "alertSubscriber": "Alert Subscriber",
         "metricSubscriber": "Metric Subscriber"
       },

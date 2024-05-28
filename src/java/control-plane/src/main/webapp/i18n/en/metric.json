@@ -21,7 +21,11 @@
       "type": "Type",
       "name": "Name",
       "description": "Description",
-      "alert": "Alert",
+      "criticalAlertProducerAddress": "Critical Alert Producer Address",
+      "criticalAlertProducerPort": "Critical Alert Producer Port",
+      "criticalAlertProducerUri": "Critical Alert Producer Uri",
+      "criticalAlertProducerStreamId": "Critical Alert Producer Stream Id",
+      "realAlert": "Real Alert",
       "metricSubscriber": "Metric Subscriber",
       "client": "Client",
       "metricTagsValue": "Metric Tags Value"

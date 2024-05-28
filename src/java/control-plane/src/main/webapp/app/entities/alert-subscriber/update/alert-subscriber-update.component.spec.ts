@@ -5,10 +5,10 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject, from } from 'rxjs';
 
-import { IAlert } from 'app/entities/alert/alert.model';
-import { AlertService } from 'app/entities/alert/service/alert.service';
 import { IClient } from 'app/entities/client/client.model';
 import { ClientService } from 'app/entities/client/service/client.service';
+import { IRealAlert } from 'app/entities/real-alert/real-alert.model';
+import { RealAlertService } from 'app/entities/real-alert/service/real-alert.service';
 import { IAlertSubscriber } from '../alert-subscriber.model';
 import { AlertSubscriberService } from '../service/alert-subscriber.service';
 import { AlertSubscriberFormService } from './alert-subscriber-form.service';
@@ -21,8 +21,8 @@ describe('AlertSubscriber Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let alertSubscriberFormService: AlertSubscriberFormService;
   let alertSubscriberService: AlertSubscriberService;
-  let alertService: AlertService;
   let clientService: ClientService;
+  let realAlertService: RealAlertService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -44,41 +44,19 @@ describe('AlertSubscriber Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     alertSubscriberFormService = TestBed.inject(AlertSubscriberFormService);
     alertSubscriberService = TestBed.inject(AlertSubscriberService);
-    alertService = TestBed.inject(AlertService);
     clientService = TestBed.inject(ClientService);
+    realAlertService = TestBed.inject(RealAlertService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('Should call Alert query and add missing value', () => {
-      const alertSubscriber: IAlertSubscriber = { id: 456 };
-      const alert: IAlert = { id: 8640 };
-      alertSubscriber.alert = alert;
-
-      const alertCollection: IAlert[] = [{ id: 28835 }];
-      jest.spyOn(alertService, 'query').mockReturnValue(of(new HttpResponse({ body: alertCollection })));
-      const additionalAlerts = [alert];
-      const expectedCollection: IAlert[] = [...additionalAlerts, ...alertCollection];
-      jest.spyOn(alertService, 'addAlertToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ alertSubscriber });
-      comp.ngOnInit();
-
-      expect(alertService.query).toHaveBeenCalled();
-      expect(alertService.addAlertToCollectionIfMissing).toHaveBeenCalledWith(
-        alertCollection,
-        ...additionalAlerts.map(expect.objectContaining),
-      );
-      expect(comp.alertsSharedCollection).toEqual(expectedCollection);
-    });
-
     it('Should call Client query and add missing value', () => {
       const alertSubscriber: IAlertSubscriber = { id: 456 };
-      const client: IClient = { id: 12106 };
+      const client: IClient = { id: 23340 };
       alertSubscriber.client = client;
 
-      const clientCollection: IClient[] = [{ id: 19986 }];
+      const clientCollection: IClient[] = [{ id: 3073 }];
       jest.spyOn(clientService, 'query').mockReturnValue(of(new HttpResponse({ body: clientCollection })));
       const additionalClients = [client];
       const expectedCollection: IClient[] = [...additionalClients, ...clientCollection];
@@ -95,18 +73,40 @@ describe('AlertSubscriber Management Update Component', () => {
       expect(comp.clientsSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should update editForm', () => {
+    it('Should call RealAlert query and add missing value', () => {
       const alertSubscriber: IAlertSubscriber = { id: 456 };
-      const alert: IAlert = { id: 6637 };
-      alertSubscriber.alert = alert;
-      const client: IClient = { id: 27029 };
-      alertSubscriber.client = client;
+      const realAlert: IRealAlert = { id: 1117 };
+      alertSubscriber.realAlert = realAlert;
+
+      const realAlertCollection: IRealAlert[] = [{ id: 8042 }];
+      jest.spyOn(realAlertService, 'query').mockReturnValue(of(new HttpResponse({ body: realAlertCollection })));
+      const additionalRealAlerts = [realAlert];
+      const expectedCollection: IRealAlert[] = [...additionalRealAlerts, ...realAlertCollection];
+      jest.spyOn(realAlertService, 'addRealAlertToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ alertSubscriber });
       comp.ngOnInit();
 
-      expect(comp.alertsSharedCollection).toContain(alert);
+      expect(realAlertService.query).toHaveBeenCalled();
+      expect(realAlertService.addRealAlertToCollectionIfMissing).toHaveBeenCalledWith(
+        realAlertCollection,
+        ...additionalRealAlerts.map(expect.objectContaining),
+      );
+      expect(comp.realAlertsSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('Should update editForm', () => {
+      const alertSubscriber: IAlertSubscriber = { id: 456 };
+      const client: IClient = { id: 18600 };
+      alertSubscriber.client = client;
+      const realAlert: IRealAlert = { id: 18764 };
+      alertSubscriber.realAlert = realAlert;
+
+      activatedRoute.data = of({ alertSubscriber });
+      comp.ngOnInit();
+
       expect(comp.clientsSharedCollection).toContain(client);
+      expect(comp.realAlertsSharedCollection).toContain(realAlert);
       expect(comp.alertSubscriber).toEqual(alertSubscriber);
     });
   });
@@ -180,16 +180,6 @@ describe('AlertSubscriber Management Update Component', () => {
   });
 
   describe('Compare relationships', () => {
-    describe('compareAlert', () => {
-      it('Should forward to alertService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(alertService, 'compareAlert');
-        comp.compareAlert(entity, entity2);
-        expect(alertService.compareAlert).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
     describe('compareClient', () => {
       it('Should forward to clientService', () => {
         const entity = { id: 123 };
@@ -197,6 +187,16 @@ describe('AlertSubscriber Management Update Component', () => {
         jest.spyOn(clientService, 'compareClient');
         comp.compareClient(entity, entity2);
         expect(clientService.compareClient).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
+    describe('compareRealAlert', () => {
+      it('Should forward to realAlertService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(realAlertService, 'compareRealAlert');
+        comp.compareRealAlert(entity, entity2);
+        expect(realAlertService.compareRealAlert).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

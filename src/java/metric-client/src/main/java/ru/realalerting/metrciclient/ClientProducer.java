@@ -19,7 +19,7 @@ public class ClientProducer extends BaseProducer {
     }
 
     private void sendData(byte[][] tagsBytes, int requsetId, MutableDirectBuffer buf, int offset) {
-        buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID);
+        buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID_BY_TAGS);
         offset += MetricConstants.ID_SIZE;
         buf.putInt(offset, requsetId);
         offset += MetricConstants.ID_SIZE;

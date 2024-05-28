@@ -32,17 +32,29 @@ import ru.realalerting.controlplane.repository.ClientRepository;
 @WithMockUser
 class ClientResourceIT {
 
-    private static final String DEFAULT_PROTOCOL_ADDRESS = "AAAAAAAAAA";
-    private static final String UPDATED_PROTOCOL_ADDRESS = "BBBBBBBBBB";
+    private static final String DEFAULT_PROTOCOL_PRODUCER_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_PROTOCOL_PRODUCER_ADDRESS = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_PROTOCOL_PORT = 1;
-    private static final Integer UPDATED_PROTOCOL_PORT = 2;
+    private static final Integer DEFAULT_PROTOCOL_PRODUCER_PORT = 1;
+    private static final Integer UPDATED_PROTOCOL_PRODUCER_PORT = 2;
 
-    private static final String DEFAULT_PROTOCOL_URI = "AAAAAAAAAA";
-    private static final String UPDATED_PROTOCOL_URI = "BBBBBBBBBB";
+    private static final String DEFAULT_PROTOCOL_PRODUCER_URI = "AAAAAAAAAA";
+    private static final String UPDATED_PROTOCOL_PRODUCER_URI = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_PROTOCOL_STREAM_ID = 1;
-    private static final Integer UPDATED_PROTOCOL_STREAM_ID = 2;
+    private static final Integer DEFAULT_PROTOCOL_PRODUCER_STREAM_ID = 1;
+    private static final Integer UPDATED_PROTOCOL_PRODUCER_STREAM_ID = 2;
+
+    private static final String DEFAULT_PROTOCOL_SUBSCRIBER_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_PROTOCOL_SUBSCRIBER_ADDRESS = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_PROTOCOL_SUBSCRIBER_PORT = 1;
+    private static final Integer UPDATED_PROTOCOL_SUBSCRIBER_PORT = 2;
+
+    private static final String DEFAULT_PROTOCOL_SUBSCRIBER_URI = "AAAAAAAAAA";
+    private static final String UPDATED_PROTOCOL_SUBSCRIBER_URI = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_PROTOCOL_SUBSCRIBER_STREAM_ID = 1;
+    private static final Integer UPDATED_PROTOCOL_SUBSCRIBER_STREAM_ID = 2;
 
     private static final String DEFAULT_METRIC_PRODUCER_ADDRESS = "AAAAAAAAAA";
     private static final String UPDATED_METRIC_PRODUCER_ADDRESS = "BBBBBBBBBB";
@@ -84,10 +96,14 @@ class ClientResourceIT {
      */
     public static Client createEntity(EntityManager em) {
         Client client = new Client()
-            .protocolAddress(DEFAULT_PROTOCOL_ADDRESS)
-            .protocolPort(DEFAULT_PROTOCOL_PORT)
-            .protocolUri(DEFAULT_PROTOCOL_URI)
-            .protocolStreamId(DEFAULT_PROTOCOL_STREAM_ID)
+            .protocolProducerAddress(DEFAULT_PROTOCOL_PRODUCER_ADDRESS)
+            .protocolProducerPort(DEFAULT_PROTOCOL_PRODUCER_PORT)
+            .protocolProducerUri(DEFAULT_PROTOCOL_PRODUCER_URI)
+            .protocolProducerStreamId(DEFAULT_PROTOCOL_PRODUCER_STREAM_ID)
+            .protocolSubscriberAddress(DEFAULT_PROTOCOL_SUBSCRIBER_ADDRESS)
+            .protocolSubscriberPort(DEFAULT_PROTOCOL_SUBSCRIBER_PORT)
+            .protocolSubscriberUri(DEFAULT_PROTOCOL_SUBSCRIBER_URI)
+            .protocolSubscriberStreamId(DEFAULT_PROTOCOL_SUBSCRIBER_STREAM_ID)
             .metricProducerAddress(DEFAULT_METRIC_PRODUCER_ADDRESS)
             .metricProducerPort(DEFAULT_METRIC_PRODUCER_PORT)
             .metricProducerUri(DEFAULT_METRIC_PRODUCER_URI)
@@ -113,10 +129,14 @@ class ClientResourceIT {
      */
     public static Client createUpdatedEntity(EntityManager em) {
         Client client = new Client()
-            .protocolAddress(UPDATED_PROTOCOL_ADDRESS)
-            .protocolPort(UPDATED_PROTOCOL_PORT)
-            .protocolUri(UPDATED_PROTOCOL_URI)
-            .protocolStreamId(UPDATED_PROTOCOL_STREAM_ID)
+            .protocolProducerAddress(UPDATED_PROTOCOL_PRODUCER_ADDRESS)
+            .protocolProducerPort(UPDATED_PROTOCOL_PRODUCER_PORT)
+            .protocolProducerUri(UPDATED_PROTOCOL_PRODUCER_URI)
+            .protocolProducerStreamId(UPDATED_PROTOCOL_PRODUCER_STREAM_ID)
+            .protocolSubscriberAddress(UPDATED_PROTOCOL_SUBSCRIBER_ADDRESS)
+            .protocolSubscriberPort(UPDATED_PROTOCOL_SUBSCRIBER_PORT)
+            .protocolSubscriberUri(UPDATED_PROTOCOL_SUBSCRIBER_URI)
+            .protocolSubscriberStreamId(UPDATED_PROTOCOL_SUBSCRIBER_STREAM_ID)
             .metricProducerAddress(UPDATED_METRIC_PRODUCER_ADDRESS)
             .metricProducerPort(UPDATED_METRIC_PRODUCER_PORT)
             .metricProducerUri(UPDATED_METRIC_PRODUCER_URI)
@@ -188,10 +208,14 @@ class ClientResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(client.getId().intValue())))
-            .andExpect(jsonPath("$.[*].protocolAddress").value(hasItem(DEFAULT_PROTOCOL_ADDRESS)))
-            .andExpect(jsonPath("$.[*].protocolPort").value(hasItem(DEFAULT_PROTOCOL_PORT)))
-            .andExpect(jsonPath("$.[*].protocolUri").value(hasItem(DEFAULT_PROTOCOL_URI)))
-            .andExpect(jsonPath("$.[*].protocolStreamId").value(hasItem(DEFAULT_PROTOCOL_STREAM_ID)))
+            .andExpect(jsonPath("$.[*].protocolProducerAddress").value(hasItem(DEFAULT_PROTOCOL_PRODUCER_ADDRESS)))
+            .andExpect(jsonPath("$.[*].protocolProducerPort").value(hasItem(DEFAULT_PROTOCOL_PRODUCER_PORT)))
+            .andExpect(jsonPath("$.[*].protocolProducerUri").value(hasItem(DEFAULT_PROTOCOL_PRODUCER_URI)))
+            .andExpect(jsonPath("$.[*].protocolProducerStreamId").value(hasItem(DEFAULT_PROTOCOL_PRODUCER_STREAM_ID)))
+            .andExpect(jsonPath("$.[*].protocolSubscriberAddress").value(hasItem(DEFAULT_PROTOCOL_SUBSCRIBER_ADDRESS)))
+            .andExpect(jsonPath("$.[*].protocolSubscriberPort").value(hasItem(DEFAULT_PROTOCOL_SUBSCRIBER_PORT)))
+            .andExpect(jsonPath("$.[*].protocolSubscriberUri").value(hasItem(DEFAULT_PROTOCOL_SUBSCRIBER_URI)))
+            .andExpect(jsonPath("$.[*].protocolSubscriberStreamId").value(hasItem(DEFAULT_PROTOCOL_SUBSCRIBER_STREAM_ID)))
             .andExpect(jsonPath("$.[*].metricProducerAddress").value(hasItem(DEFAULT_METRIC_PRODUCER_ADDRESS)))
             .andExpect(jsonPath("$.[*].metricProducerPort").value(hasItem(DEFAULT_METRIC_PRODUCER_PORT)))
             .andExpect(jsonPath("$.[*].metricProducerUri").value(hasItem(DEFAULT_METRIC_PRODUCER_URI)))
@@ -210,10 +234,14 @@ class ClientResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(client.getId().intValue()))
-            .andExpect(jsonPath("$.protocolAddress").value(DEFAULT_PROTOCOL_ADDRESS))
-            .andExpect(jsonPath("$.protocolPort").value(DEFAULT_PROTOCOL_PORT))
-            .andExpect(jsonPath("$.protocolUri").value(DEFAULT_PROTOCOL_URI))
-            .andExpect(jsonPath("$.protocolStreamId").value(DEFAULT_PROTOCOL_STREAM_ID))
+            .andExpect(jsonPath("$.protocolProducerAddress").value(DEFAULT_PROTOCOL_PRODUCER_ADDRESS))
+            .andExpect(jsonPath("$.protocolProducerPort").value(DEFAULT_PROTOCOL_PRODUCER_PORT))
+            .andExpect(jsonPath("$.protocolProducerUri").value(DEFAULT_PROTOCOL_PRODUCER_URI))
+            .andExpect(jsonPath("$.protocolProducerStreamId").value(DEFAULT_PROTOCOL_PRODUCER_STREAM_ID))
+            .andExpect(jsonPath("$.protocolSubscriberAddress").value(DEFAULT_PROTOCOL_SUBSCRIBER_ADDRESS))
+            .andExpect(jsonPath("$.protocolSubscriberPort").value(DEFAULT_PROTOCOL_SUBSCRIBER_PORT))
+            .andExpect(jsonPath("$.protocolSubscriberUri").value(DEFAULT_PROTOCOL_SUBSCRIBER_URI))
+            .andExpect(jsonPath("$.protocolSubscriberStreamId").value(DEFAULT_PROTOCOL_SUBSCRIBER_STREAM_ID))
             .andExpect(jsonPath("$.metricProducerAddress").value(DEFAULT_METRIC_PRODUCER_ADDRESS))
             .andExpect(jsonPath("$.metricProducerPort").value(DEFAULT_METRIC_PRODUCER_PORT))
             .andExpect(jsonPath("$.metricProducerUri").value(DEFAULT_METRIC_PRODUCER_URI))
@@ -240,10 +268,14 @@ class ClientResourceIT {
         // Disconnect from session so that the updates on updatedClient are not directly saved in db
         em.detach(updatedClient);
         updatedClient
-            .protocolAddress(UPDATED_PROTOCOL_ADDRESS)
-            .protocolPort(UPDATED_PROTOCOL_PORT)
-            .protocolUri(UPDATED_PROTOCOL_URI)
-            .protocolStreamId(UPDATED_PROTOCOL_STREAM_ID)
+            .protocolProducerAddress(UPDATED_PROTOCOL_PRODUCER_ADDRESS)
+            .protocolProducerPort(UPDATED_PROTOCOL_PRODUCER_PORT)
+            .protocolProducerUri(UPDATED_PROTOCOL_PRODUCER_URI)
+            .protocolProducerStreamId(UPDATED_PROTOCOL_PRODUCER_STREAM_ID)
+            .protocolSubscriberAddress(UPDATED_PROTOCOL_SUBSCRIBER_ADDRESS)
+            .protocolSubscriberPort(UPDATED_PROTOCOL_SUBSCRIBER_PORT)
+            .protocolSubscriberUri(UPDATED_PROTOCOL_SUBSCRIBER_URI)
+            .protocolSubscriberStreamId(UPDATED_PROTOCOL_SUBSCRIBER_STREAM_ID)
             .metricProducerAddress(UPDATED_METRIC_PRODUCER_ADDRESS)
             .metricProducerPort(UPDATED_METRIC_PRODUCER_PORT)
             .metricProducerUri(UPDATED_METRIC_PRODUCER_URI)
@@ -324,8 +356,11 @@ class ClientResourceIT {
         partialUpdatedClient.setId(client.getId());
 
         partialUpdatedClient
-            .protocolAddress(UPDATED_PROTOCOL_ADDRESS)
-            .protocolStreamId(UPDATED_PROTOCOL_STREAM_ID)
+            .protocolProducerAddress(UPDATED_PROTOCOL_PRODUCER_ADDRESS)
+            .protocolProducerStreamId(UPDATED_PROTOCOL_PRODUCER_STREAM_ID)
+            .protocolSubscriberStreamId(UPDATED_PROTOCOL_SUBSCRIBER_STREAM_ID)
+            .metricProducerAddress(UPDATED_METRIC_PRODUCER_ADDRESS)
+            .metricProducerPort(UPDATED_METRIC_PRODUCER_PORT)
             .metricProducerStreamId(UPDATED_METRIC_PRODUCER_STREAM_ID);
 
         restClientMockMvc
@@ -355,10 +390,14 @@ class ClientResourceIT {
         partialUpdatedClient.setId(client.getId());
 
         partialUpdatedClient
-            .protocolAddress(UPDATED_PROTOCOL_ADDRESS)
-            .protocolPort(UPDATED_PROTOCOL_PORT)
-            .protocolUri(UPDATED_PROTOCOL_URI)
-            .protocolStreamId(UPDATED_PROTOCOL_STREAM_ID)
+            .protocolProducerAddress(UPDATED_PROTOCOL_PRODUCER_ADDRESS)
+            .protocolProducerPort(UPDATED_PROTOCOL_PRODUCER_PORT)
+            .protocolProducerUri(UPDATED_PROTOCOL_PRODUCER_URI)
+            .protocolProducerStreamId(UPDATED_PROTOCOL_PRODUCER_STREAM_ID)
+            .protocolSubscriberAddress(UPDATED_PROTOCOL_SUBSCRIBER_ADDRESS)
+            .protocolSubscriberPort(UPDATED_PROTOCOL_SUBSCRIBER_PORT)
+            .protocolSubscriberUri(UPDATED_PROTOCOL_SUBSCRIBER_URI)
+            .protocolSubscriberStreamId(UPDATED_PROTOCOL_SUBSCRIBER_STREAM_ID)
             .metricProducerAddress(UPDATED_METRIC_PRODUCER_ADDRESS)
             .metricProducerPort(UPDATED_METRIC_PRODUCER_PORT)
             .metricProducerUri(UPDATED_METRIC_PRODUCER_URI)

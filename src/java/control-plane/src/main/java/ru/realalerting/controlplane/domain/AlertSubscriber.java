@@ -38,13 +38,13 @@ public class AlertSubscriber implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "metric" }, allowSetters = true)
-    private Alert alert;
+    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "realAlerts", "alertSubscribers", "tenant" }, allowSetters = true)
+    private Client client;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "metrics", "metricSubscribers", "tenant" }, allowSetters = true)
-    private Client client;
+    @JsonIgnoreProperties(value = { "alertSubscribers", "client", "metric" }, allowSetters = true)
+    private RealAlert realAlert;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -113,19 +113,6 @@ public class AlertSubscriber implements Serializable {
         this.subscriberStreamId = subscriberStreamId;
     }
 
-    public Alert getAlert() {
-        return this.alert;
-    }
-
-    public void setAlert(Alert alert) {
-        this.alert = alert;
-    }
-
-    public AlertSubscriber alert(Alert alert) {
-        this.setAlert(alert);
-        return this;
-    }
-
     public Client getClient() {
         return this.client;
     }
@@ -136,6 +123,19 @@ public class AlertSubscriber implements Serializable {
 
     public AlertSubscriber client(Client client) {
         this.setClient(client);
+        return this;
+    }
+
+    public RealAlert getRealAlert() {
+        return this.realAlert;
+    }
+
+    public void setRealAlert(RealAlert realAlert) {
+        this.realAlert = realAlert;
+    }
+
+    public AlertSubscriber realAlert(RealAlert realAlert) {
+        this.setRealAlert(realAlert);
         return this;
     }
 

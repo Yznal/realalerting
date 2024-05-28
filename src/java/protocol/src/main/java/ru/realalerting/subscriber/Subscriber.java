@@ -64,6 +64,16 @@ public class Subscriber implements AutoCloseable {
         idle = idleStrategy;
     }
 
+    public Subscriber(RealAlertingDriverContext aeronContext, IdleStrategy idle, String uri, int streamId) {
+        subscription = aeronContext.getAeron().addSubscription(uri, streamId);
+        this.idle = idle;
+    }
+
+    public Subscriber(RealAlertingDriverContext aeronContext, String uri, int streamId) {
+        subscription = aeronContext.getAeron().addSubscription(uri, streamId);
+        idle = new SleepingIdleStrategy();
+    }
+
     public IdleStrategy getIdle() {
         return idle;
     }

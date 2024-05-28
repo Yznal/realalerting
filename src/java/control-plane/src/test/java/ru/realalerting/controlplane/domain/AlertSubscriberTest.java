@@ -2,8 +2,8 @@ package ru.realalerting.controlplane.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.realalerting.controlplane.domain.AlertSubscriberTestSamples.*;
-import static ru.realalerting.controlplane.domain.AlertTestSamples.*;
 import static ru.realalerting.controlplane.domain.ClientTestSamples.*;
+import static ru.realalerting.controlplane.domain.RealAlertTestSamples.*;
 
 import org.junit.jupiter.api.Test;
 import ru.realalerting.controlplane.web.rest.TestUtil;
@@ -25,18 +25,6 @@ class AlertSubscriberTest {
     }
 
     @Test
-    void alertTest() throws Exception {
-        AlertSubscriber alertSubscriber = getAlertSubscriberRandomSampleGenerator();
-        Alert alertBack = getAlertRandomSampleGenerator();
-
-        alertSubscriber.setAlert(alertBack);
-        assertThat(alertSubscriber.getAlert()).isEqualTo(alertBack);
-
-        alertSubscriber.alert(null);
-        assertThat(alertSubscriber.getAlert()).isNull();
-    }
-
-    @Test
     void clientTest() throws Exception {
         AlertSubscriber alertSubscriber = getAlertSubscriberRandomSampleGenerator();
         Client clientBack = getClientRandomSampleGenerator();
@@ -46,5 +34,17 @@ class AlertSubscriberTest {
 
         alertSubscriber.client(null);
         assertThat(alertSubscriber.getClient()).isNull();
+    }
+
+    @Test
+    void realAlertTest() throws Exception {
+        AlertSubscriber alertSubscriber = getAlertSubscriberRandomSampleGenerator();
+        RealAlert realAlertBack = getRealAlertRandomSampleGenerator();
+
+        alertSubscriber.setRealAlert(realAlertBack);
+        assertThat(alertSubscriber.getRealAlert()).isEqualTo(realAlertBack);
+
+        alertSubscriber.realAlert(null);
+        assertThat(alertSubscriber.getRealAlert()).isNull();
     }
 }

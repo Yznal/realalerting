@@ -63,6 +63,34 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerAddress">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerAddress">Critical Alert Producer Address</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerPort">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerPort">Critical Alert Producer Port</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerUri">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerUri">Critical Alert Producer Uri</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerStreamId">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerStreamId">Critical Alert Producer Stream Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col" jhiSortBy="client.id">
               <div class="d-flex">
                 <span jhiTranslate="controlPlaneApp.metric.client">Client</span>
@@ -83,6 +111,10 @@
               </td>
               <td>{{ metric.name }}</td>
               <td>{{ metric.description }}</td>
+              <td>{{ metric.criticalAlertProducerAddress }}</td>
+              <td>{{ metric.criticalAlertProducerPort }}</td>
+              <td>{{ metric.criticalAlertProducerUri }}</td>
+              <td>{{ metric.criticalAlertProducerStreamId }}</td>
               <td>
                 @if (metric.client) {
                   <div>

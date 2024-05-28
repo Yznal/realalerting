@@ -11,22 +11,22 @@
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084008_added_entity_MetricMeta.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084009_added_entity_Client.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084010_added_entity_MetricTagsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084011_added_entity_Tenant.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084012_added_entity_Metric.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084013_added_entity_Alert.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084014_added_entity_AlertSubscriber.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084015_added_entity_MetricSubscriber.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144423_added_entity_MetricMeta.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144523_added_entity_Client.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144623_added_entity_MetricTagsValue.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144723_added_entity_Tenant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144823_added_entity_Metric.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144923_added_entity_RealAlert.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527145023_added_entity_AlertSubscriber.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527145123_added_entity_MetricSubscriber.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <include file="config/liquibase/changelog/20240522084008_added_entity_constraints_MetricMeta.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084009_added_entity_constraints_Client.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084010_added_entity_constraints_MetricTagsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084012_added_entity_constraints_Metric.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084013_added_entity_constraints_Alert.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084014_added_entity_constraints_AlertSubscriber.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240522084015_added_entity_constraints_MetricSubscriber.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144423_added_entity_constraints_MetricMeta.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144523_added_entity_constraints_Client.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144623_added_entity_constraints_MetricTagsValue.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144823_added_entity_constraints_Metric.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527144923_added_entity_constraints_RealAlert.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527145023_added_entity_constraints_AlertSubscriber.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240527145123_added_entity_constraints_MetricSubscriber.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

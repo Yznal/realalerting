@@ -1,23 +1,39 @@
 {
   "annotations": {
-    "changelogDate": "20240522084009"
+    "changelogDate": "20240527144523"
   },
   "applications": ["ControlPlane"],
   "fields": [
     {
-      "fieldName": "protocolAddress",
+      "fieldName": "protocolProducerAddress",
       "fieldType": "String"
     },
     {
-      "fieldName": "protocolPort",
+      "fieldName": "protocolProducerPort",
       "fieldType": "Integer"
     },
     {
-      "fieldName": "protocolUri",
+      "fieldName": "protocolProducerUri",
       "fieldType": "String"
     },
     {
-      "fieldName": "protocolStreamId",
+      "fieldName": "protocolProducerStreamId",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "protocolSubscriberAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "protocolSubscriberPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "protocolSubscriberUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "protocolSubscriberStreamId",
       "fieldType": "Integer"
     },
     {
@@ -50,6 +66,20 @@
       "otherEntityName": "metricSubscriber",
       "otherEntityRelationshipName": "client",
       "relationshipName": "metricSubscriber",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "realAlert",
+      "otherEntityRelationshipName": "client",
+      "relationshipName": "realAlert",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "alertSubscriber",
+      "otherEntityRelationshipName": "client",
+      "relationshipName": "alertSubscriber",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     },

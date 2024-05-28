@@ -38,16 +38,21 @@ public abstract class AlertSubscriber extends MetricSubscriber {
         return alertId;
     }
 
-    abstract public void onAlert(int metricId, long value, long timestamp);
+    abstract public void onAlert(int alertId, int metricId, long value, long timestamp);
 
     @Override
     public void onFragment(DirectBuffer directBuffer, int offset, int length, Header header) {
         for (int i = 0; i * MetricConstants.METRIC_BYTES < length; ++i){
-            int id = directBuffer.getInt(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.ID_OFFSET);
-            long value = directBuffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.VALUE_OFFSET);
-            long timestamp = directBuffer.getLong(offset + i * MetricConstants.METRIC_BYTES + MetricConstants.TIMESTAMP_OFFSET);
+            int alertId = directBuffer.getInt(offset);
+            offset += MetricConstants.ID_SIZE;
+            int metricId = directBuffer.getInt(offset);
+            offset += MetricConstants.ID_SIZE;
+            long value = directBuffer.getLong(offset);
+            offset += MetricConstants.VALUE_SIZE;
+            long timestamp = directBuffer.getLong(offset);
+            offset += MetricConstants.VALUE_SIZE;
             if (lastTimestamp.get() < timestamp) { // дедупликация
-                onAlert(id, value, timestamp);
+                onAlert(alertId, metricId, value, timestamp);
                 lastTimestamp.set(timestamp);
             }
         }

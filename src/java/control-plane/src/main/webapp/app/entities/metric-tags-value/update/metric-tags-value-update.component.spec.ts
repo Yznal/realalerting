@@ -53,10 +53,10 @@ describe('MetricTagsValue Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call metric query and add missing value', () => {
       const metricTagsValue: IMetricTagsValue = { id: 456 };
-      const metric: IMetric = { id: 1523 };
+      const metric: IMetric = { id: 32065 };
       metricTagsValue.metric = metric;
 
-      const metricCollection: IMetric[] = [{ id: 20824 }];
+      const metricCollection: IMetric[] = [{ id: 12974 }];
       jest.spyOn(metricService, 'query').mockReturnValue(of(new HttpResponse({ body: metricCollection })));
       const expectedCollection: IMetric[] = [metric, ...metricCollection];
       jest.spyOn(metricService, 'addMetricToCollectionIfMissing').mockReturnValue(expectedCollection);
@@ -93,7 +93,7 @@ describe('MetricTagsValue Management Update Component', () => {
 
     it('Should update editForm', () => {
       const metricTagsValue: IMetricTagsValue = { id: 456 };
-      const metric: IMetric = { id: 2776 };
+      const metric: IMetric = { id: 32401 };
       metricTagsValue.metric = metric;
       const tenant: ITenant = { id: 13455 };
       metricTagsValue.tenant = tenant;

@@ -23,6 +23,10 @@ describe('Metric Form Service', () => {
             type: expect.any(Object),
             name: expect.any(Object),
             description: expect.any(Object),
+            criticalAlertProducerAddress: expect.any(Object),
+            criticalAlertProducerPort: expect.any(Object),
+            criticalAlertProducerUri: expect.any(Object),
+            criticalAlertProducerStreamId: expect.any(Object),
             client: expect.any(Object),
           }),
         );
@@ -37,6 +41,10 @@ describe('Metric Form Service', () => {
             type: expect.any(Object),
             name: expect.any(Object),
             description: expect.any(Object),
+            criticalAlertProducerAddress: expect.any(Object),
+            criticalAlertProducerPort: expect.any(Object),
+            criticalAlertProducerUri: expect.any(Object),
+            criticalAlertProducerStreamId: expect.any(Object),
             client: expect.any(Object),
           }),
         );

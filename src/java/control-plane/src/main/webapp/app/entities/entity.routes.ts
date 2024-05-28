@@ -32,9 +32,9 @@ const routes: Routes = [
     loadChildren: () => import('./metric/metric.routes'),
   },
   {
-    path: 'alert',
-    data: { pageTitle: 'controlPlaneApp.alert.home.title' },
-    loadChildren: () => import('./alert/alert.routes'),
+    path: 'real-alert',
+    data: { pageTitle: 'controlPlaneApp.realAlert.home.title' },
+    loadChildren: () => import('./real-alert/real-alert.routes'),
   },
   {
     path: 'alert-subscriber',
