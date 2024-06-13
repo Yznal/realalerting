@@ -7,6 +7,10 @@ package ru.realalerting.protocol;
  */
 
 
+import org.agrona.DirectBuffer;
+
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author Karbayev Saruar
  */

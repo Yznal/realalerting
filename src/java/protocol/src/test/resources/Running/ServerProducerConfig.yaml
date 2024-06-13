@@ -1,0 +1,7 @@
+producer:
+  publication-type : udp
+  ip: localhost
+  port: 6000
+  stream-id: 2
+  idle-strategy: SleepingIdleStrategy
+  media-path: /dev/shm/aeron

@@ -10,7 +10,7 @@ import static ru.realalerting.controlplane.web.rest.TestUtil.createUpdateProxyFo
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ class ClientResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicInteger intCount = new AtomicInteger(random.nextInt() + (2 * Short.MAX_VALUE));
 
     @Autowired
     private ObjectMapper om;
@@ -183,7 +183,7 @@ class ClientResourceIT {
     @Transactional
     void createClientWithExistingId() throws Exception {
         // Create the Client with an existing ID
-        client.setId(1L);
+        client.setId(1);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
@@ -252,7 +252,7 @@ class ClientResourceIT {
     @Transactional
     void getNonExistingClient() throws Exception {
         // Get the client
-        restClientMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restClientMockMvc.perform(get(ENTITY_API_URL_ID, Integer.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -298,7 +298,7 @@ class ClientResourceIT {
     @Transactional
     void putNonExistingClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restClientMockMvc
@@ -313,12 +313,12 @@ class ClientResourceIT {
     @Transactional
     void putWithIdMismatchClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restClientMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                put(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(om.writeValueAsBytes(client))
             )
@@ -332,7 +332,7 @@ class ClientResourceIT {
     @Transactional
     void putWithMissingIdPathParamClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restClientMockMvc
@@ -421,7 +421,7 @@ class ClientResourceIT {
     @Transactional
     void patchNonExistingClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restClientMockMvc
@@ -438,12 +438,12 @@ class ClientResourceIT {
     @Transactional
     void patchWithIdMismatchClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restClientMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                patch(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(om.writeValueAsBytes(client))
             )
@@ -457,7 +457,7 @@ class ClientResourceIT {
     @Transactional
     void patchWithMissingIdPathParamClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        client.setId(longCount.incrementAndGet());
+        client.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restClientMockMvc

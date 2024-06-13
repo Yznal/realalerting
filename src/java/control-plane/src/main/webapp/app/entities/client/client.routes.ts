@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
 import { ClientComponent } from './list/client.component';
 import { ClientDetailComponent } from './detail/client-detail.component';
 import { ClientUpdateComponent } from './update/client-update.component';
@@ -11,9 +10,7 @@ const clientRoute: Routes = [
   {
     path: '',
     component: ClientComponent,
-    data: {
-      defaultSort: 'id,' + ASC,
-    },
+    data: {},
     canActivate: [UserRouteAccessService],
   },
   {

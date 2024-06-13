@@ -9,4 +9,4 @@ import ru.realalerting.controlplane.domain.Tenant;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface TenantRepository extends JpaRepository<Tenant, Long> {}
+public interface TenantRepository extends JpaRepository<Tenant, Integer> {}

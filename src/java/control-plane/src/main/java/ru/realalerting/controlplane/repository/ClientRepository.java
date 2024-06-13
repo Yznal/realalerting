@@ -9,4 +9,4 @@ import ru.realalerting.controlplane.domain.Client;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ClientRepository extends JpaRepository<Client, Long> {}
+public interface ClientRepository extends JpaRepository<Client, Integer> {}

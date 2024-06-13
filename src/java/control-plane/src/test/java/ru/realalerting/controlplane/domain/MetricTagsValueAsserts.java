@@ -47,7 +47,7 @@ public class MetricTagsValueAsserts {
     public static void assertMetricTagsValueUpdatableFieldsEquals(MetricTagsValue expected, MetricTagsValue actual) {
         assertThat(expected)
             .as("Verify MetricTagsValue relevant properties")
-            .satisfies(e -> assertThat(e.getValue01()).as("check value01").isEqualTo(actual.getValue01()))
+            .satisfies(e -> assertThat(e.getValue1()).as("check value1").isEqualTo(actual.getValue1()))
             .satisfies(e -> assertThat(e.getValue256()).as("check value256").isEqualTo(actual.getValue256()));
     }
 

@@ -6,6 +6,7 @@ import io.vertx.sqlclient.SqlClient;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.Agent;
 import ru.realalerting.producer.Producer;
+import ru.realalerting.protocol.client.GetCriticalAlerts;
 import ru.realalerting.protocol.client.GetMetricId;
 import ru.realalerting.subscriber.Subscriber;
 
@@ -14,24 +15,27 @@ public class ClientProtocolConnection implements FragmentHandler, AutoCloseable,
     private final Producer apiResponseProducer;
     private final Subscriber apiRequestSubscriber;
     private GetMetricId getMetricId;
+    private GetCriticalAlerts getCriticalAlerts;
     private SqlClient database;
     private int maxFragmentSize = 1000;
 
     public ClientProtocolConnection(int clientId, Producer apiResponseProducer, Subscriber apiRequestSubscriber,
-                                    GetMetricId getMetricId, SqlClient database) {
+                                    GetMetricId getMetricId, GetCriticalAlerts getCriticalAlerts, SqlClient database) {
         this.clientId = clientId;
         this.apiResponseProducer = apiResponseProducer;
         this.apiRequestSubscriber = apiRequestSubscriber;
         this.getMetricId = getMetricId;
+        this.getCriticalAlerts = getCriticalAlerts;
         this.database = database;
     }
 
     public ClientProtocolConnection(int clientId, Producer apiResponseProducer, Subscriber apiRequestSubscriber,
-                                    GetMetricId getMetricId, SqlClient database, int maxFragmentSize) {
+                                    GetMetricId getMetricId, GetCriticalAlerts getCriticalAlerts, SqlClient database, int maxFragmentSize) {
         this.clientId = clientId;
         this.apiResponseProducer = apiResponseProducer;
         this.apiRequestSubscriber = apiRequestSubscriber;
         this.getMetricId = getMetricId;
+        this.getCriticalAlerts = getCriticalAlerts;
         this.database = database;
         this.maxFragmentSize = maxFragmentSize;
     }
@@ -61,10 +65,10 @@ public class ClientProtocolConnection implements FragmentHandler, AutoCloseable,
         offset += MetricConstants.INT_SIZE;
         switch (instructionId) {
             case Protocol.INSTRUCTION_GET_METRIC_ID_BY_TAGS -> {
-                getMetricId.doWork(database, apiResponseProducer, buffer, offset, length, header);
-            } // TODO + 2 инструкции
+                getMetricId.doWork(clientId, database, apiResponseProducer, buffer, offset, length, header);
+            }
             case Protocol.INSTRUCTION_GET_METRIC_CRITICAL_ALERTS_BY_METRIC_ID -> {
-
+                getCriticalAlerts.doWork(clientId, database, apiResponseProducer, buffer, offset, length, header);
             }
             default -> throw new IllegalStateException("Invalid instruction id in api node: " + instructionId);
         }

@@ -85,6 +85,9 @@ public class MetricRegistry implements AutoCloseable {
         }
         Metric metric = new Metric(getInstance(), metricId);
         metricByIds.put(metricId, metric); // TODO Actor для записи в Map
+        int curRequestId = requsetId.getAndIncrement();
+        requestContexts.put(curRequestId, null);
+        clientProducer.getAlertsConfigsByMetricId(curRequestId, metricId);
         return metric;
     }
 

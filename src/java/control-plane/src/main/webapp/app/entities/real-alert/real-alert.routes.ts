@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
 import { RealAlertComponent } from './list/real-alert.component';
 import { RealAlertDetailComponent } from './detail/real-alert-detail.component';
 import { RealAlertUpdateComponent } from './update/real-alert-update.component';
@@ -11,9 +10,7 @@ const realAlertRoute: Routes = [
   {
     path: '',
     component: RealAlertComponent,
-    data: {
-      defaultSort: 'id,' + ASC,
-    },
+    data: {},
     canActivate: [UserRouteAccessService],
   },
   {

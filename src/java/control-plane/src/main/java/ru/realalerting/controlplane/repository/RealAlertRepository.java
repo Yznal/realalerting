@@ -9,4 +9,4 @@ import ru.realalerting.controlplane.domain.RealAlert;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface RealAlertRepository extends JpaRepository<RealAlert, Long> {}
+public interface RealAlertRepository extends JpaRepository<RealAlert, Integer> {}

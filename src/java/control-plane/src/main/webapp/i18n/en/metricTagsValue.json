@@ -18,7 +18,7 @@
         "title": "Metric Tags Value"
       },
       "id": "ID",
-      "value01": "Value 01",
+      "value1": "Value 1",
       "value256": "Value 256",
       "metric": "Metric",
       "tenant": "Tenant"

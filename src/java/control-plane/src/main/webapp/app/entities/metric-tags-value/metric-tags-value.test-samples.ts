@@ -6,12 +6,12 @@ export const sampleWithRequiredData: IMetricTagsValue = {
 
 export const sampleWithPartialData: IMetricTagsValue = {
   id: 12025,
-  value01: 'strictly short',
+  value1: 'strictly short',
 };
 
 export const sampleWithFullData: IMetricTagsValue = {
   id: 17699,
-  value01: 'peer',
+  value1: 'peer',
   value256: 'despite',
 };
 

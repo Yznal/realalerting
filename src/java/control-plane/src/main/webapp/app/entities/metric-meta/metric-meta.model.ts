@@ -2,7 +2,7 @@ import { ITenant } from 'app/entities/tenant/tenant.model';
 
 export interface IMetricMeta {
   id: number;
-  label01?: string | null;
+  label1?: string | null;
   label256?: string | null;
   tenant?: ITenant | null;
 }

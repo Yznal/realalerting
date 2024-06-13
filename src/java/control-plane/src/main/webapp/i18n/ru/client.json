@@ -17,7 +17,7 @@
       "detail": {
         "title": "Client"
       },
-      "id": "ID",
+      "id": "Id",
       "protocolProducerAddress": "Protocol Producer Address",
       "protocolProducerPort": "Protocol Producer Port",
       "protocolProducerUri": "Protocol Producer Uri",

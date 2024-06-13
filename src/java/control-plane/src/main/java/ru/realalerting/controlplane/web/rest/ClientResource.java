@@ -71,7 +71,7 @@ public class ClientResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Client> updateClient(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @Valid @RequestBody Client client
     ) throws URISyntaxException {
         log.debug("REST request to update Client : {}, {}", id, client);
@@ -105,7 +105,7 @@ public class ClientResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Client> partialUpdateClient(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @NotNull @RequestBody Client client
     ) throws URISyntaxException {
         log.debug("REST request to partial update Client partially : {}, {}", id, client);
@@ -188,7 +188,7 @@ public class ClientResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the client, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Client> getClient(@PathVariable("id") Long id) {
+    public ResponseEntity<Client> getClient(@PathVariable("id") Integer id) {
         log.debug("REST request to get Client : {}", id);
         Optional<Client> client = clientRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(client);
@@ -201,7 +201,7 @@ public class ClientResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteClient(@PathVariable("id") Integer id) {
         log.debug("REST request to delete Client : {}", id);
         clientRepository.deleteById(id);
         return ResponseEntity.noContent()

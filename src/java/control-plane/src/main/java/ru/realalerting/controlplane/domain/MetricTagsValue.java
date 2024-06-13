@@ -24,8 +24,8 @@ public class MetricTagsValue implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "value_01")
-    private String value01;
+    @Column(name = "value_1")
+    private String value1;
 
     @Column(name = "value_256")
     private String value256;
@@ -56,17 +56,17 @@ public class MetricTagsValue implements Serializable {
         this.id = id;
     }
 
-    public String getValue01() {
-        return this.value01;
+    public String getValue1() {
+        return this.value1;
     }
 
-    public MetricTagsValue value01(String value01) {
-        this.setValue01(value01);
+    public MetricTagsValue value1(String value1) {
+        this.setValue1(value1);
         return this;
     }
 
-    public void setValue01(String value01) {
-        this.value01 = value01;
+    public void setValue1(String value1) {
+        this.value1 = value1;
     }
 
     public String getValue256() {
@@ -132,7 +132,7 @@ public class MetricTagsValue implements Serializable {
     public String toString() {
         return "MetricTagsValue{" +
             "id=" + getId() +
-            ", value01='" + getValue01() + "'" +
+            ", value1='" + getValue1() + "'" +
             ", value256='" + getValue256() + "'" +
             "}";
     }

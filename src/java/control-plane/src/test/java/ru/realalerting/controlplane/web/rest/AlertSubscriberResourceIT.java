@@ -10,7 +10,7 @@ import static ru.realalerting.controlplane.web.rest.TestUtil.createUpdateProxyFo
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ class AlertSubscriberResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicInteger intCount = new AtomicInteger(random.nextInt() + (2 * Short.MAX_VALUE));
 
     @Autowired
     private ObjectMapper om;
@@ -164,7 +164,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void createAlertSubscriberWithExistingId() throws Exception {
         // Create the AlertSubscriber with an existing ID
-        alertSubscriber.setId(1L);
+        alertSubscriber.setId(1);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
@@ -217,7 +217,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void getNonExistingAlertSubscriber() throws Exception {
         // Get the alertSubscriber
-        restAlertSubscriberMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restAlertSubscriberMockMvc.perform(get(ENTITY_API_URL_ID, Integer.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -255,7 +255,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void putNonExistingAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc
@@ -274,12 +274,12 @@ class AlertSubscriberResourceIT {
     @Transactional
     void putWithIdMismatchAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                put(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(om.writeValueAsBytes(alertSubscriber))
             )
@@ -293,7 +293,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void putWithMissingIdPathParamAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc
@@ -374,7 +374,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void patchNonExistingAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc
@@ -393,12 +393,12 @@ class AlertSubscriberResourceIT {
     @Transactional
     void patchWithIdMismatchAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                patch(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(om.writeValueAsBytes(alertSubscriber))
             )
@@ -412,7 +412,7 @@ class AlertSubscriberResourceIT {
     @Transactional
     void patchWithMissingIdPathParamAlertSubscriber() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alertSubscriber.setId(longCount.incrementAndGet());
+        alertSubscriber.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlertSubscriberMockMvc

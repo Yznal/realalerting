@@ -25,8 +25,12 @@ public class ProtocolProcessor {
         offset += MetricConstants.ID_SIZE;
         int alertsCount = directBuffer.getInt(offset);
         offset += MetricConstants.INT_SIZE;
-        String uri = directBuffer.getStringUtf8(offset);
-        offset += uri.getBytes().length;
+        int uriSize = directBuffer.getInt(offset);
+        offset += MetricConstants.INT_SIZE;
+        byte[] uriBytes = new byte[uriSize];
+        directBuffer.getBytes(offset, uriBytes);
+        offset += uriSize;
+        String uri = new String(uriBytes);
         int streamId = directBuffer.getInt(offset);
         offset += MetricConstants.ID_SIZE;
         AlertProducer alertProducer = new AlertProducer(MetricRegistry.getInstance().getDriverContext(), uri, streamId);

@@ -61,7 +61,7 @@ public class ClientWithServerTests {
         List<CharSequence> tagsList = new ArrayList<CharSequence>(Arrays.asList(tags));
 
         int metricsCount = 10000;
-        ArrayList<Long >startAlert = new ArrayList<>(metricsCount);
+        ArrayList<Long> startAlert = new ArrayList<>(metricsCount);
         ArrayList<Long> endAlert = new ArrayList<>(metricsCount);
         // отправили запрос на metricId
         long startRequest = System.nanoTime();
@@ -98,7 +98,7 @@ public class ClientWithServerTests {
         System.out.println(String.format("0.9 latency - %s mcs", getLatencyPercentile(latencies, 0.9)));
         System.out.println(String.format("0.95 latency - %s mcs", getLatencyPercentile(latencies, 0.95)));
         System.out.println(String.format("0.99 latency - %s mcs", getLatencyPercentile(latencies, 0.99)));
-        System.out.println(String.format("1.00 latency - %s mcs", getLatencyPercentile(latencies, 1.0)));
+//        System.out.println(String.format("1.00 latency - %s mcs", getLatencyPercentile(latencies, 1.0)));
 
     }
 

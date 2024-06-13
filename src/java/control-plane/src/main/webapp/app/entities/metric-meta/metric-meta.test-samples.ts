@@ -6,12 +6,12 @@ export const sampleWithRequiredData: IMetricMeta = {
 
 export const sampleWithPartialData: IMetricMeta = {
   id: 17951,
-  label01: 'thistle worth expurgate',
+  label1: 'thistle worth expurgate',
 };
 
 export const sampleWithFullData: IMetricMeta = {
   id: 28123,
-  label01: 'young regularly',
+  label1: 'young regularly',
   label256: 'dark germinate along',
 };
 

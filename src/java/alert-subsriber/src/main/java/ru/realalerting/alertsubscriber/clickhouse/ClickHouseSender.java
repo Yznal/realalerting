@@ -97,7 +97,7 @@ public class ClickHouseSender extends AlertSubscriber {
 
     public ClickHouseSender(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo,
                             IdleStrategy idleStrategy, int alertId, String url, HttpClient httpClient, ClickHouseProperties properties) {
-        super(aeronContext, connectInfo, idleStrategy, alertId);
+        super(aeronContext, connectInfo, idleStrategy/*, alertId*/);
 //        servers = ClickHouseNodes.of(url);
 //        client = ClickHouseClient.newInstance(ClickHouseProtocol.HTTP);
         this.httpClient = httpClient;

@@ -72,7 +72,7 @@ public class MetricResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Metric> updateMetric(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @Valid @RequestBody Metric metric
     ) throws URISyntaxException {
         log.debug("REST request to update Metric : {}, {}", id, metric);
@@ -106,7 +106,7 @@ public class MetricResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Metric> partialUpdateMetric(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @NotNull @RequestBody Metric metric
     ) throws URISyntaxException {
         log.debug("REST request to partial update Metric partially : {}, {}", id, metric);
@@ -181,7 +181,7 @@ public class MetricResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the metric, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Metric> getMetric(@PathVariable("id") Long id) {
+    public ResponseEntity<Metric> getMetric(@PathVariable("id") Integer id) {
         log.debug("REST request to get Metric : {}", id);
         Optional<Metric> metric = metricRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(metric);
@@ -194,7 +194,7 @@ public class MetricResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMetric(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteMetric(@PathVariable("id") Integer id) {
         log.debug("REST request to delete Metric : {}", id);
         metricRepository.deleteById(id);
         return ResponseEntity.noContent()

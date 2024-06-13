@@ -17,7 +17,7 @@
       "detail": {
         "title": "Tenant"
       },
-      "id": "ID",
+      "id": "Id",
       "name": "Name",
       "description": "Description",
       "client": "Client",

@@ -124,8 +124,8 @@ public class MetricTagsValueResource {
         Optional<MetricTagsValue> result = metricTagsValueRepository
             .findById(metricTagsValue.getId())
             .map(existingMetricTagsValue -> {
-                if (metricTagsValue.getValue01() != null) {
-                    existingMetricTagsValue.setValue01(metricTagsValue.getValue01());
+                if (metricTagsValue.getValue1() != null) {
+                    existingMetricTagsValue.setValue1(metricTagsValue.getValue1());
                 }
                 if (metricTagsValue.getValue256() != null) {
                     existingMetricTagsValue.setValue256(metricTagsValue.getValue256());

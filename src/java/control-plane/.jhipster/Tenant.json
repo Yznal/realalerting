@@ -1,9 +1,14 @@
 {
   "annotations": {
-    "changelogDate": "20240527144723"
+    "changelogDate": "20240609090528"
   },
   "applications": ["ControlPlane"],
   "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "unique"]
+    },
     {
       "fieldName": "name",
       "fieldType": "String"

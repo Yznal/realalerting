@@ -18,7 +18,7 @@ type MetricTagsValueFormDefaults = Pick<NewMetricTagsValue, 'id'>;
 
 type MetricTagsValueFormGroupContent = {
   id: FormControl<IMetricTagsValue['id'] | NewMetricTagsValue['id']>;
-  value01: FormControl<IMetricTagsValue['value01']>;
+  value1: FormControl<IMetricTagsValue['value1']>;
   value256: FormControl<IMetricTagsValue['value256']>;
   metric: FormControl<IMetricTagsValue['metric']>;
   tenant: FormControl<IMetricTagsValue['tenant']>;
@@ -41,7 +41,7 @@ export class MetricTagsValueFormService {
           validators: [Validators.required],
         },
       ),
-      value01: new FormControl(metricTagsValueRawValue.value01),
+      value1: new FormControl(metricTagsValueRawValue.value1),
       value256: new FormControl(metricTagsValueRawValue.value256),
       metric: new FormControl(metricTagsValueRawValue.metric, {
         validators: [Validators.required],

@@ -60,7 +60,9 @@ public class AlertProducer extends MetricProducer {
     private boolean sendSingleMetricWithAlertId(int alertId, int metricId, long value, long timestamp) {
         boolean isSended = false;
         BufferClaim curBufferClaim = this.bufferClaim.get();
-        if (producer.getPublication().tryClaim(MetricConstants.ID_SIZE + MetricConstants.METRIC_BYTES, curBufferClaim) > 0) {
+        long temp = producer.getPublication().tryClaim(MetricConstants.ID_SIZE + MetricConstants.METRIC_BYTES, curBufferClaim);
+//        System.out.println(temp);
+        if (temp > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             sendData(alertId, metricId, value, timestamp, buf, curBufferClaim.offset());
             curBufferClaim.commit();

@@ -20,7 +20,7 @@ describe('MetricTagsValue Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            value01: expect.any(Object),
+            value1: expect.any(Object),
             value256: expect.any(Object),
             metric: expect.any(Object),
             tenant: expect.any(Object),
@@ -34,7 +34,7 @@ describe('MetricTagsValue Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            value01: expect.any(Object),
+            value1: expect.any(Object),
             value256: expect.any(Object),
             metric: expect.any(Object),
             tenant: expect.any(Object),

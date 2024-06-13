@@ -10,7 +10,7 @@ import static ru.realalerting.controlplane.web.rest.TestUtil.createUpdateProxyFo
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class TenantResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
-    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicInteger intCount = new AtomicInteger(random.nextInt() + (2 * Short.MAX_VALUE));
 
     @Autowired
     private ObjectMapper om;
@@ -108,7 +108,7 @@ class TenantResourceIT {
     @Transactional
     void createTenantWithExistingId() throws Exception {
         // Create the Tenant with an existing ID
-        tenant.setId(1L);
+        tenant.setId(1);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
@@ -157,7 +157,7 @@ class TenantResourceIT {
     @Transactional
     void getNonExistingTenant() throws Exception {
         // Get the tenant
-        restTenantMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+        restTenantMockMvc.perform(get(ENTITY_API_URL_ID, Integer.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -191,7 +191,7 @@ class TenantResourceIT {
     @Transactional
     void putNonExistingTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTenantMockMvc
@@ -206,12 +206,12 @@ class TenantResourceIT {
     @Transactional
     void putWithIdMismatchTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTenantMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                put(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(om.writeValueAsBytes(tenant))
             )
@@ -225,7 +225,7 @@ class TenantResourceIT {
     @Transactional
     void putWithMissingIdPathParamTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTenantMockMvc
@@ -294,7 +294,7 @@ class TenantResourceIT {
     @Transactional
     void patchNonExistingTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTenantMockMvc
@@ -311,12 +311,12 @@ class TenantResourceIT {
     @Transactional
     void patchWithIdMismatchTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTenantMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
+                patch(ENTITY_API_URL_ID, intCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
                     .content(om.writeValueAsBytes(tenant))
             )
@@ -330,7 +330,7 @@ class TenantResourceIT {
     @Transactional
     void patchWithMissingIdPathParamTenant() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        tenant.setId(longCount.incrementAndGet());
+        tenant.setId(intCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTenantMockMvc

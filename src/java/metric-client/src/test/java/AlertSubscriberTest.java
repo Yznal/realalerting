@@ -6,15 +6,15 @@ import ru.realalerting.subscriber.Subscriber;
 
 public class AlertSubscriberTest extends AlertSubscriber {
     public AlertSubscriberTest(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo, IdleStrategy idleStrategy, int alertId) {
-        super(aeronContext, connectInfo, idleStrategy, alertId);
+        super(aeronContext, connectInfo, idleStrategy/*, alertId*/);
     }
 
     public AlertSubscriberTest(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo, int alertId) {
-        super(aeronContext, connectInfo, alertId);
+        super(aeronContext, connectInfo/*, alertId*/);
     }
 
     public AlertSubscriberTest(Subscriber subscriber, int alertId) {
-        super(subscriber, alertId);
+        super(subscriber/*, alertId*/);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class AlertSubscriberResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<AlertSubscriber> updateAlertSubscriber(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @Valid @RequestBody AlertSubscriber alertSubscriber
     ) throws URISyntaxException {
         log.debug("REST request to update AlertSubscriber : {}, {}", id, alertSubscriber);
@@ -106,7 +106,7 @@ public class AlertSubscriberResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<AlertSubscriber> partialUpdateAlertSubscriber(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @NotNull @RequestBody AlertSubscriber alertSubscriber
     ) throws URISyntaxException {
         log.debug("REST request to partial update AlertSubscriber partially : {}, {}", id, alertSubscriber);
@@ -165,7 +165,7 @@ public class AlertSubscriberResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the alertSubscriber, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AlertSubscriber> getAlertSubscriber(@PathVariable("id") Long id) {
+    public ResponseEntity<AlertSubscriber> getAlertSubscriber(@PathVariable("id") Integer id) {
         log.debug("REST request to get AlertSubscriber : {}", id);
         Optional<AlertSubscriber> alertSubscriber = alertSubscriberRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(alertSubscriber);
@@ -178,7 +178,7 @@ public class AlertSubscriberResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAlertSubscriber(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteAlertSubscriber(@PathVariable("id") Integer id) {
         log.debug("REST request to delete AlertSubscriber : {}", id);
         alertSubscriberRepository.deleteById(id);
         return ResponseEntity.noContent()

@@ -33,8 +33,8 @@ import ru.realalerting.controlplane.repository.MetricTagsValueRepository;
 @WithMockUser
 class MetricTagsValueResourceIT {
 
-    private static final String DEFAULT_VALUE_01 = "AAAAAAAAAA";
-    private static final String UPDATED_VALUE_01 = "BBBBBBBBBB";
+    private static final String DEFAULT_VALUE_1 = "AAAAAAAAAA";
+    private static final String UPDATED_VALUE_1 = "BBBBBBBBBB";
 
     private static final String DEFAULT_VALUE_256 = "AAAAAAAAAA";
     private static final String UPDATED_VALUE_256 = "BBBBBBBBBB";
@@ -66,7 +66,7 @@ class MetricTagsValueResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static MetricTagsValue createEntity(EntityManager em) {
-        MetricTagsValue metricTagsValue = new MetricTagsValue().value01(DEFAULT_VALUE_01).value256(DEFAULT_VALUE_256);
+        MetricTagsValue metricTagsValue = new MetricTagsValue().value1(DEFAULT_VALUE_1).value256(DEFAULT_VALUE_256);
         // Add required entity
         Metric metric;
         if (TestUtil.findAll(em, Metric.class).isEmpty()) {
@@ -97,7 +97,7 @@ class MetricTagsValueResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static MetricTagsValue createUpdatedEntity(EntityManager em) {
-        MetricTagsValue metricTagsValue = new MetricTagsValue().value01(UPDATED_VALUE_01).value256(UPDATED_VALUE_256);
+        MetricTagsValue metricTagsValue = new MetricTagsValue().value1(UPDATED_VALUE_1).value256(UPDATED_VALUE_256);
         // Add required entity
         Metric metric;
         if (TestUtil.findAll(em, Metric.class).isEmpty()) {
@@ -175,7 +175,7 @@ class MetricTagsValueResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metricTagsValue.getId().intValue())))
-            .andExpect(jsonPath("$.[*].value01").value(hasItem(DEFAULT_VALUE_01)))
+            .andExpect(jsonPath("$.[*].value1").value(hasItem(DEFAULT_VALUE_1)))
             .andExpect(jsonPath("$.[*].value256").value(hasItem(DEFAULT_VALUE_256)));
     }
 
@@ -191,7 +191,7 @@ class MetricTagsValueResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(metricTagsValue.getId().intValue()))
-            .andExpect(jsonPath("$.value01").value(DEFAULT_VALUE_01))
+            .andExpect(jsonPath("$.value1").value(DEFAULT_VALUE_1))
             .andExpect(jsonPath("$.value256").value(DEFAULT_VALUE_256));
     }
 
@@ -214,7 +214,7 @@ class MetricTagsValueResourceIT {
         MetricTagsValue updatedMetricTagsValue = metricTagsValueRepository.findById(metricTagsValue.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedMetricTagsValue are not directly saved in db
         em.detach(updatedMetricTagsValue);
-        updatedMetricTagsValue.value01(UPDATED_VALUE_01).value256(UPDATED_VALUE_256);
+        updatedMetricTagsValue.value1(UPDATED_VALUE_1).value256(UPDATED_VALUE_256);
 
         restMetricTagsValueMockMvc
             .perform(
@@ -294,7 +294,7 @@ class MetricTagsValueResourceIT {
         MetricTagsValue partialUpdatedMetricTagsValue = new MetricTagsValue();
         partialUpdatedMetricTagsValue.setId(metricTagsValue.getId());
 
-        partialUpdatedMetricTagsValue.value01(UPDATED_VALUE_01).value256(UPDATED_VALUE_256);
+        partialUpdatedMetricTagsValue.value1(UPDATED_VALUE_1).value256(UPDATED_VALUE_256);
 
         restMetricTagsValueMockMvc
             .perform(
@@ -325,7 +325,7 @@ class MetricTagsValueResourceIT {
         MetricTagsValue partialUpdatedMetricTagsValue = new MetricTagsValue();
         partialUpdatedMetricTagsValue.setId(metricTagsValue.getId());
 
-        partialUpdatedMetricTagsValue.value01(UPDATED_VALUE_01).value256(UPDATED_VALUE_256);
+        partialUpdatedMetricTagsValue.value1(UPDATED_VALUE_1).value256(UPDATED_VALUE_256);
 
         restMetricTagsValueMockMvc
             .perform(

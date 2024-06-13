@@ -42,9 +42,9 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="value01">
+            <th scope="col" jhiSortBy="value1">
               <div class="d-flex">
-                <span jhiTranslate="controlPlaneApp.metricTagsValue.value01">Value 01</span>
+                <span jhiTranslate="controlPlaneApp.metricTagsValue.value1">Value 1</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
@@ -77,7 +77,7 @@
               <td>
                 <a [routerLink]="['/metric-tags-value', metricTagsValue.id, 'view']">{{ metricTagsValue.id }}</a>
               </td>
-              <td>{{ metricTagsValue.value01 }}</td>
+              <td>{{ metricTagsValue.value1 }}</td>
               <td>{{ metricTagsValue.value256 }}</td>
               <td>
                 @if (metricTagsValue.metric) {

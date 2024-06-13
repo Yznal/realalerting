@@ -32,8 +32,8 @@ import ru.realalerting.controlplane.repository.MetricMetaRepository;
 @WithMockUser
 class MetricMetaResourceIT {
 
-    private static final String DEFAULT_LABEL_01 = "AAAAAAAAAA";
-    private static final String UPDATED_LABEL_01 = "BBBBBBBBBB";
+    private static final String DEFAULT_LABEL_1 = "AAAAAAAAAA";
+    private static final String UPDATED_LABEL_1 = "BBBBBBBBBB";
 
     private static final String DEFAULT_LABEL_256 = "AAAAAAAAAA";
     private static final String UPDATED_LABEL_256 = "BBBBBBBBBB";
@@ -65,7 +65,7 @@ class MetricMetaResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static MetricMeta createEntity(EntityManager em) {
-        MetricMeta metricMeta = new MetricMeta().label01(DEFAULT_LABEL_01).label256(DEFAULT_LABEL_256);
+        MetricMeta metricMeta = new MetricMeta().label1(DEFAULT_LABEL_1).label256(DEFAULT_LABEL_256);
         // Add required entity
         Tenant tenant;
         if (TestUtil.findAll(em, Tenant.class).isEmpty()) {
@@ -86,7 +86,7 @@ class MetricMetaResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static MetricMeta createUpdatedEntity(EntityManager em) {
-        MetricMeta metricMeta = new MetricMeta().label01(UPDATED_LABEL_01).label256(UPDATED_LABEL_256);
+        MetricMeta metricMeta = new MetricMeta().label1(UPDATED_LABEL_1).label256(UPDATED_LABEL_256);
         // Add required entity
         Tenant tenant;
         if (TestUtil.findAll(em, Tenant.class).isEmpty()) {
@@ -154,7 +154,7 @@ class MetricMetaResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metricMeta.getId().intValue())))
-            .andExpect(jsonPath("$.[*].label01").value(hasItem(DEFAULT_LABEL_01)))
+            .andExpect(jsonPath("$.[*].label1").value(hasItem(DEFAULT_LABEL_1)))
             .andExpect(jsonPath("$.[*].label256").value(hasItem(DEFAULT_LABEL_256)));
     }
 
@@ -170,7 +170,7 @@ class MetricMetaResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(metricMeta.getId().intValue()))
-            .andExpect(jsonPath("$.label01").value(DEFAULT_LABEL_01))
+            .andExpect(jsonPath("$.label1").value(DEFAULT_LABEL_1))
             .andExpect(jsonPath("$.label256").value(DEFAULT_LABEL_256));
     }
 
@@ -193,7 +193,7 @@ class MetricMetaResourceIT {
         MetricMeta updatedMetricMeta = metricMetaRepository.findById(metricMeta.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedMetricMeta are not directly saved in db
         em.detach(updatedMetricMeta);
-        updatedMetricMeta.label01(UPDATED_LABEL_01).label256(UPDATED_LABEL_256);
+        updatedMetricMeta.label1(UPDATED_LABEL_1).label256(UPDATED_LABEL_256);
 
         restMetricMetaMockMvc
             .perform(
@@ -300,7 +300,7 @@ class MetricMetaResourceIT {
         MetricMeta partialUpdatedMetricMeta = new MetricMeta();
         partialUpdatedMetricMeta.setId(metricMeta.getId());
 
-        partialUpdatedMetricMeta.label01(UPDATED_LABEL_01).label256(UPDATED_LABEL_256);
+        partialUpdatedMetricMeta.label1(UPDATED_LABEL_1).label256(UPDATED_LABEL_256);
 
         restMetricMetaMockMvc
             .perform(

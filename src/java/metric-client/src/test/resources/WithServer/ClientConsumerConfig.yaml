@@ -3,6 +3,6 @@ consumer:
     - subscription-type: udp
       ip: localhost
       port: 6002
-      stream-id: 2
+      stream-id: 1
   idle-strategy: SleepingIdleStrategy
   media-path: /dev/shm/aeron

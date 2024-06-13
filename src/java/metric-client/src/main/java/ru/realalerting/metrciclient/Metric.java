@@ -85,6 +85,10 @@ public class Metric implements AutoCloseable {
         return metricId;
     }
 
+    public AlertProducer getAlertProducer() {
+        return alertProducer;
+    }
+
     private void sendToAllAlerts(long value, long timestamp) {
         for (int i = 0; i < alertLogicBases.size(); i++) {
             alertProducer.sendAlertWithAlertId(alertLogicBases.get(i),

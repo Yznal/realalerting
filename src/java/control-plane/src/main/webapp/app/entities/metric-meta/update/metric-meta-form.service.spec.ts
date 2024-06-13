@@ -20,7 +20,7 @@ describe('MetricMeta Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            label01: expect.any(Object),
+            label1: expect.any(Object),
             label256: expect.any(Object),
             tenant: expect.any(Object),
           }),
@@ -33,7 +33,7 @@ describe('MetricMeta Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            label01: expect.any(Object),
+            label1: expect.any(Object),
             label256: expect.any(Object),
             tenant: expect.any(Object),
           }),

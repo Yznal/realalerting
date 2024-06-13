@@ -123,8 +123,8 @@ public class MetricMetaResource {
         Optional<MetricMeta> result = metricMetaRepository
             .findById(metricMeta.getId())
             .map(existingMetricMeta -> {
-                if (metricMeta.getLabel01() != null) {
-                    existingMetricMeta.setLabel01(metricMeta.getLabel01());
+                if (metricMeta.getLabel1() != null) {
+                    existingMetricMeta.setLabel1(metricMeta.getLabel1());
                 }
                 if (metricMeta.getLabel256() != null) {
                     existingMetricMeta.setLabel256(metricMeta.getLabel256());

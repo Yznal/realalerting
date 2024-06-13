@@ -9,4 +9,4 @@ import ru.realalerting.controlplane.domain.AlertSubscriber;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AlertSubscriberRepository extends JpaRepository<AlertSubscriber, Long> {}
+public interface AlertSubscriberRepository extends JpaRepository<AlertSubscriber, Integer> {}

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
 import { TenantComponent } from './list/tenant.component';
 import { TenantDetailComponent } from './detail/tenant-detail.component';
 import { TenantUpdateComponent } from './update/tenant-update.component';
@@ -11,9 +10,7 @@ const tenantRoute: Routes = [
   {
     path: '',
     component: TenantComponent,
-    data: {
-      defaultSort: 'id,' + ASC,
-    },
+    data: {},
     canActivate: [UserRouteAccessService],
   },
   {

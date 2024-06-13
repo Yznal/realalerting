@@ -71,7 +71,7 @@ public class RealAlertResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<RealAlert> updateRealAlert(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @Valid @RequestBody RealAlert realAlert
     ) throws URISyntaxException {
         log.debug("REST request to update RealAlert : {}, {}", id, realAlert);
@@ -105,7 +105,7 @@ public class RealAlertResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<RealAlert> partialUpdateRealAlert(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @NotNull @RequestBody RealAlert realAlert
     ) throws URISyntaxException {
         log.debug("REST request to partial update RealAlert partially : {}, {}", id, realAlert);
@@ -164,7 +164,7 @@ public class RealAlertResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the realAlert, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RealAlert> getRealAlert(@PathVariable("id") Long id) {
+    public ResponseEntity<RealAlert> getRealAlert(@PathVariable("id") Integer id) {
         log.debug("REST request to get RealAlert : {}", id);
         Optional<RealAlert> realAlert = realAlertRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(realAlert);
@@ -177,7 +177,7 @@ public class RealAlertResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRealAlert(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteRealAlert(@PathVariable("id") Integer id) {
         log.debug("REST request to delete RealAlert : {}", id);
         realAlertRepository.deleteById(id);
         return ResponseEntity.noContent()

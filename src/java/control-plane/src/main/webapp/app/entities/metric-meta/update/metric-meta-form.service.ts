@@ -18,7 +18,7 @@ type MetricMetaFormDefaults = Pick<NewMetricMeta, 'id'>;
 
 type MetricMetaFormGroupContent = {
   id: FormControl<IMetricMeta['id'] | NewMetricMeta['id']>;
-  label01: FormControl<IMetricMeta['label01']>;
+  label1: FormControl<IMetricMeta['label1']>;
   label256: FormControl<IMetricMeta['label256']>;
   tenant: FormControl<IMetricMeta['tenant']>;
 };
@@ -40,7 +40,7 @@ export class MetricMetaFormService {
           validators: [Validators.required],
         },
       ),
-      label01: new FormControl(metricMetaRawValue.label01),
+      label1: new FormControl(metricMetaRawValue.label1),
       label256: new FormControl(metricMetaRawValue.label256),
       tenant: new FormControl(metricMetaRawValue.tenant, {
         validators: [Validators.required],

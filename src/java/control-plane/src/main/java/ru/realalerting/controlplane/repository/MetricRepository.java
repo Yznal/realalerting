@@ -9,4 +9,4 @@ import ru.realalerting.controlplane.domain.Metric;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface MetricRepository extends JpaRepository<Metric, Long> {}
+public interface MetricRepository extends JpaRepository<Metric, Integer> {}

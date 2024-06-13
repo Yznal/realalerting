@@ -2,6 +2,7 @@ package ru.realalerting.controlplane.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,11 +20,12 @@ public class Tenant implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", nullable = false, unique = true)
+    private Integer id;
 
     @Column(name = "name")
     private String name;
@@ -47,16 +49,16 @@ public class Tenant implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public Integer getId() {
         return this.id;
     }
 
-    public Tenant id(Long id) {
+    public Tenant id(Integer id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

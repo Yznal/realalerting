@@ -1,5 +1,7 @@
 package ru.realalerting.controlplane.web.rest;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -47,7 +49,7 @@ public class TenantResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<Tenant> createTenant(@RequestBody Tenant tenant) throws URISyntaxException {
+    public ResponseEntity<Tenant> createTenant(@Valid @RequestBody Tenant tenant) throws URISyntaxException {
         log.debug("REST request to save Tenant : {}", tenant);
         if (tenant.getId() != null) {
             throw new BadRequestAlertException("A new tenant cannot already have an ID", ENTITY_NAME, "idexists");
@@ -69,8 +71,10 @@ public class TenantResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Tenant> updateTenant(@PathVariable(value = "id", required = false) final Long id, @RequestBody Tenant tenant)
-        throws URISyntaxException {
+    public ResponseEntity<Tenant> updateTenant(
+        @PathVariable(value = "id", required = false) final Integer id,
+        @Valid @RequestBody Tenant tenant
+    ) throws URISyntaxException {
         log.debug("REST request to update Tenant : {}, {}", id, tenant);
         if (tenant.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -102,8 +106,8 @@ public class TenantResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<Tenant> partialUpdateTenant(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Tenant tenant
+        @PathVariable(value = "id", required = false) final Integer id,
+        @NotNull @RequestBody Tenant tenant
     ) throws URISyntaxException {
         log.debug("REST request to partial update Tenant partially : {}, {}", id, tenant);
         if (tenant.getId() == null) {
@@ -162,7 +166,7 @@ public class TenantResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the tenant, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Tenant> getTenant(@PathVariable("id") Long id) {
+    public ResponseEntity<Tenant> getTenant(@PathVariable("id") Integer id) {
         log.debug("REST request to get Tenant : {}", id);
         Optional<Tenant> tenant = tenantRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tenant);
@@ -175,7 +179,7 @@ public class TenantResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTenant(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteTenant(@PathVariable("id") Integer id) {
         log.debug("REST request to delete Tenant : {}", id);
         tenantRepository.deleteById(id);
         return ResponseEntity.noContent()

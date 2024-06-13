@@ -47,7 +47,7 @@ public class MetricMetaAsserts {
     public static void assertMetricMetaUpdatableFieldsEquals(MetricMeta expected, MetricMeta actual) {
         assertThat(expected)
             .as("Verify MetricMeta relevant properties")
-            .satisfies(e -> assertThat(e.getLabel01()).as("check label01").isEqualTo(actual.getLabel01()))
+            .satisfies(e -> assertThat(e.getLabel1()).as("check label1").isEqualTo(actual.getLabel1()))
             .satisfies(e -> assertThat(e.getLabel256()).as("check label256").isEqualTo(actual.getLabel256()));
     }
 

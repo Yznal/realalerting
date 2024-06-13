@@ -21,6 +21,7 @@ public class ApiNode {
     private Int2ObjectOpenHashMap<ClientProtocolConnection> connections = new Int2ObjectOpenHashMap<>();
     private Int2ObjectOpenHashMap<AgentRunner> runners = new Int2ObjectOpenHashMap<>();
     private GetMetricId getMetricId = new GetMetricId();
+    private GetCriticalAlerts getCriticalAlerts = new GetCriticalAlerts();
     private SqlClient database;
 
     public ApiNode() {}
@@ -34,13 +35,14 @@ public class ApiNode {
     }
 
     public void addClient(int clientId, Producer producer, Subscriber subscriber) {
-        connections.put(clientId, new ClientProtocolConnection(clientId, producer, subscriber, getMetricId, database));
+        connections.put(clientId, new ClientProtocolConnection(clientId, producer, subscriber, getMetricId,
+                getCriticalAlerts, database));
     }
 
     public void startClient(int clientId) {
         ClientProtocolConnection connection = connections.get(clientId);
         if (connection != null) {
-            connection.waitUntilConnected();
+//            connection.waitUntilConnected(); // TODO если клиента нет, все равно нужно запустить, поэтому нужно закоментить
             final AgentRunner receiveAgentRunner = new AgentRunner(connection.getApiRequestSubscriber().getIdle(), Throwable::printStackTrace, null, connection);
             runners.put(clientId, receiveAgentRunner);
             AgentRunner.startOnThread(receiveAgentRunner);

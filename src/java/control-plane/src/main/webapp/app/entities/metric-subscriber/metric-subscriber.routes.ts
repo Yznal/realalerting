@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
 import { MetricSubscriberComponent } from './list/metric-subscriber.component';
 import { MetricSubscriberDetailComponent } from './detail/metric-subscriber-detail.component';
 import { MetricSubscriberUpdateComponent } from './update/metric-subscriber-update.component';
@@ -11,9 +10,7 @@ const metricSubscriberRoute: Routes = [
   {
     path: '',
     component: MetricSubscriberComponent,
-    data: {
-      defaultSort: 'id,' + ASC,
-    },
+    data: {},
     canActivate: [UserRouteAccessService],
   },
   {

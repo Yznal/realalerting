@@ -24,8 +24,8 @@ public class MetricMeta implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "label_01")
-    private String label01;
+    @Column(name = "label_1")
+    private String label1;
 
     @Column(name = "label_256")
     private String label256;
@@ -51,17 +51,17 @@ public class MetricMeta implements Serializable {
         this.id = id;
     }
 
-    public String getLabel01() {
-        return this.label01;
+    public String getLabel1() {
+        return this.label1;
     }
 
-    public MetricMeta label01(String label01) {
-        this.setLabel01(label01);
+    public MetricMeta label1(String label1) {
+        this.setLabel1(label1);
         return this;
     }
 
-    public void setLabel01(String label01) {
-        this.label01 = label01;
+    public void setLabel1(String label1) {
+        this.label1 = label1;
     }
 
     public String getLabel256() {
@@ -114,7 +114,7 @@ public class MetricMeta implements Serializable {
     public String toString() {
         return "MetricMeta{" +
             "id=" + getId() +
-            ", label01='" + getLabel01() + "'" +
+            ", label1='" + getLabel1() + "'" +
             ", label256='" + getLabel256() + "'" +
             "}";
     }

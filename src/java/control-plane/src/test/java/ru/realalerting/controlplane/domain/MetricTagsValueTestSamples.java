@@ -10,17 +10,17 @@ public class MetricTagsValueTestSamples {
     private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     public static MetricTagsValue getMetricTagsValueSample1() {
-        return new MetricTagsValue().id(1L).value01("value011").value256("value2561");
+        return new MetricTagsValue().id(1L).value1("value11").value256("value2561");
     }
 
     public static MetricTagsValue getMetricTagsValueSample2() {
-        return new MetricTagsValue().id(2L).value01("value012").value256("value2562");
+        return new MetricTagsValue().id(2L).value1("value12").value256("value2562");
     }
 
     public static MetricTagsValue getMetricTagsValueRandomSampleGenerator() {
         return new MetricTagsValue()
             .id(longCount.incrementAndGet())
-            .value01(UUID.randomUUID().toString())
+            .value1(UUID.randomUUID().toString())
             .value256(UUID.randomUUID().toString());
     }
 }

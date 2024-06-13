@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { ASC } from 'app/config/navigation.constants';
 import { AlertSubscriberComponent } from './list/alert-subscriber.component';
 import { AlertSubscriberDetailComponent } from './detail/alert-subscriber-detail.component';
 import { AlertSubscriberUpdateComponent } from './update/alert-subscriber-update.component';
@@ -11,9 +10,7 @@ const alertSubscriberRoute: Routes = [
   {
     path: '',
     component: AlertSubscriberComponent,
-    data: {
-      defaultSort: 'id,' + ASC,
-    },
+    data: {},
     canActivate: [UserRouteAccessService],
   },
   {

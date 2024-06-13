@@ -1,11 +1,11 @@
 {
   "annotations": {
-    "changelogDate": "20240527144423"
+    "changelogDate": "20240609090228"
   },
   "applications": ["ControlPlane"],
   "fields": [
     {
-      "fieldName": "label01",
+      "fieldName": "label1",
       "fieldType": "String"
     },
     {

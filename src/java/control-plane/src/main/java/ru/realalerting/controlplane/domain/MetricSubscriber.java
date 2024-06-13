@@ -18,11 +18,12 @@ public class MetricSubscriber implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", nullable = false, unique = true)
+    private Integer id;
 
     @Column(name = "subscriber_address")
     private String subscriberAddress;
@@ -48,16 +49,16 @@ public class MetricSubscriber implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public Integer getId() {
         return this.id;
     }
 
-    public MetricSubscriber id(Long id) {
+    public MetricSubscriber id(Integer id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

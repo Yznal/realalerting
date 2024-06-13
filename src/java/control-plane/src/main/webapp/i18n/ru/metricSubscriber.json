@@ -17,7 +17,7 @@
       "detail": {
         "title": "Metric Subscriber"
       },
-      "id": "ID",
+      "id": "Id",
       "subscriberAddress": "Subscriber Address",
       "subscriberPort": "Subscriber Port",
       "subscriberUri": "Subscriber Uri",

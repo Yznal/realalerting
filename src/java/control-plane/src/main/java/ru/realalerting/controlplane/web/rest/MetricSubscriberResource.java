@@ -72,7 +72,7 @@ public class MetricSubscriberResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<MetricSubscriber> updateMetricSubscriber(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @Valid @RequestBody MetricSubscriber metricSubscriber
     ) throws URISyntaxException {
         log.debug("REST request to update MetricSubscriber : {}, {}", id, metricSubscriber);
@@ -106,7 +106,7 @@ public class MetricSubscriberResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<MetricSubscriber> partialUpdateMetricSubscriber(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final Integer id,
         @NotNull @RequestBody MetricSubscriber metricSubscriber
     ) throws URISyntaxException {
         log.debug("REST request to partial update MetricSubscriber partially : {}, {}", id, metricSubscriber);
@@ -165,7 +165,7 @@ public class MetricSubscriberResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the metricSubscriber, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MetricSubscriber> getMetricSubscriber(@PathVariable("id") Long id) {
+    public ResponseEntity<MetricSubscriber> getMetricSubscriber(@PathVariable("id") Integer id) {
         log.debug("REST request to get MetricSubscriber : {}", id);
         Optional<MetricSubscriber> metricSubscriber = metricSubscriberRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(metricSubscriber);
@@ -178,7 +178,7 @@ public class MetricSubscriberResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMetricSubscriber(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteMetricSubscriber(@PathVariable("id") Integer id) {
         log.debug("REST request to delete MetricSubscriber : {}", id);
         metricSubscriberRepository.deleteById(id);
         return ResponseEntity.noContent()
