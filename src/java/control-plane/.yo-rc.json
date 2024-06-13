@@ -1,0 +1,22 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 0,
+    "applicationType": "monolith",
+    "baseName": "ControlPlane",
+    "buildTool": "maven",
+    "databaseType": "sql",
+    "devServerPort": 4200,
+    "entities": ["MetricMeta", "Client", "MetricTagsValue", "Tenant", "Metric", "RealAlert", "AlertSubscriber", "MetricSubscriber"],
+    "jhipsterVersion": "8.4.0",
+    "jwtSecretKey": "NThlNjc1M2Q0NmY1YjhkNzYwODNjMWMzMWVlYzQxMmEzMjM5MGVhNzk5ODdkYmI0NWJkOWY0NTI5NDU0MmNkZWM5ZGU1MTVmMjMyZDY3Zjc1NGQ1ZjIxYjU0MzUyZGQzODY4ZmI3YmY1YTkyYmJhYThjMTI5ODM1N2ZhYjFiODg=",
+    "languages": ["en", "ru"],
+    "lastLiquibaseTimestamp": 1717924168000,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "packageFolder": "ru/realalerting/controlplane",
+    "packageName": "ru.realalerting.controlplane",
+    "prodDatabaseType": "postgresql",
+    "serverPort": "8080",
+    "skipCommitHook": true
+  }
+}

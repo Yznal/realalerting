@@ -1,0 +1,30 @@
+{
+  "controlPlaneApp": {
+    "realAlert": {
+      "home": {
+        "title": "Real Alerts",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Real Alert",
+        "createOrEditLabel": "Создать или отредактировать Real Alert",
+        "notFound": "Real Alerts не найдено"
+      },
+      "created": "Новый Real Alert создан с идентификатором {{ param }}",
+      "updated": "Real Alert обновлен с идентификатором {{ param }}",
+      "deleted": "Real Alert удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Real Alert {{ id }}?"
+      },
+      "detail": {
+        "title": "Real Alert"
+      },
+      "id": "Id",
+      "type": "Type",
+      "name": "Name",
+      "description": "Description",
+      "conf": "Conf",
+      "alertSubscriber": "Alert Subscriber",
+      "client": "Client",
+      "metric": "Metric"
+    }
+  }
+}

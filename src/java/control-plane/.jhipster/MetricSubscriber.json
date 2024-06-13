@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "changelogDate": "20240609090928"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "subscriberAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "subscriberPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "subscriberUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "subscriberStreamId",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "MetricSubscriber",
+  "relationships": [
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "metric",
+      "relationshipName": "metric",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

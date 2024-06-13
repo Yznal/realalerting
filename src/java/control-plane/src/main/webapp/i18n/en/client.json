@@ -1,0 +1,40 @@
+{
+  "controlPlaneApp": {
+    "client": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Client",
+        "createOrEditLabel": "Create or edit a Client",
+        "notFound": "No Clients found"
+      },
+      "created": "A new Client is created with identifier {{ param }}",
+      "updated": "A Client is updated with identifier {{ param }}",
+      "deleted": "A Client is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Client {{ id }}?"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "Id",
+      "protocolProducerAddress": "Protocol Producer Address",
+      "protocolProducerPort": "Protocol Producer Port",
+      "protocolProducerUri": "Protocol Producer Uri",
+      "protocolProducerStreamId": "Protocol Producer Stream Id",
+      "protocolSubscriberAddress": "Protocol Subscriber Address",
+      "protocolSubscriberPort": "Protocol Subscriber Port",
+      "protocolSubscriberUri": "Protocol Subscriber Uri",
+      "protocolSubscriberStreamId": "Protocol Subscriber Stream Id",
+      "metricProducerAddress": "Metric Producer Address",
+      "metricProducerPort": "Metric Producer Port",
+      "metricProducerUri": "Metric Producer Uri",
+      "metricProducerStreamId": "Metric Producer Stream Id",
+      "metric": "Metric",
+      "metricSubscriber": "Metric Subscriber",
+      "realAlert": "Real Alert",
+      "alertSubscriber": "Alert Subscriber",
+      "tenant": "Tenant"
+    }
+  }
+}

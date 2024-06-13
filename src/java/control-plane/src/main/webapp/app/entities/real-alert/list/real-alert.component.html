@@ -1,0 +1,138 @@
+<div>
+  <h2 id="page-heading" data-cy="RealAlertHeading">
+    <span jhiTranslate="controlPlaneApp.realAlert.home.title">Real Alerts</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.realAlert.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-real-alert"
+        [routerLink]="['/real-alert/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.realAlert.home.createLabel">Create a new Real Alert</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (realAlerts?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="controlPlaneApp.realAlert.home.notFound">No Real Alerts found</span>
+    </div>
+  }
+
+  @if (realAlerts && realAlerts.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.id">Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="type">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.type">Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.name">Name</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="conf">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.conf">Conf</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="client.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.client">Client</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metric.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.realAlert.metric">Metric</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (realAlert of realAlerts; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/real-alert', realAlert.id, 'view']">{{ realAlert.id }}</a>
+              </td>
+              <td [jhiTranslate]="'controlPlaneApp.AlertType.' + (realAlert.type ?? 'null')">
+                {{ { null: '', CRITICAL: 'CRITICAL', REGULAR: 'REGULAR' }[realAlert.type ?? 'null'] }}
+              </td>
+              <td>{{ realAlert.name }}</td>
+              <td>{{ realAlert.description }}</td>
+              <td>{{ realAlert.conf }}</td>
+              <td>
+                @if (realAlert.client) {
+                  <div>
+                    <a [routerLink]="['/client', realAlert.client.id, 'view']">{{ realAlert.client.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (realAlert.metric) {
+                  <div>
+                    <a [routerLink]="['/metric', realAlert.metric.id, 'view']">{{ realAlert.metric.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/real-alert', realAlert.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/real-alert', realAlert.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(realAlert)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

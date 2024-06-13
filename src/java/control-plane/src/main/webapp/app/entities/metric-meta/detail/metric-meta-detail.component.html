@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (metricMeta()) {
+      <div>
+        <h2 data-cy="metricMetaDetailsHeading"><span jhiTranslate="controlPlaneApp.metricMeta.detail.title">Metric Meta</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ metricMeta()!.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metricMeta.label1">Label 1</span></dt>
+          <dd>
+            <span>{{ metricMeta()!.label1 }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metricMeta.label256">Label 256</span></dt>
+          <dd>
+            <span>{{ metricMeta()!.label256 }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.metricMeta.tenant">Tenant</span></dt>
+          <dd>
+            @if (metricMeta()!.tenant) {
+              <div>
+                <a [routerLink]="['/tenant', metricMeta()!.tenant?.id, 'view']">{{ metricMeta()!.tenant?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/metric-meta', metricMeta()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

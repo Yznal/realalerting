@@ -1,0 +1,71 @@
+{
+  "annotations": {
+    "changelogDate": "20240609090628"
+  },
+  "applications": ["ControlPlane"],
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "unique"]
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "MetricType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "INT,DOUBLE",
+      "fieldValuesJavadocs": {
+        "DOUBLE": "возможно нужно не по типам, а по способу взаимодействия\n      * счетчик (может идти только вврех),\n      * числовой (вверх и вниз)\n      * показатель (дробное число - значение чего-то)\n      * и т.д."
+      }
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerPort",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "criticalAlertProducerUri",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "criticalAlertProducerStreamId",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "Metric",
+  "relationships": [
+    {
+      "otherEntityName": "realAlert",
+      "otherEntityRelationshipName": "metric",
+      "relationshipName": "realAlert",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "metricSubscriber",
+      "otherEntityRelationshipName": "metric",
+      "relationshipName": "metricSubscriber",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "client",
+      "relationshipName": "client",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no"
+}

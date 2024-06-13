@@ -1,0 +1,158 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-metric-subscriber-heading"
+        data-cy="MetricSubscriberCreateUpdateHeading"
+        jhiTranslate="controlPlaneApp.metricSubscriber.home.createOrEditLabel"
+      >
+        Create or edit a Metric Subscriber
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="controlPlaneApp.metricSubscriber.id">Id</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+            @if (editForm.get('id')!.invalid && (editForm.get('id')!.dirty || editForm.get('id')!.touched)) {
+              <div>
+                @if (editForm.get('id')?.errors?.required) {
+                  <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('id')?.errors?.number" jhiTranslate="entity.validation.number"
+                  >This field should be a number.</small
+                >
+              </div>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_subscriberAddress" jhiTranslate="controlPlaneApp.metricSubscriber.subscriberAddress"
+            >Subscriber Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="subscriberAddress"
+            id="field_subscriberAddress"
+            data-cy="subscriberAddress"
+            formControlName="subscriberAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_subscriberPort" jhiTranslate="controlPlaneApp.metricSubscriber.subscriberPort"
+            >Subscriber Port</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="subscriberPort"
+            id="field_subscriberPort"
+            data-cy="subscriberPort"
+            formControlName="subscriberPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_subscriberUri" jhiTranslate="controlPlaneApp.metricSubscriber.subscriberUri"
+            >Subscriber Uri</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="subscriberUri"
+            id="field_subscriberUri"
+            data-cy="subscriberUri"
+            formControlName="subscriberUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_subscriberStreamId" jhiTranslate="controlPlaneApp.metricSubscriber.subscriberStreamId"
+            >Subscriber Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="subscriberStreamId"
+            id="field_subscriberStreamId"
+            data-cy="subscriberStreamId"
+            formControlName="subscriberStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_client" jhiTranslate="controlPlaneApp.metricSubscriber.client">Client</label>
+          <select
+            class="form-control"
+            id="field_client"
+            data-cy="client"
+            name="client"
+            formControlName="client"
+            [compareWith]="compareClient"
+          >
+            @if (editForm.get(['client'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (clientOption of clientsSharedCollection; track $index) {
+              <option [ngValue]="clientOption">{{ clientOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)) {
+          <div>
+            @if (editForm.get(['client'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metric" jhiTranslate="controlPlaneApp.metricSubscriber.metric">Metric</label>
+          <select
+            class="form-control"
+            id="field_metric"
+            data-cy="metric"
+            name="metric"
+            formControlName="metric"
+            [compareWith]="compareMetric"
+          >
+            @if (editForm.get(['metric'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (metricOption of metricsSharedCollection; track $index) {
+              <option [ngValue]="metricOption">{{ metricOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['metric'])!.invalid && (editForm.get(['metric'])!.dirty || editForm.get(['metric'])!.touched)) {
+          <div>
+            @if (editForm.get(['metric'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

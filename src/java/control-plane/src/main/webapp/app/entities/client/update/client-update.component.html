@@ -1,0 +1,240 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-client-heading" data-cy="ClientCreateUpdateHeading" jhiTranslate="controlPlaneApp.client.home.createOrEditLabel">
+        Create or edit a Client
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="controlPlaneApp.client.id">Id</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+            @if (editForm.get('id')!.invalid && (editForm.get('id')!.dirty || editForm.get('id')!.touched)) {
+              <div>
+                @if (editForm.get('id')?.errors?.required) {
+                  <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+                }
+                <small class="form-text text-danger" [hidden]="!editForm.get('id')?.errors?.number" jhiTranslate="entity.validation.number"
+                  >This field should be a number.</small
+                >
+              </div>
+            }
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolProducerAddress" jhiTranslate="controlPlaneApp.client.protocolProducerAddress"
+            >Protocol Producer Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="protocolProducerAddress"
+            id="field_protocolProducerAddress"
+            data-cy="protocolProducerAddress"
+            formControlName="protocolProducerAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolProducerPort" jhiTranslate="controlPlaneApp.client.protocolProducerPort"
+            >Protocol Producer Port</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="protocolProducerPort"
+            id="field_protocolProducerPort"
+            data-cy="protocolProducerPort"
+            formControlName="protocolProducerPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolProducerUri" jhiTranslate="controlPlaneApp.client.protocolProducerUri"
+            >Protocol Producer Uri</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="protocolProducerUri"
+            id="field_protocolProducerUri"
+            data-cy="protocolProducerUri"
+            formControlName="protocolProducerUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolProducerStreamId" jhiTranslate="controlPlaneApp.client.protocolProducerStreamId"
+            >Protocol Producer Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="protocolProducerStreamId"
+            id="field_protocolProducerStreamId"
+            data-cy="protocolProducerStreamId"
+            formControlName="protocolProducerStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolSubscriberAddress" jhiTranslate="controlPlaneApp.client.protocolSubscriberAddress"
+            >Protocol Subscriber Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="protocolSubscriberAddress"
+            id="field_protocolSubscriberAddress"
+            data-cy="protocolSubscriberAddress"
+            formControlName="protocolSubscriberAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolSubscriberPort" jhiTranslate="controlPlaneApp.client.protocolSubscriberPort"
+            >Protocol Subscriber Port</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="protocolSubscriberPort"
+            id="field_protocolSubscriberPort"
+            data-cy="protocolSubscriberPort"
+            formControlName="protocolSubscriberPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolSubscriberUri" jhiTranslate="controlPlaneApp.client.protocolSubscriberUri"
+            >Protocol Subscriber Uri</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="protocolSubscriberUri"
+            id="field_protocolSubscriberUri"
+            data-cy="protocolSubscriberUri"
+            formControlName="protocolSubscriberUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_protocolSubscriberStreamId" jhiTranslate="controlPlaneApp.client.protocolSubscriberStreamId"
+            >Protocol Subscriber Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="protocolSubscriberStreamId"
+            id="field_protocolSubscriberStreamId"
+            data-cy="protocolSubscriberStreamId"
+            formControlName="protocolSubscriberStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerAddress" jhiTranslate="controlPlaneApp.client.metricProducerAddress"
+            >Metric Producer Address</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="metricProducerAddress"
+            id="field_metricProducerAddress"
+            data-cy="metricProducerAddress"
+            formControlName="metricProducerAddress"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerPort" jhiTranslate="controlPlaneApp.client.metricProducerPort"
+            >Metric Producer Port</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="metricProducerPort"
+            id="field_metricProducerPort"
+            data-cy="metricProducerPort"
+            formControlName="metricProducerPort"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerUri" jhiTranslate="controlPlaneApp.client.metricProducerUri"
+            >Metric Producer Uri</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="metricProducerUri"
+            id="field_metricProducerUri"
+            data-cy="metricProducerUri"
+            formControlName="metricProducerUri"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_metricProducerStreamId" jhiTranslate="controlPlaneApp.client.metricProducerStreamId"
+            >Metric Producer Stream Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="metricProducerStreamId"
+            id="field_metricProducerStreamId"
+            data-cy="metricProducerStreamId"
+            formControlName="metricProducerStreamId"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_tenant" jhiTranslate="controlPlaneApp.client.tenant">Tenant</label>
+          <select
+            class="form-control"
+            id="field_tenant"
+            data-cy="tenant"
+            name="tenant"
+            formControlName="tenant"
+            [compareWith]="compareTenant"
+          >
+            @if (editForm.get(['tenant'])!.value == null) {
+              <option [ngValue]="null" selected></option>
+            }
+            @for (tenantOption of tenantsSharedCollection; track $index) {
+              <option [ngValue]="tenantOption">{{ tenantOption.id }}</option>
+            }
+          </select>
+        </div>
+        @if (editForm.get(['tenant'])!.invalid && (editForm.get(['tenant'])!.dirty || editForm.get(['tenant'])!.touched)) {
+          <div>
+            @if (editForm.get(['tenant'])?.errors?.required) {
+              <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

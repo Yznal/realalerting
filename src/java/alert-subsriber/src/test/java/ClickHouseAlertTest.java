@@ -24,17 +24,17 @@ public class ClickHouseAlertTest {
     private static AlertProducer producer;
     private static int alertId = 0;
 
-    @BeforeAll
-    static void setUp() throws Exception {
-        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
-        RealAlertingConfig config = ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml");
-        String url = "jdbc:clickhouse://localhost:8123";
-        ClickHouseProperties properties = ClickhouseJdbcUrlParser.parse(url, new ClickHouseProperties().asProperties());
-        HttpClient httpClient = new ClickHouseHttpClientBuilder(properties).buildClient();
-
-        sender = new ClickHouseSender(context, config, new SleepingIdleStrategy(), alertId, url, httpClient, properties);
-        producer = new AlertProducer(new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml")));
-    }
+//    @BeforeAll
+//    static void setUp() throws Exception {
+//        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
+//        RealAlertingConfig config = ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml");
+//        String url = "jdbc:clickhouse://localhost:8123";
+//        ClickHouseProperties properties = ClickhouseJdbcUrlParser.parse(url, new ClickHouseProperties().asProperties());
+//        HttpClient httpClient = new ClickHouseHttpClientBuilder(properties).buildClient();
+//
+//        sender = new ClickHouseSender(context, config, new SleepingIdleStrategy(), alertId, url, httpClient, properties);
+//        producer = new AlertProducer(new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProducerConfig.yaml")));
+//    }
 
 //    @Test
 //    public void test() {

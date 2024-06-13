@@ -1,0 +1,29 @@
+{
+  "controlPlaneApp": {
+    "alertSubscriber": {
+      "home": {
+        "title": "Alert Subscribers",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Alert Subscriber",
+        "createOrEditLabel": "Создать или отредактировать Alert Subscriber",
+        "notFound": "Alert Subscribers не найдено"
+      },
+      "created": "Новый Alert Subscriber создан с идентификатором {{ param }}",
+      "updated": "Alert Subscriber обновлен с идентификатором {{ param }}",
+      "deleted": "Alert Subscriber удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Alert Subscriber {{ id }}?"
+      },
+      "detail": {
+        "title": "Alert Subscriber"
+      },
+      "id": "Id",
+      "subscriberAddress": "Subscriber Address",
+      "subscriberPort": "Subscriber Port",
+      "subscriberUri": "Subscriber Uri",
+      "subscriberStreamId": "Subscriber Stream Id",
+      "client": "Client",
+      "realAlert": "Real Alert"
+    }
+  }
+}

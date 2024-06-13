@@ -1,0 +1,149 @@
+<div>
+  <h2 id="page-heading" data-cy="MetricHeading">
+    <span jhiTranslate="controlPlaneApp.metric.home.title">Metrics</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.metric.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-metric"
+        [routerLink]="['/metric/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.metric.home.createLabel">Create a new Metric</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (metrics?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="controlPlaneApp.metric.home.notFound">No Metrics found</span>
+    </div>
+  }
+
+  @if (metrics && metrics.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.id">Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="type">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.type">Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.name">Name</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerAddress">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerAddress">Critical Alert Producer Address</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerPort">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerPort">Critical Alert Producer Port</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerUri">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerUri">Critical Alert Producer Uri</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="criticalAlertProducerStreamId">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.criticalAlertProducerStreamId">Critical Alert Producer Stream Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="client.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metric.client">Client</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (metric of metrics; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/metric', metric.id, 'view']">{{ metric.id }}</a>
+              </td>
+              <td [jhiTranslate]="'controlPlaneApp.MetricType.' + (metric.type ?? 'null')">
+                {{ { null: '', INT: 'INT', DOUBLE: 'DOUBLE' }[metric.type ?? 'null'] }}
+              </td>
+              <td>{{ metric.name }}</td>
+              <td>{{ metric.description }}</td>
+              <td>{{ metric.criticalAlertProducerAddress }}</td>
+              <td>{{ metric.criticalAlertProducerPort }}</td>
+              <td>{{ metric.criticalAlertProducerUri }}</td>
+              <td>{{ metric.criticalAlertProducerStreamId }}</td>
+              <td>
+                @if (metric.client) {
+                  <div>
+                    <a [routerLink]="['/client', metric.client.id, 'view']">{{ metric.client.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/metric', metric.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/metric', metric.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(metric)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

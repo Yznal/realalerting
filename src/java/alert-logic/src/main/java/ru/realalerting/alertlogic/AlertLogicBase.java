@@ -8,6 +8,9 @@ public abstract class AlertLogicBase {
         this.alertInfo = alertInfo;
     }
 
-   public abstract boolean calculateAlert(int metricId, long value, long timestamp);
+    public abstract boolean calculateAlert(int metricId, long value, long timestamp);
 
+    public AlertInfo getAlertInfo() {
+        return alertInfo;
+    }
 }

@@ -1,0 +1,34 @@
+{
+  "controlPlaneApp": {
+    "metric": {
+      "home": {
+        "title": "Metrics",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Metric",
+        "createOrEditLabel": "Создать или отредактировать Metric",
+        "notFound": "Metrics не найдено"
+      },
+      "created": "Новый Metric создан с идентификатором {{ param }}",
+      "updated": "Metric обновлен с идентификатором {{ param }}",
+      "deleted": "Metric удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Metric {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric"
+      },
+      "id": "Id",
+      "type": "Type",
+      "name": "Name",
+      "description": "Description",
+      "criticalAlertProducerAddress": "Critical Alert Producer Address",
+      "criticalAlertProducerPort": "Critical Alert Producer Port",
+      "criticalAlertProducerUri": "Critical Alert Producer Uri",
+      "criticalAlertProducerStreamId": "Critical Alert Producer Stream Id",
+      "realAlert": "Real Alert",
+      "metricSubscriber": "Metric Subscriber",
+      "client": "Client",
+      "metricTagsValue": "Metric Tags Value"
+    }
+  }
+}

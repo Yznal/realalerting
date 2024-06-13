@@ -45,6 +45,7 @@ public class ClickHouseSender extends AlertSubscriber {
     private HttpPost httpPost;
     private HttpResponse response;
 
+
     public static class Alert {
         int metricId;
         long value;
@@ -96,7 +97,7 @@ public class ClickHouseSender extends AlertSubscriber {
 
     public ClickHouseSender(RealAlertingDriverContext aeronContext, RealAlertingConfig connectInfo,
                             IdleStrategy idleStrategy, int alertId, String url, HttpClient httpClient, ClickHouseProperties properties) {
-        super(aeronContext, connectInfo, idleStrategy, alertId);
+        super(aeronContext, connectInfo, idleStrategy/*, alertId*/);
 //        servers = ClickHouseNodes.of(url);
 //        client = ClickHouseClient.newInstance(ClickHouseProtocol.HTTP);
         this.httpClient = httpClient;
@@ -190,7 +191,7 @@ public class ClickHouseSender extends AlertSubscriber {
     }
 
     @Override
-    public void onAlert(int metricId, long value, long timestamp) {
+    public void onAlert(int alertId, int metricId, long value, long timestamp) {
         disruptor.publishEvent(TRANSLATOR, metricId, timestamp, value);
     }
 }

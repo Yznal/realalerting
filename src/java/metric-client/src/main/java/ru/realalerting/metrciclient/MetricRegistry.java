@@ -2,6 +2,8 @@ package ru.realalerting.metrciclient;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.agrona.concurrent.AgentRunner;
+import ru.realalerting.alertlogic.AlertLogicBase;
+import ru.realalerting.producer.AlertProducer;
 import ru.realalerting.producer.MetricProducer;
 import ru.realalerting.producer.Producer;
 import ru.realalerting.protocol.RealAlertingDriverContext;
@@ -83,6 +85,9 @@ public class MetricRegistry implements AutoCloseable {
         }
         Metric metric = new Metric(getInstance(), metricId);
         metricByIds.put(metricId, metric); // TODO Actor для записи в Map
+        int curRequestId = requsetId.getAndIncrement();
+        requestContexts.put(curRequestId, null);
+        clientProducer.getAlertsConfigsByMetricId(curRequestId, metricId);
         return metric;
     }
 
@@ -92,6 +97,32 @@ public class MetricRegistry implements AutoCloseable {
             metricByTags.get(gettedTags).changeId(newId);
             requestContexts.remove(requestId); // дедупликация
         }
+    }
+
+    void setCriticalAlertsToMetric(int requestId, AlertProducer alertProducer, List<AlertLogicBase> alertsLogic) {
+        List<CharSequence> tags = (List<CharSequence>) requestContexts.get(requestId); // TODO добавить Metric в requestContext
+        if (tags != null) {
+            Metric metric = metricByTags.get(tags);
+            setMetricAlerts(requestId, metric, alertProducer, alertsLogic);
+        }
+    }
+
+    void setCriticalAlertsToMetric(int requestId, int metricId,
+                                   AlertProducer alertProducer, List<AlertLogicBase> alertsLogic) {
+        Metric metric = metricByIds.get(metricId);
+        setMetricAlerts(requestId, metric, alertProducer, alertsLogic);
+    }
+
+    private void setMetricAlerts(int requestId, Metric metric, AlertProducer alertProducer, List<AlertLogicBase> alertsLogic) {
+        metric.setAlertProducer(alertProducer);
+        for (int i = 0; i < alertsLogic.size(); ++i) {
+            metric.addAlertLogic(alertsLogic.get(i));
+        }
+        requestContexts.remove(requestId);
+    }
+
+    void deleteRequest(int requestId) {
+        requestContexts.remove(requestId);
     }
 
     @Override

@@ -1,0 +1,128 @@
+<div>
+  <h2 id="page-heading" data-cy="MetricTagsValueHeading">
+    <span jhiTranslate="controlPlaneApp.metricTagsValue.home.title">Metric Tags Values</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.metricTagsValue.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-metric-tags-value"
+        [routerLink]="['/metric-tags-value/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="controlPlaneApp.metricTagsValue.home.createLabel">Create a new Metric Tags Value</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (metricTagsValues?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="controlPlaneApp.metricTagsValue.home.notFound">No Metric Tags Values found</span>
+    </div>
+  }
+
+  @if (metricTagsValues && metricTagsValues.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="value1">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metricTagsValue.value1">Value 1</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="value256">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metricTagsValue.value256">Value 256</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="metric.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metricTagsValue.metric">Metric</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tenant.id">
+              <div class="d-flex">
+                <span jhiTranslate="controlPlaneApp.metricTagsValue.tenant">Tenant</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (metricTagsValue of metricTagsValues; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/metric-tags-value', metricTagsValue.id, 'view']">{{ metricTagsValue.id }}</a>
+              </td>
+              <td>{{ metricTagsValue.value1 }}</td>
+              <td>{{ metricTagsValue.value256 }}</td>
+              <td>
+                @if (metricTagsValue.metric) {
+                  <div>
+                    <a [routerLink]="['/metric', metricTagsValue.metric.id, 'view']">{{ metricTagsValue.metric.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (metricTagsValue.tenant) {
+                  <div>
+                    <a [routerLink]="['/tenant', metricTagsValue.tenant.id, 'view']">{{ metricTagsValue.tenant.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/metric-tags-value', metricTagsValue.id, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a
+                    [routerLink]="['/metric-tags-value', metricTagsValue.id, 'edit']"
+                    class="btn btn-primary btn-sm"
+                    data-cy="entityEditButton"
+                  >
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(metricTagsValue)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

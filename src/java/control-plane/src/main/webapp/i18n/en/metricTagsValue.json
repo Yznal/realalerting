@@ -1,0 +1,27 @@
+{
+  "controlPlaneApp": {
+    "metricTagsValue": {
+      "home": {
+        "title": "Metric Tags Values",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Metric Tags Value",
+        "createOrEditLabel": "Create or edit a Metric Tags Value",
+        "notFound": "No Metric Tags Values found"
+      },
+      "created": "A new Metric Tags Value is created with identifier {{ param }}",
+      "updated": "A Metric Tags Value is updated with identifier {{ param }}",
+      "deleted": "A Metric Tags Value is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Metric Tags Value {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric Tags Value"
+      },
+      "id": "ID",
+      "value1": "Value 1",
+      "value256": "Value 256",
+      "metric": "Metric",
+      "tenant": "Tenant"
+    }
+  }
+}

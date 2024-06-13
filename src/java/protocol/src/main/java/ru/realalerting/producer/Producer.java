@@ -28,6 +28,16 @@ public class Producer implements AutoCloseable {
         idle = idleStrategy;
     }
 
+    public Producer(RealAlertingDriverContext aeronContext, String uri, int streamId) {
+        this.publication = aeronContext.getAeron().addPublication(uri, streamId);
+        idle = new SleepingIdleStrategy();
+    }
+
+    public Producer(RealAlertingDriverContext aeronContext, String uri, int streamId, IdleStrategy idleStrategy) {
+        this.publication = aeronContext.getAeron().addPublication(uri, streamId);
+        idle = idleStrategy;
+    }
+
     protected Producer() {
         publication = null;
         idle = null;

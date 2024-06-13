@@ -1,0 +1,26 @@
+{
+  "controlPlaneApp": {
+    "metricMeta": {
+      "home": {
+        "title": "Metric Metas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Metric Meta",
+        "createOrEditLabel": "Create or edit a Metric Meta",
+        "notFound": "No Metric Metas found"
+      },
+      "created": "A new Metric Meta is created with identifier {{ param }}",
+      "updated": "A Metric Meta is updated with identifier {{ param }}",
+      "deleted": "A Metric Meta is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Metric Meta {{ id }}?"
+      },
+      "detail": {
+        "title": "Metric Meta"
+      },
+      "id": "ID",
+      "label1": "Label 1",
+      "label256": "Label 256",
+      "tenant": "Tenant"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (realAlert()) {
+      <div>
+        <h2 data-cy="realAlertDetailsHeading"><span jhiTranslate="controlPlaneApp.realAlert.detail.title">Real Alert</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.id">Id</span></dt>
+          <dd>
+            <span>{{ realAlert()!.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.type">Type</span></dt>
+          <dd>
+            <span [jhiTranslate]="'controlPlaneApp.AlertType.' + (realAlert()!.type ?? 'null')">{{
+              { null: '', CRITICAL: 'CRITICAL', REGULAR: 'REGULAR' }[realAlert()!.type ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.name">Name</span></dt>
+          <dd>
+            <span>{{ realAlert()!.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.description">Description</span></dt>
+          <dd>
+            <span>{{ realAlert()!.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.conf">Conf</span></dt>
+          <dd>
+            <span>{{ realAlert()!.conf }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.client">Client</span></dt>
+          <dd>
+            @if (realAlert()!.client) {
+              <div>
+                <a [routerLink]="['/client', realAlert()!.client?.id, 'view']">{{ realAlert()!.client?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.realAlert.metric">Metric</span></dt>
+          <dd>
+            @if (realAlert()!.metric) {
+              <div>
+                <a [routerLink]="['/metric', realAlert()!.metric?.id, 'view']">{{ realAlert()!.metric?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/real-alert', realAlert()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

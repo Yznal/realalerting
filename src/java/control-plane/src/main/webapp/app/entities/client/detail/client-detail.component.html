@@ -1,0 +1,86 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (client()) {
+      <div>
+        <h2 data-cy="clientDetailsHeading"><span jhiTranslate="controlPlaneApp.client.detail.title">Client</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="controlPlaneApp.client.id">Id</span></dt>
+          <dd>
+            <span>{{ client()!.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolProducerAddress">Protocol Producer Address</span></dt>
+          <dd>
+            <span>{{ client()!.protocolProducerAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolProducerPort">Protocol Producer Port</span></dt>
+          <dd>
+            <span>{{ client()!.protocolProducerPort }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolProducerUri">Protocol Producer Uri</span></dt>
+          <dd>
+            <span>{{ client()!.protocolProducerUri }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolProducerStreamId">Protocol Producer Stream Id</span></dt>
+          <dd>
+            <span>{{ client()!.protocolProducerStreamId }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolSubscriberAddress">Protocol Subscriber Address</span></dt>
+          <dd>
+            <span>{{ client()!.protocolSubscriberAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolSubscriberPort">Protocol Subscriber Port</span></dt>
+          <dd>
+            <span>{{ client()!.protocolSubscriberPort }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolSubscriberUri">Protocol Subscriber Uri</span></dt>
+          <dd>
+            <span>{{ client()!.protocolSubscriberUri }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.protocolSubscriberStreamId">Protocol Subscriber Stream Id</span></dt>
+          <dd>
+            <span>{{ client()!.protocolSubscriberStreamId }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.metricProducerAddress">Metric Producer Address</span></dt>
+          <dd>
+            <span>{{ client()!.metricProducerAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.metricProducerPort">Metric Producer Port</span></dt>
+          <dd>
+            <span>{{ client()!.metricProducerPort }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.metricProducerUri">Metric Producer Uri</span></dt>
+          <dd>
+            <span>{{ client()!.metricProducerUri }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.metricProducerStreamId">Metric Producer Stream Id</span></dt>
+          <dd>
+            <span>{{ client()!.metricProducerStreamId }}</span>
+          </dd>
+          <dt><span jhiTranslate="controlPlaneApp.client.tenant">Tenant</span></dt>
+          <dd>
+            @if (client()!.tenant) {
+              <div>
+                <a [routerLink]="['/tenant', client()!.tenant?.id, 'view']">{{ client()!.tenant?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/client', client()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

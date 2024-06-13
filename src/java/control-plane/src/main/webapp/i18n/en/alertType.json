@@ -1,0 +1,9 @@
+{
+  "controlPlaneApp": {
+    "AlertType": {
+      "null": "",
+      "CRITICAL": "CRITICAL",
+      "REGULAR": "REGULAR"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "controlPlaneApp": {
+    "tenant": {
+      "home": {
+        "title": "Tenants",
+        "refreshListLabel": "Обновить список",
+        "createLabel": "Создать новый Tenant",
+        "createOrEditLabel": "Создать или отредактировать Tenant",
+        "notFound": "Tenants не найдено"
+      },
+      "created": "Новый Tenant создан с идентификатором {{ param }}",
+      "updated": "Tenant обновлен с идентификатором {{ param }}",
+      "deleted": "Tenant удален с идентификатором {{ param }}",
+      "delete": {
+        "question": "Вы уверены что хотите удалить Tenant {{ id }}?"
+      },
+      "detail": {
+        "title": "Tenant"
+      },
+      "id": "Id",
+      "name": "Name",
+      "description": "Description",
+      "client": "Client",
+      "metricTagsValue": "Metric Tags Value",
+      "metricMeta": "Metric Meta"
+    }
+  }
+}

@@ -11,24 +11,34 @@ import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.subscriber.MetricSubscriber;
 import ru.realalerting.subscriber.Subscriber;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class AlertNode {
-    private ConcurrentMap<Integer, Integer> alertIdByMetricId = new ConcurrentHashMap<>();
-    private ConcurrentMap<Integer, AlertLogicBase> alertComputationByAlertId = new ConcurrentHashMap<>();
-    private AlertProducer alertProducer;
+    private ConcurrentMap<Integer, List<Integer>> alertIdByMetricId = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, List<AlertLogicBase>> alertComputationByAlertId = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, AlertProducer> alertProducerByMetricId = new ConcurrentHashMap<>();
     private MetricSubscriber metricSubscriber;
 
     public AlertNode() {}
 
-    public AlertNode(AlertProducer alertProducer, MetricSubscriber metricSubscriber) {
-        this.alertProducer = alertProducer;
+    public AlertNode(Subscriber subscriber) {
+        metricSubscriber = new MetricSubscriber(subscriber) {
+            @Override
+            public void onFragment(DirectBuffer directBuffer, int offset, int length, Header header) {
+                metricProcessing(directBuffer, offset, length, header);
+            }
+        };
+    }
+
+    public AlertNode(MetricSubscriber metricSubscriber) {
         this.metricSubscriber = metricSubscriber;
     }
 
-    public void setAlertProducer(Producer alertProducer) {
-        this.alertProducer = new AlertProducer(alertProducer);
+    public void addAlertProducer(int metricId, Producer producer) {
+        alertProducerByMetricId.putIfAbsent(metricId, new AlertProducer(producer));
     }
 
     public void setMetricSubscriber(Subscriber metricSubscriber) {
@@ -41,27 +51,36 @@ public class AlertNode {
     }
 
     public void addAlert(AlertInfo alertInfo, AlertLogicBase alertLogic) {
-        alertIdByMetricId.putIfAbsent(alertInfo.getMetricId(), alertInfo.getAlertId());
-        alertComputationByAlertId.put(alertInfo.getAlertId(), alertLogic);
+        alertIdByMetricId.putIfAbsent(alertInfo.getMetricId(), new ArrayList<>());
+        alertComputationByAlertId.putIfAbsent(alertInfo.getAlertId(), new ArrayList<>());
+
+        alertIdByMetricId.get(alertInfo.getMetricId()).add(alertInfo.getAlertId());
+        alertComputationByAlertId.get(alertInfo.getAlertId()).add(alertLogic);
     }
 
     private void metricProcessing(DirectBuffer buffer, int offset, int length, Header header) {
         int metricId = buffer.getInt(offset + MetricConstants.ID_OFFSET);
         long value = buffer.getLong(offset + MetricConstants.VALUE_OFFSET);
         long timestamp = buffer.getLong(offset + MetricConstants.TIMESTAMP_OFFSET);
-        int alertId = alertIdByMetricId.get(metricId);
-        alertProducer.sendAlertWithAlertId(alertComputationByAlertId.get(alertId), alertId, metricId, value, timestamp);
+        List<Integer> alertIds = alertIdByMetricId.get(metricId);
+        if (alertIds != null) {
+            for (Integer alertId : alertIdByMetricId.get(metricId)) {
+                for (AlertLogicBase alertLogic : alertComputationByAlertId.get(alertId)) {
+                    alertProducerByMetricId.get(metricId).sendAlertWithAlertId(alertLogic, alertId, metricId, value, timestamp);
+                }
+            }
+        }
     }
 
     public void start() throws Exception {
-        alertProducer.start();
+//        alertProducer.waitUntilConnected();
         final AgentRunner receiveAgentRunner = new AgentRunner(metricSubscriber.getConsumer().getIdle(), Throwable::printStackTrace, null, metricSubscriber);
         AgentRunner.startOnThread(receiveAgentRunner);
     }
 
-    public boolean isRunning() {
-        return alertProducer.isRunning();
-    }
+//    public boolean isRunning() {
+//        return alertProducer.isRunning();
+//    }
 
 
 

@@ -1,0 +1,30 @@
+{
+  "controlPlaneApp": {
+    "realAlert": {
+      "home": {
+        "title": "Real Alerts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Real Alert",
+        "createOrEditLabel": "Create or edit a Real Alert",
+        "notFound": "No Real Alerts found"
+      },
+      "created": "A new Real Alert is created with identifier {{ param }}",
+      "updated": "A Real Alert is updated with identifier {{ param }}",
+      "deleted": "A Real Alert is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Real Alert {{ id }}?"
+      },
+      "detail": {
+        "title": "Real Alert"
+      },
+      "id": "Id",
+      "type": "Type",
+      "name": "Name",
+      "description": "Description",
+      "conf": "Conf",
+      "alertSubscriber": "Alert Subscriber",
+      "client": "Client",
+      "metric": "Metric"
+    }
+  }
+}

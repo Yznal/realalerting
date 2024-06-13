@@ -19,7 +19,7 @@ public class ClientProducer extends BaseProducer {
     }
 
     private void sendData(byte[][] tagsBytes, int requsetId, MutableDirectBuffer buf, int offset) {
-        buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID);
+        buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_ID_BY_TAGS);
         offset += MetricConstants.ID_SIZE;
         buf.putInt(offset, requsetId);
         offset += MetricConstants.ID_SIZE;
@@ -61,6 +61,25 @@ public class ClientProducer extends BaseProducer {
         if (producer.getPublication().tryClaim(allocatedMemory, curBufferClaim) > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             sendData(tagsBytes, requestId, buf, curBufferClaim.offset());
+            curBufferClaim.commit();
+        } else {
+            ++dataLeaked;
+        }
+    }
+
+    public void getAlertsConfigsByMetricId(int requestId, int metricId) {
+        int allocatedMemory = MetricConstants.INT_SIZE + MetricConstants.ID_SIZE + MetricConstants.INT_SIZE;
+        // instructionId + requestId + metricId
+        BufferClaim curBufferClaim = bufferClaim.get();
+        if (producer.getPublication().tryClaim(allocatedMemory, curBufferClaim) > 0) {
+            MutableDirectBuffer buf = curBufferClaim.buffer();
+            int offset = curBufferClaim.offset();
+            buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_CRITICAL_ALERTS_BY_METRIC_ID);
+            offset += MetricConstants.INT_SIZE;
+            buf.putInt(offset, requestId);
+            offset += MetricConstants.ID_SIZE;
+            buf.putInt(offset, metricId);
+            offset += MetricConstants.INT_SIZE;
             curBufferClaim.commit();
         } else {
             ++dataLeaked;
