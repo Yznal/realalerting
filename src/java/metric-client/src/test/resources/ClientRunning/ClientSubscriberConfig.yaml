@@ -1,0 +1,8 @@
+subscriber:
+  streams:
+    - subscription-type: udp # // TODO все udp в mdc
+      ip: 10.129.0.32
+      port: 6000
+      stream-id: 2
+  idle-strategy: SleepingIdleStrategy
+  media-path: /dev/shm/aeron

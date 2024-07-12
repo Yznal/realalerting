@@ -1,6 +1,6 @@
 package ru.realalerting.alertlogic;
 
-public class AlertInfo { // TODO record
+public class AlertInfo {
     // TODO перенести всю инфу в саму реализацию
     private final int alertId;
     private final int metricId;

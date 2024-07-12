@@ -55,5 +55,4 @@ public class ProtocolProcessor {
         response[3] = alertLogics;
         return response;
     }
-
 }

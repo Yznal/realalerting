@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * @author Karbayev Saruar
+ */
+// Отправляет метрику батчами. Пока нигде не используется
 public class MetricBatchThreadProducer extends MetricProducer {
 
     public MetricBatchThreadProducer(Producer producer) {

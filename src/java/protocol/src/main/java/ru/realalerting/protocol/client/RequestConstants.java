@@ -20,12 +20,12 @@ public class RequestConstants {
                                                            Producer producer, RowSet<Row> rows) {
         boolean isSended = false;
         byte[] uriBytes = uri.getBytes(StandardCharsets.UTF_8);
-        int allocatedMemory = MetricConstants.INT_SIZE + MetricConstants.ID_SIZE + MetricConstants.ID_SIZE +
-                MetricConstants.INT_SIZE + MetricConstants.INT_SIZE + uriBytes.length + MetricConstants.INT_SIZE +
-                MetricConstants.ID_SIZE * rows.size() + (MetricConstants.INT_SIZE + MetricConstants.INT_SIZE) * rows.size();
-        // instructionId(int) + requestId(int) + metricId(int) + critical alert count + длина uri +
-        // + количество байт в uri + streamId + alertId(int) * critical alert count +
-        // + (id конфига для просчета алерта + threshold ) * critical alert count
+        int allocatedMemory = MetricConstants.ID_SIZE + MetricConstants.ID_SIZE + MetricConstants.ID_SIZE +
+                MetricConstants.INT_SIZE + MetricConstants.INT_SIZE + uriBytes.length + MetricConstants.ID_SIZE +
+                MetricConstants.ID_SIZE * rows.size() + (MetricConstants.ID_SIZE + MetricConstants.INT_SIZE) * rows.size();
+        // instructionId + requestId + metricId +
+        // critical alert count + длина uri + количество байт в uri + streamId +
+        // alertId * critical alert count + (id конфига для просчета алерта + threshold ) * critical alert count
         // TODO нужно переделать систему отправки конфиги алертов
         if (producer.getPublication().tryClaim(allocatedMemory, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
@@ -33,9 +33,9 @@ public class RequestConstants {
             buf.putInt(offset, protocolInstruction);
             offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, requestId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, metricId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, rows.size());
             offset += MetricConstants.INT_SIZE;
             buf.putInt(offset, uriBytes.length);
@@ -43,12 +43,12 @@ public class RequestConstants {
             buf.putBytes(offset, uriBytes);
             offset += uriBytes.length;
             buf.putInt(offset, streamId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             for (Row row : rows) {
                 int alertId = row.getInteger(0);
                 String alertConfig = row.getString(1);
                 buf.putInt(offset, alertId);
-                offset += MetricConstants.INT_SIZE;
+                offset += MetricConstants.ID_SIZE;
                 offset = sendAlertConfig(alertConfig, producer, buf, offset);
             }
             bufferClaim.commit();

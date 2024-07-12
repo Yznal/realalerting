@@ -152,17 +152,17 @@ public class GetMetricId implements RequestProcessor {
 
     private boolean sendGetMetricIdWithoutCriticalAlertsResponse(int requestId, int metricId, Producer producer) {
         boolean isSended = false;
-        int allocatedMemory = MetricConstants.INT_SIZE + MetricConstants.ID_SIZE + MetricConstants.ID_SIZE;
-        // instructionId(int) + requestId(int) + metricId(int)
+        int allocatedMemory = MetricConstants.ID_SIZE + MetricConstants.ID_SIZE + MetricConstants.ID_SIZE;
+        // instructionId + requestId + metricId
         if (producer.getPublication().tryClaim(allocatedMemory, bufferClaim) > 0) {
             MutableDirectBuffer buf = bufferClaim.buffer();
             int offset = bufferClaim.offset();
             buf.putInt(offset, Protocol.INSTRUCTION_SET_METRIC_ID_WITHOUT_CRITICAL_ALERTS);
             offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, requestId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, metricId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             bufferClaim.commit();
             isSended = true;
         }

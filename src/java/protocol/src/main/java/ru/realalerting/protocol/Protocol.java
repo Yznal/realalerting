@@ -32,8 +32,4 @@ public final class Protocol {
     public static final int INSTRUCTION_NEW_CRITICAL_ALERT_TYPE_2 = 12;
     //...
 
-
-
-//    private Protocol() {}
-
 }

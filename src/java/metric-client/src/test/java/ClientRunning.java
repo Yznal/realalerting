@@ -28,26 +28,19 @@ public class ClientRunning {
     private static ArrayList<AlertSubscriber> alertSubscribers = new ArrayList<>();
     private static ConcurrentHashMap<Integer, ArrayList<Long>> timestampsByAlertId = new ConcurrentHashMap<>();
     private static ArrayList<Long> latencies = new ArrayList<>();
-
-    private static final String AERON_UDP_FORMAT = "aeron:udp?endpoint=%s:%s";
-    private static final String AERON_MDC_PUBLICATION = "aeron:udp?control-mode=dynamic|control=%s:%s";
-    private static final String AERON_MDC_SUBSCRIPTION = "aeron:udp?endpoint=%s:%s|control=%s:%s|control-mode=dynamic";
-
     private static ArrayList<Long> timestamps = new ArrayList<>();
 
     private static MetricRegistry metricRegistry;
     private static RealAlertingDriverContext context;
 
-    private static final Random RANDOM = new Random(42);
-
     private static void setUpMetricRegistry() throws IOException {
         context = new RealAlertingDriverContext("/dev/shm/aeron");
 
-        Producer metricProducer = new Producer(context, String.format(AERON_MDC_PUBLICATION, "localhost", 6006), 4); // "src/test/resources/Running/MetricProducerConfig.yaml"
+        Producer metricProducer = new Producer(context, ConfigReader.readProducerFromFile("/home/random/metric-client (saruar)/src/test/resources/ClientRunning/MetricProducerConfig.yaml"));
 
         MetricProducer clientMetricProducer = new MetricProducer(metricProducer);
-        Producer clientProducer = new Producer(context, String.format(AERON_UDP_FORMAT, "localhost", 6001), 1); // "src/test/resources/Running/ClientProducerConfig.yaml"
-        Subscriber clientConsumer = new Subscriber(context, String.format(AERON_UDP_FORMAT, "localhost", 6000), 2); // "src/test/resources/Running/ClientConsumerConfig.yaml"
+        Producer clientProducer = new Producer(context, ConfigReader.readProducerFromFile("/home/random/metric-client (saruar)/src/test/resources/ClientRunning/ClientProducerConfig.yaml"));
+        Subscriber clientConsumer = new Subscriber(context, ConfigReader.readSubscriberFromFile("/home/random/metric-client (saruar)/src/test/resources/ClientRunning/ClientSubscriberConfig.yaml"));
 
         MetricRegistry.initialize(clientProducer, clientConsumer, clientMetricProducer, context);
         metricRegistry = MetricRegistry.getInstance();
@@ -58,8 +51,8 @@ public class ClientRunning {
 
     private static void setUpAlertSubscriber() {
         for (int i = 1; i <= alertCount; ++i) {
-            Subscriber subscriber = new Subscriber(context, String.format(AERON_MDC_SUBSCRIPTION, "localhost", 6020, "localhost", 6010), i); // "src/test/resources/Running/AlertSubscribers/AlertConsumerConfig" + i + "_1" + ".yaml"
-            AlertSubscriber alertSubscriber = new AlertSubscriber(subscriber/*, 100 + i*/) {
+            Subscriber subscriber = new Subscriber(context, ConfigReader.readSubscriberFromFile("/home/random/metric-client (saruar)/src/test/resources/ClientRunning/AlertSubscribers/AlertSubscriberConfig" + i + "_1" + ".yaml"));
+            AlertSubscriber alertSubscriber = new AlertSubscriber(subscriber) {
                 @Override
                 public void onAlert(int alertId, int metricId, long value, long timestamp) {
                     System.out.println(alertId);
@@ -110,7 +103,6 @@ public class ClientRunning {
         while(metric5.getMetricId() == -1) {
             Thread.sleep(50);
         }
-//        Thread.sleep(1000);
 
         for (int i = 0; i < 10000; ++i) {
             if (i >= 1) {
@@ -127,18 +119,15 @@ public class ClientRunning {
     public static void main(String[] args) throws IOException, InterruptedException {
         setUp();
         runClient();
-//        while(true) {
-//            Thread.sleep(1000);
-//        }
+        Thread.sleep(20 * 1000);
 
-        Thread.sleep(10 * 1000);
-
-        for (Map.Entry<Integer, ArrayList<Long>> e: timestampsByAlertId.entrySet()) {
+        for (Map.Entry<Integer, ArrayList<Long>> e : timestampsByAlertId.entrySet()) {
             int i = 0;
             for (Long timestamp : e.getValue()) {
                 latencies.add(timestamp - timestamps.get(i++));
             }
         }
+        System.out.println(latencies.size());
         latencies.sort(Comparator.naturalOrder());
         System.out.println(String.format("Fastest - %s mcs", getMicroLatency(latencies.getFirst())));
         System.out.println(String.format("0.5 latency - %s mcs", getLatencyPercentile(latencies, 0.5)));
@@ -148,7 +137,6 @@ public class ClientRunning {
         System.out.println(String.format("0.9999 latency - %s mcs", getLatencyPercentile(latencies, 0.9999)));
         System.out.println(String.format("1.0 latency - %s mcs", getMicroLatency(latencies.get(latencies.size() - 1))));
         System.exit(0);
-
     }
 
     private static double getLatencyPercentile(List<Long> nanoLatencies, double percentile) {

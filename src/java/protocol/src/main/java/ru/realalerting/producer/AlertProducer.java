@@ -35,13 +35,14 @@ public class AlertProducer extends MetricProducer {
         return false;
     }
 
+    // пока не поддерживается с double
     public boolean sendAlert(AlertLogicBase alertLogic, int metricId, double value, long timestamp) {
 //        if (alertLogic.calculateAlert(metricId, value, timestamp)) {
             return sendSingleMetric(metricId, value, timestamp);
 //        }
     }
 
-    public boolean sendAlert(AlertLogicBase alertLogic, int alertId, int metricId, long value, long timestamp) {
+    public boolean sendAlertWithAlertId(AlertLogicBase alertLogic, int alertId, int metricId, long value, long timestamp) {
         if (alertLogic.calculateAlert(metricId, value, timestamp)) {
             return sendSingleMetricWithAlertId(alertId, metricId, value, timestamp);
         }
@@ -60,9 +61,7 @@ public class AlertProducer extends MetricProducer {
     private boolean sendSingleMetricWithAlertId(int alertId, int metricId, long value, long timestamp) {
         boolean isSended = false;
         BufferClaim curBufferClaim = this.bufferClaim.get();
-        long temp = producer.getPublication().tryClaim(MetricConstants.ID_SIZE + MetricConstants.METRIC_BYTES, curBufferClaim);
-//        System.out.println(temp);
-        if (temp > 0) {
+        if (producer.getPublication().tryClaim(MetricConstants.ID_SIZE + MetricConstants.METRIC_BYTES, curBufferClaim) > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             sendData(alertId, metricId, value, timestamp, buf, curBufferClaim.offset());
             curBufferClaim.commit();
@@ -73,11 +72,11 @@ public class AlertProducer extends MetricProducer {
         return isSended;
     }
 
-    public boolean sendAlertWithAlertId(AlertLogicBase alertLogic, int alertId, int metricId, long value, long timestamp) {
-        if (alertLogic.calculateAlert(metricId, value, timestamp)) {
-            return sendSingleMetricWithAlertId(alertId, metricId, value, timestamp);
-        }
-        return false;
-    }
+//    public boolean sendAlertWithAlertId(AlertLogicBase alertLogic, int alertId, int metricId, long value, long timestamp) {
+//        if (alertLogic.calculateAlert(metricId, value, timestamp)) {
+//            return sendSingleMetricWithAlertId(alertId, metricId, value, timestamp);
+//        }
+//        return false;
+//    }
 
 }

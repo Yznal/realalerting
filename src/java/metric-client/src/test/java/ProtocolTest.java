@@ -53,16 +53,16 @@ public class ProtocolTest {
                 .connectingTo(connectOptions)
                 .build();
         apiNode = new ApiNode(client);
-        Producer protocolServerProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/Protocol/ServerProducerConfig.yaml"));
-        Subscriber protocolServerSubscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/Protocol/ServerConsumerConfig.yaml"));
+        Producer protocolServerProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProtocolTest/ServerProducerConfig.yaml"));
+        Subscriber protocolServerSubscriber = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/ProtocolTest/ServerSubscriberConfig.yaml"));
         apiNode.addClient(clientId, protocolServerProducer, protocolServerSubscriber);
 
         // Client setup
-        Producer metricProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/Protocol/MetricProducerConfig.yaml"));
+        Producer metricProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProtocolTest/MetricProducerConfig.yaml"));
 
         MetricProducer clientMetricProducer = new MetricProducer(metricProducer);
-        Producer clientProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/Protocol/ClientProducerConfig.yaml"));
-        Subscriber clientConsumer = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/Protocol/ClientConsumerConfig.yaml"));
+        Producer clientProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ProtocolTest/ClientProducerConfig.yaml"));
+        Subscriber clientConsumer = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/ProtocolTest/ClientSubscriberConfig.yaml"));
 
         MetricRegistry.initialize(clientProducer, clientConsumer, clientMetricProducer, context);
         metricRegistry = MetricRegistry.getInstance();

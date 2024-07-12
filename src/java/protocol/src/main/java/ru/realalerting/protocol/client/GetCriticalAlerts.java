@@ -12,8 +12,6 @@ import ru.realalerting.producer.Producer;
 import ru.realalerting.protocol.MetricConstants;
 import ru.realalerting.protocol.Protocol;
 
-import java.nio.charset.StandardCharsets;
-
 public class GetCriticalAlerts implements RequestProcessor {
     private final BufferClaim bufferClaim = new BufferClaim();
     private final String getCriticalAlertProducer = """
@@ -32,19 +30,19 @@ public class GetCriticalAlerts implements RequestProcessor {
         int metricId = directBuffer.getInt(offset);
         offset += MetricConstants.ID_SIZE;
         client.preparedQuery(getAlertsConfigsQuery)
-                .execute(Tuple.of(clientId, metricId))
-                .onComplete(rowSetAsyncResult -> {
-                    if (rowSetAsyncResult.succeeded()) {
-                        RowSet<Row> rows = rowSetAsyncResult.result();
-                        if (rows.size() == 0) {
-                            sendNoCriticalAlerts(requestId, producer);
-                        } else {
-                            getMetricCriticalAlertProducer(requestId, clientId, metricId, producer, client, rows);
-                        }
+            .execute(Tuple.of(clientId, metricId))
+            .onComplete(rowSetAsyncResult -> {
+                if (rowSetAsyncResult.succeeded()) {
+                    RowSet<Row> rows = rowSetAsyncResult.result();
+                    if (rows.size() == 0) {
+                        sendNoCriticalAlerts(requestId, producer);
                     } else {
-                        System.err.println("Failed to get alerts configs: " + rowSetAsyncResult.cause().getMessage());
+                        getMetricCriticalAlertProducer(requestId, clientId, metricId, producer, client, rows);
                     }
-                });
+                } else {
+                    System.err.println("Failed to get alerts configs: " + rowSetAsyncResult.cause().getMessage());
+                }
+            });
     }
 
     private boolean sendNoCriticalAlerts(int requestId, Producer producer) {
@@ -65,19 +63,19 @@ public class GetCriticalAlerts implements RequestProcessor {
 
     private void getMetricCriticalAlertProducer (int requestId, int clientId, int metricId, Producer producer, SqlClient client, RowSet<Row> alertConfigsRows) {
         client.preparedQuery(getCriticalAlertProducer)
-                .execute(Tuple.of(clientId, metricId))
-                .onComplete(rowSetAsyncResult -> {
-                    if (rowSetAsyncResult.succeeded()) {
-                        RowSet<Row> rowsProducer = rowSetAsyncResult.result();
-                        Row rowProducer = rowsProducer.iterator().next();
-                        String uri = rowProducer.getString(0);
-                        int streamId = rowProducer.getInteger(1);
-                        RequestConstants.sendGetMetricIdWithCriticalAlert(bufferClaim,
-                                Protocol.INSTRUCTION_SET_METRIC_CRITICAL_ALERTS_BY_METRIC_ID, requestId, metricId,
-                                uri, streamId, producer, alertConfigsRows);
-                    } else {
-                        System.err.println("Failed to get critical alert producer: " + rowSetAsyncResult.cause().getMessage());
-                    }
-                });
+            .execute(Tuple.of(clientId, metricId))
+            .onComplete(rowSetAsyncResult -> {
+                if (rowSetAsyncResult.succeeded()) {
+                    RowSet<Row> rowsProducer = rowSetAsyncResult.result();
+                    Row rowProducer = rowsProducer.iterator().next();
+                    String uri = rowProducer.getString(0);
+                    int streamId = rowProducer.getInteger(1);
+                    RequestConstants.sendGetMetricIdWithCriticalAlert(bufferClaim,
+                            Protocol.INSTRUCTION_SET_METRIC_CRITICAL_ALERTS_BY_METRIC_ID, requestId, metricId,
+                            uri, streamId, producer, alertConfigsRows);
+                } else {
+                    System.err.println("Failed to get critical alert producer: " + rowSetAsyncResult.cause().getMessage());
+                }
+            });
     }
 }

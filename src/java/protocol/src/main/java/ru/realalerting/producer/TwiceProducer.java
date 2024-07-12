@@ -4,6 +4,7 @@ import io.aeron.logbuffer.BufferClaim;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
 
+// для Alert и Api нод, но пока не используется
 public class TwiceProducer extends BaseProducer{
     private Producer secondProducer;
     private final ThreadLocal<BufferClaim> secondBufferClaim = ThreadLocal.withInitial(() -> new BufferClaim());
