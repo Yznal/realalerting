@@ -1,9 +1,7 @@
 package ru.realalerting.metrciclient;
 
 import io.aeron.logbuffer.BufferClaim;
-import org.agrona.BufferUtil;
 import org.agrona.MutableDirectBuffer;
-import org.agrona.concurrent.UnsafeBuffer;
 import ru.realalerting.producer.BaseProducer;
 import ru.realalerting.producer.Producer;
 import ru.realalerting.protocol.MetricConstants;
@@ -57,7 +55,7 @@ public class ClientProducer extends BaseProducer {
         int allocatedMemory = MetricConstants.ID_SIZE + MetricConstants.ID_SIZE
                 + MetricConstants.INT_SIZE + allTagsSize + tagsBytes.length * MetricConstants.INT_SIZE;
         BufferClaim curBufferClaim = bufferClaim.get();
-        // int (id инструкции) + int(request id) + колиечство тэгов + сумма размеров всех тэгов + количество тэгов * int (длина тэга)
+        // instructionId + requestId + количество тэгов + сумма размеров всех тэгов + количество тэгов * длина тэга (int)
         if (producer.getPublication().tryClaim(allocatedMemory, curBufferClaim) > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             sendData(tagsBytes, requestId, buf, curBufferClaim.offset());
@@ -68,18 +66,18 @@ public class ClientProducer extends BaseProducer {
     }
 
     public void getAlertsConfigsByMetricId(int requestId, int metricId) {
-        int allocatedMemory = MetricConstants.INT_SIZE + MetricConstants.ID_SIZE + MetricConstants.INT_SIZE;
+        int allocatedMemory = MetricConstants.ID_SIZE + MetricConstants.ID_SIZE + MetricConstants.ID_SIZE;
         // instructionId + requestId + metricId
         BufferClaim curBufferClaim = bufferClaim.get();
         if (producer.getPublication().tryClaim(allocatedMemory, curBufferClaim) > 0) {
             MutableDirectBuffer buf = curBufferClaim.buffer();
             int offset = curBufferClaim.offset();
             buf.putInt(offset, Protocol.INSTRUCTION_GET_METRIC_CRITICAL_ALERTS_BY_METRIC_ID);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, requestId);
             offset += MetricConstants.ID_SIZE;
             buf.putInt(offset, metricId);
-            offset += MetricConstants.INT_SIZE;
+            offset += MetricConstants.ID_SIZE;
             curBufferClaim.commit();
         } else {
             ++dataLeaked;

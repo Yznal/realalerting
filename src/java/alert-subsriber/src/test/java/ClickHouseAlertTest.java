@@ -27,7 +27,7 @@ public class ClickHouseAlertTest {
 //    @BeforeAll
 //    static void setUp() throws Exception {
 //        RealAlertingDriverContext context = new RealAlertingDriverContext("/dev/shm/aeron");
-//        RealAlertingConfig config = ConfigReader.readConsumerFromFile("src/test/resources/ConsumerConfig.yaml");
+//        RealAlertingConfig config = ConfigReader.readConsumerFromFile("src/test/resources/SubscriberConfig.yaml");
 //        String url = "jdbc:clickhouse://localhost:8123";
 //        ClickHouseProperties properties = ClickhouseJdbcUrlParser.parse(url, new ClickHouseProperties().asProperties());
 //        HttpClient httpClient = new ClickHouseHttpClientBuilder(properties).buildClient();

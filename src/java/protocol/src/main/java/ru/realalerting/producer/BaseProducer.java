@@ -4,12 +4,11 @@ import io.aeron.logbuffer.BufferClaim;
 import ru.realalerting.protocol.RealAlertingDriverContext;
 import ru.realalerting.reader.RealAlertingConfig;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * @author Karbayev Saruar
  */
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class BaseProducer implements AutoCloseable {
     protected final Producer producer;
     protected final AtomicBoolean isRunning = new AtomicBoolean(false);

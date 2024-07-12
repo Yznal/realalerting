@@ -1,0 +1,10 @@
+subscriber:
+  streams:
+    - subscription-type: mdc
+      publication-ip: 10.129.0.33
+      publication-port: 6110
+      ip: 10.129.0.32
+      port: 6120
+      stream-id: 3
+  idle-strategy: SleepingIdleStrategy
+  media-path: /dev/shm/aeron

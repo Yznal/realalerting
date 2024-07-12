@@ -56,32 +56,32 @@ public class MetricClientTest {
 //
 //    static void setupClient() throws IOException {
 //        context = new RealAlertingDriverContext("/dev/shm/aeron");
-//        Producer metricProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricProducerConfig.yaml"));
+//        Producer metricProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricClientTest/MetricProducerConfig.yaml"));
 //
 //        MetricProducer clientMetricProducer = new MetricProducer(metricProducer);
-//        Producer clientProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ClientProducerConfig.yaml"));
-//        Subscriber clientConsumer = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ClientConsumerConfig.yaml"));
+//        Producer clientProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricClientTest/ClientProducerConfig.yaml"));
+//        Subscriber clientConsumer = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/MetricClientTest/ClientConsumerConfig.yaml"));
 //
 //        MetricRegistry.initialize(clientProducer, clientConsumer, clientMetricProducer, context);
 //        metricRegistry = MetricRegistry.getInstance();
 //
 //        alertSubscriber = new AlertSubscriberTest(new Subscriber(context,
-//                ConfigReader.readConsumerFromFile("src/test/resources/AlertConsumerConfig.yaml")),
+//                ConfigReader.readSubscriberFromFile("src/test/resources/MetricClientTest/AlertConsumerConfig.yaml")),
 //                alertId, metricId, alertValue, alertTimestamp);
 //        alertSubscriber.start();
 //    }
 //
 //    static void setupServer() {
-//        serverProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/ServerProducerConfig.yaml"));
-//        serverSubscriber = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/ServerConsumerConfig.yaml"));
+//        serverProducer = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricClientTest/ServerProducerConfig.yaml"));
+//        serverSubscriber = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/MetricClientTest/ServerConsumerConfig.yaml"));
 //
-//        alertNodeProducer1 = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/AlertNodeProducerConfig1.yaml"));
-//        alertNodeProducer2 = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/AlertNodeProducerConfig2.yaml"));
-//        alertNodeSubscriber1 = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/AlertNodeConsumerConfig1.yaml"));
-//        alertNodeSubscriber2 = new Subscriber(context, ConfigReader.readConsumerFromFile("src/test/resources/AlertNodeConsumerConfig2.yaml"));
+//        alertNodeProducer1 = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricClientTest/AlertNodeProducerConfig1.yaml"));
+//        alertNodeProducer2 = new Producer(context, ConfigReader.readProducerFromFile("src/test/resources/MetricClientTest/AlertNodeProducerConfig2.yaml"));
+//        alertNodeSubscriber1 = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/MetricClientTest/AlertNodeConsumerConfig1.yaml"));
+//        alertNodeSubscriber2 = new Subscriber(context, ConfigReader.readSubscriberFromFile("src/test/resources/MetricClientTest/AlertNodeConsumerConfig2.yaml"));
 //    }
 //
-//    @BeforeAll
+//    @BeforeAllConsumer
 //    static void run() throws IOException {
 //        setupClient();
 //        setupServer();

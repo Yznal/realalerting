@@ -3,10 +3,15 @@ package ru.realalerting.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.aeron.ChannelUriStringBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 
 /**
@@ -50,7 +55,7 @@ public class ConfigReader {
         }
     }
 
-    public static RealAlertingConfig readConsumerFromFile(String configPath) {
+    public static RealAlertingConfig readSubscriberFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
                 || !fileYamlConfiguration.isFile()
@@ -59,7 +64,7 @@ public class ConfigReader {
         }
         var objectMapper = new ObjectMapper(new YAMLFactory());
         try {
-            JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("consumer");
+            JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("subscriber");
             JsonNode streams = consumerYamlSection.get("streams").get(0);
             String consumerType = streams.get("subscription-type").asText();
             String streamUri = switch (consumerType) {
@@ -85,6 +90,39 @@ public class ConfigReader {
         }
     }
 
+    // https://github.com/real-logic/aeron-cookbook-code/blob/b77cb301731b29d239e18f2ae226f781b0c0b190/aeron-mdc/aeron-mdc-subscriber/src/main/java/com/aeroncookbook/aeron/mdc/MultiDestinationSubscriberAgent.java#L71
+    private static String localHost(final String fallback)
+    {
+        try
+        {
+            final Enumeration<NetworkInterface> interfaceEnumeration = NetworkInterface.getNetworkInterfaces();
+            while (interfaceEnumeration.hasMoreElements())
+            {
+                final var networkInterface = interfaceEnumeration.nextElement();
+
+                if (networkInterface.getName().startsWith("eth0"))
+                {
+                    final Enumeration<InetAddress> interfaceAddresses = networkInterface.getInetAddresses();
+                    while (interfaceAddresses.hasMoreElements())
+                    {
+                        if (interfaceAddresses.nextElement() instanceof Inet4Address inet4Address)
+                        {
+                            System.out.println("detected ip4 address as " +  inet4Address.getHostAddress());
+                            return inet4Address.getHostAddress();
+                            // ServerRunning вернет 10.129.0.33
+                            // можно проверить на VM ip запустив команду ip address
+                        }
+                    }
+                }
+            }
+        }
+        catch (final Exception e)
+        {
+            System.out.println("Failed to get address, using " + fallback);
+        }
+        return fallback;
+    }
+
     public static ArrayList<RealAlertingConfig> readManyConsumerFromFile(String configPath) {
         final File fileYamlConfiguration = new File(configPath);
         if (!fileYamlConfiguration.exists()
@@ -94,7 +132,7 @@ public class ConfigReader {
         }
         var objectMapper = new ObjectMapper(new YAMLFactory());
         try {
-            JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("consumer");
+            JsonNode consumerYamlSection = objectMapper.readTree(fileYamlConfiguration).get("subscriber");
             ArrayList<RealAlertingConfig> streams = new ArrayList<>();
             for (JsonNode node: consumerYamlSection.get("streams")) {
                 String consumerType = node.get("subscription-type").asText();
